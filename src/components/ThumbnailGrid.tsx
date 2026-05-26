@@ -8,6 +8,9 @@ GlobalWorkerOptions.workerSrc = new URL(
   import.meta.url
 ).toString()
 
+const THUMB_HEIGHT = 200
+const EXPANDED_HEIGHT = 500
+
 export default function ThumbnailGrid() {
   const { files, activeFileId } = useApp()
   const activeFile = files.find(f => f.id === activeFileId)
@@ -21,11 +24,14 @@ export default function ThumbnailGrid() {
     )
   }
 
-  const scale = expanded ? 0.7 : 0.35
-  const stripHeight = expanded ? 'min-h-[70vh] max-h-[70vh]' : 'min-h-[180px] max-h-[180px]'
+  const h = expanded ? EXPANDED_HEIGHT : THUMB_HEIGHT
+  const stripH = h + 40
 
   return (
-    <div className={`${stripHeight} border-t border-gray-200 bg-gray-50 shrink-0 flex flex-col transition-all duration-200`}>
+    <div
+      className="border-t border-gray-200 bg-gray-50 shrink-0 flex flex-col transition-all duration-200"
+      style={{ height: stripH, minHeight: stripH, maxHeight: stripH }}
+    >
       <div className="flex items-center justify-between px-4 py-1.5 shrink-0">
         <span className="text-xs text-gray-400">
           {activeFile.name} · 共 {activeFile.pageCount} 页
@@ -42,13 +48,13 @@ export default function ThumbnailGrid() {
         </button>
       </div>
       <div className="flex-1 overflow-x-auto overflow-y-hidden">
-        <div className="flex gap-3 h-full px-4 pb-3">
+        <div className="flex gap-3 px-4 pb-3" style={{ height: h }}>
           {Array.from({ length: activeFile.pageCount }, (_, i) => (
             <PagePreview
               key={i}
               arrayBuffer={activeFile.arrayBuffer}
               pageIndex={i}
-              scale={scale}
+              targetPx={h}
             />
           ))}
         </div>
@@ -60,14 +66,15 @@ export default function ThumbnailGrid() {
 function PagePreview({
   arrayBuffer,
   pageIndex,
-  scale,
+  targetPx,
 }: {
   arrayBuffer: ArrayBuffer
   pageIndex: number
-  scale: number
+  targetPx: number
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [error, setError] = useState(false)
+  const [size, setSize] = useState({ w: 0, h: 0 })
 
   useEffect(() => {
     let cancelled = false
@@ -83,10 +90,14 @@ function PagePreview({
         if (cancelled) return
 
         const rotation = page.rotate
+        const unscaled = page.getViewport({ scale: 1, rotation })
+        const scale = targetPx / unscaled.height
         const viewport = page.getViewport({ scale, rotation })
 
         cvs.width = viewport.width
         cvs.height = viewport.height
+
+        if (!cancelled) setSize({ w: cvs.width, h: cvs.height })
 
         const ctx = cvs.getContext('2d')
         if (!ctx) return
@@ -104,13 +115,13 @@ function PagePreview({
     })()
 
     return () => { cancelled = true }
-  }, [arrayBuffer, pageIndex, scale])
+  }, [arrayBuffer, pageIndex, targetPx])
 
   if (error) {
     return (
       <div
         className="bg-white rounded border border-dashed border-gray-300 flex items-center justify-center shrink-0 text-xs text-gray-400"
-        style={{ width: scale * 400, height: scale * 500 }}
+        style={{ width: targetPx * 0.7, height: targetPx }}
       >
         加载失败
       </div>
@@ -119,8 +130,12 @@ function PagePreview({
 
   return (
     <div className="flex flex-col items-center gap-1 shrink-0">
-      <div className={`bg-white rounded border border-gray-200 shadow-sm overflow-hidden`}>
-        <canvas ref={canvasRef} className="block" />
+      <div className="bg-white rounded border border-gray-200 shadow-sm overflow-hidden">
+        <canvas
+          ref={canvasRef}
+          className="block"
+          style={{ width: size.w || undefined, height: size.h || undefined }}
+        />
       </div>
       <span className="font-medium text-[10px] text-gray-400">{pageIndex + 1}</span>
     </div>
