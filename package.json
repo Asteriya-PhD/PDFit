@@ -1,7 +1,8 @@
 {
-  "name": "pdfx",
+  "name": "pdfit",
   "private": true,
   "version": "0.1.0",
+  "description": "Privacy-first, browser-based PDF manipulation tool",
   "type": "module",
   "scripts": {
     "dev": "vite",
