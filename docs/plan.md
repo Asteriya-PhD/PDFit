@@ -51,17 +51,179 @@ A lightweight, privacy-first PDF manipulation tool that runs **entirely in the b
 
 ### Phase 3: Conversion Features ⬜
 
-**Goal**: Add PDF-to-other-format conversion capabilities.
+**Goal**: Add PDF-to-other-format and other-format-to-PDF conversion capabilities.
 
-**Deliverables**:
-- [ ] PDF → Markdown (using pdf.js text extraction or PyMuPDF4LLM)
-- [ ] PDF → Image (canvas-based export)
-- [ ] Image → PDF (pdf-lib supports this natively)
-- [ ] PDF → Word/Excel (Desktop: LibreOffice CLI; Web: optional API)
+**Strategy**:
+- All 3 browser-safe features (**PDF→Markdown**, **PDF→Image**, **Image→PDF**) run in-browser — no server needed
+- **PDF→Word/Excel**: Desktop-only via LibreOffice CLI; Web version uses optional remote API (MinerU)
+- 0 new npm dependencies needed for browser features (reuse pdfjs-dist, pdf-lib, jszip)
 
-**Conversion Strategy**:
-- **Web version**: Only features that can run in-browser (PDF→MD, PDF→Image, Image→PDF). Heavy conversions (Word/Excel) use optional remote API (MinerU or similar).
-- **Desktop version**: Heavy conversions call locally installed LibreOffice (`--headless --convert-to`). User is guided to install LibreOffice if not detected.
+---
+
+#### Feature A: PDF → Image
+
+**Goal**: Render PDF pages as PNG/JPEG images for download.
+
+**Technical approach**:
+- Reuse `ThumbnailGrid`'s pdfjs-dist canvas rendering pattern at full resolution
+- Render each page at a configurable DPI (default 150, max 300) via `viewport.scale`
+- Export as Blob via `canvas.toBlob()` — PNG (lossless) or JPEG (configurable quality)
+- Single page → direct download; multiple pages → ZIP archive via jszip
+
+**Files to create/modify**:
+| File | Action | Purpose |
+|---|---|---|
+| `src/lib/pdfToImage.ts` | CREATE | Core engine: render page → canvas → blob |
+| `src/components/tools/PdfToImageTool.tsx` | CREATE | UI: page range, format, DPI options |
+| `src/types/index.ts` | MODIFY | Add `'pdf-to-image'` to `ToolType` union |
+| `src/components/Header.tsx` | MODIFY | Add nav button + tool config entry |
+| `src/components/ToolPanel.tsx` | MODIFY | Add route entry |
+
+**UI states**:
+- **No file selected**: 提示选择文件
+- **File loaded, default view**: Show page range selector (all / custom), format toggle (PNG/JPEG), quality slider (JPEG), DPI selector
+- **Loading**: Processing bar with page progress
+- **Success**: Download triggered; optionally show result preview
+- **Error**: Alert with error message (render failure, memory limit)
+
+---
+
+#### Feature B: Image → PDF
+
+**Goal**: Convert one or more images (PNG/JPEG) into a single PDF document.
+
+**Technical approach**:
+- pdf-lib `embedPng()` / `embedJpg()` — both are synchronous once data is loaded
+- Create page at image dimensions (use `image.scale(1)` for 1:1 sizing), maintain aspect ratio
+- Support drag-and-drop or file picker for image selection
+- Options: page size (auto / A4 / Letter), orientation, margins, sort order
+- **⚠️ Images managed locally in component state** — NOT through AppContext (which is PDF-only, calls `PDFDocument.load()`). The tool component maintains its own `{ file: File; preview: string }[]` state for image files.
+
+**Files to create/modify**:
+| File | Action | Purpose |
+|---|---|---|
+| `src/lib/imageToPdf.ts` | CREATE | Core engine: embed images → PDFDocument |
+| `src/components/tools/ImageToPdfTool.tsx` | CREATE | UI: file picker, reorder, options (self-contained image state) |
+| `src/types/index.ts` | MODIFY | Add `ToolType` union member `'image-to-pdf'` |
+| `src/components/Header.tsx` | MODIFY | Add nav button |
+| `src/components/ToolPanel.tsx` | MODIFY | Add route entry |
+
+**UI states**:
+- **Empty (no images loaded)**: Dropzone for images (PNG/JPEG/WebP); accept image types
+- **Images loaded**: Thumbnail list with drag-to-reorder, remove button per image, URL.createObjectURL preview
+- **Options**: Page size (Auto / A4 / Letter), margin
+- **Loading**: Processing bar
+- **Success**: Download PDF
+- **Error**: Invalid image format, memory limit
+
+---
+
+#### Feature C: PDF → Markdown
+
+**Goal**: Extract text content from PDF and format as Markdown.
+
+**Technical approach**:
+- Use pdfjs-dist `page.getTextContent()` — returns `TextItem[]` with text, position (x, y), font size
+- Algorithm:
+  1. Group items by y-position → lines (same baseline)
+  2. Sort lines top-to-bottom, items within lines left-to-right
+  3. Heuristic heading detection: font size significantly larger than body → `# / ## / ###`
+  4. Paragraph breaks: vertical gap > 1.5× line height
+  5. Images: render page region → embed as `![page-N](image-data:...)` base64 ( optional)
+- Output: `.md` file download + preview in a text area (user can copy)
+
+**Trade-offs & limitations**:
+- No table reconstruction — pdfjs text items don't encode table structure
+- No native list detection — bullet chars (`•`, `-`, `*`) are heuristics
+- CJK text extracts well (pdfjs has good CJK support)
+- Scanned PDFs produce no text — handled gracefully with "detected as scanned document" message
+
+**Files to create/modify**:
+| File | Action | Purpose |
+|---|---|---|
+| `src/lib/pdfToMarkdown.ts` | CREATE | Core engine: text extraction → Markdown |
+| `src/components/tools/PdfToMdTool.tsx` | CREATE | UI: mode selector, preview, download |
+| `src/types/index.ts` | MODIFY | Add `ToolType` union member `'pdf-to-md'` |
+| `src/components/Header.tsx` | MODIFY | Add nav button |
+| `src/components/ToolPanel.tsx` | MODIFY | Add route entry |
+
+**UI states**:
+- **No file selected**: 提示选择 PDF
+- **File loaded, default**: "提取 Markdown" button
+- **Loading**: Extraction progress
+- **Preview**: Textarea with extracted Markdown (read-only, selectable)
+- **Actions**: Download `.md` file, Copy to clipboard
+- **Empty result**: "此 PDF 可能为扫描件，无可提取的文本" + suggestion to use OCR tools
+
+---
+
+#### Feature D: PDF → Word/Excel (Desktop, post-MVP)
+
+**Scope postponed**: Not in the initial Phase 3 implementation.
+
+**Technical approach**:
+- Desktop-only: Tauri Rust command → `exec` / `Command` → `libreoffice --headless --convert-to docx`
+- Web: Optional MinerU API call (configurable endpoint)
+- Desktop guide: If LibreOffice not found, show download link
+
+**When to implement**: After A/B/C are stable and tested.
+
+---
+
+### Type Changes
+
+The `ToolType` union in `src/types/index.ts` needs to be extended:
+
+```typescript
+// Before:
+export type ToolType = 'merge' | 'split' | 'delete' | 'rotate' | null
+
+// After:
+export type ToolType = 'merge' | 'split' | 'delete' | 'rotate' | 'pdf-to-image' | 'image-to-pdf' | 'pdf-to-md' | null
+```
+
+Each tool also conforms to a consistent interface in `Header.tsx`:
+
+```typescript
+const tools: { type: ToolType; label: string; icon: typeof Combine }[] = [
+  ...existing,
+  { type: 'pdf-to-image', label: 'PDF转图片', icon: ImageIcon },
+  { type: 'image-to-pdf', label: '图片转PDF', icon: FileImage },
+  { type: 'pdf-to-md',    label: '提取Markdown', icon: FileText },
+]
+```
+
+### Implementation Order
+
+```
+Feature A (PDF→Image) ─→ Feature B (Image→PDF) ─→ Feature C (PDF→Markdown)
+```
+
+**Rationale**:
+1. **PDF→Image first** — simplest, reuses existing ThumbnailGrid canvas code, fastest win
+2. **Image→PDF second** — independent of feature A, uses pdf-lib (already familiar), no pdfjs needed
+3. **PDF→Markdown last** — most complex (positional layout reconstruction), benefits from the pattern established by A and B
+
+**Testing plan** (per feature):
+
+| Feature | Test Case | Steps | Expected Result |
+|---|---|---|---|
+| A (PDF→Image) | Single page extraction | Load 1-page PDF, select page 1, PNG, 150 DPI | Downloads single `.png` file at ~1240×1754 px |
+| A | Multi-page ZIP | Load 3-page PDF, select all pages, JPEG quality 80 | Downloads `.zip` with 3 `.jpg` files |
+| A | Custom DPI | Set 300 DPI, export 1 page | Image is ~2480×3508 px (2× size of 150 DPI) |
+| A | Empty page | PDF with blank page | Exports blank white image, no crash |
+| B (Image→PDF) | Single PNG | Drop 1 PNG, click convert | Downloads PDF; opens in viewer at correct dimensions |
+| B | Multiple images | Drop 3 images (PNG+JPEG), drag reorder, convert | PDF has 3 pages in dropped order, correct orientation |
+| B | A4 override | Set page size to A4, convert portrait image | Image centered on A4 page, aspect ratio preserved |
+| B | Invalid file | Drop a `.txt` file | Rejected with format error; only PNG/JPEG accepted |
+| C (PDF→MD) | Text extraction | Load text-heavy PDF, click extract | Preview shows readable Markdown with paragraph breaks |
+| C | Headings | PDF with title + section headers | Output has `# Title`, `## Section` structure |
+| C | Scanned PDF | Load image-only PDF (scanned) | Shows "可能为扫描件" message, empty preview |
+| C | CJK text | Load Chinese PDF | Chinese characters extracted correctly, no garbled text |
+| Cross | Large file | 500+ page PDF, export all as images | Progress indicator, no memory crash (may take time) |
+
+**Rollback plan**:
+Each feature is independently revertible (one commit per feature). If a feature causes issues, revert its single commit without affecting the others.
 
 ---
 
@@ -89,6 +251,9 @@ A lightweight, privacy-first PDF manipulation tool that runs **entirely in the b
 | 2026-05 | GitHub Pages + Actions | Free hosting, auto-deploy on push |
 | 2026-05 | Local pdfjs worker (not CDN) | Avoid version mismatch, offline support |
 | 2026-05 | Dynamic thumbnail height | Guarantees full page visibility regardless of orientation |
+| 2026-05 | 0 new npm deps for Phase 3 browser features | pdfjs-dist + pdf-lib + jszip already cover all needs |
+| 2026-05 | pdfjs getTextContent() for PDF→MD | Pure browser, no WASM or server; positional heuristics for structure |
+| 2026-05 | PDF→Word/Excel postponed to post-MVP | LibreOffice CLI adds complexity; focus on browser-safe features first |
 
 ## Future Considerations
 

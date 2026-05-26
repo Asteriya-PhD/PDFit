@@ -97,7 +97,7 @@ Web deploys to GitHub Pages at `/PDFit/`. Tauri WebView needs base `/`. The `vit
 - **Phase**: 2 (Desktop app via Tauri v2 — split/merge/delete/rotate, native installers)
 - **Platform**: Web (GitHub Pages) + Desktop (macOS dmg / Windows msi / Linux AppImage)
 - **Deployment**: GitHub Actions auto-deploy (web), `npm run tauri:build` (desktop)
-- **Next up**: Phase 3 — PDF conversion features (to Markdown, Image, Word)
+- **Next up**: Phase 3 — PDF conversion features (PDF→Image, Image→PDF, PDF→Markdown)
 
 ## Conventions
 

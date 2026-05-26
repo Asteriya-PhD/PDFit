@@ -35,3 +35,11 @@ coverage/
 
 # Misc
 .cache/
+
+# Development
+.omo/
+.playwright-mcp/
+test-files/
+
+# Build artifacts
+tsconfig.tsbuildinfo

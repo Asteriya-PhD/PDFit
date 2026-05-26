@@ -134,13 +134,20 @@ src/lib/
 
 ---
 
-### Phase 3: Conversion Features ⬜
+### Phase 3: Conversion Features 🚧 Planning Complete
 
-*Not started.*
+**Goal**: PDF ↔ Image, PDF → Markdown conversion (browser-side).
 
-### Phase 3: Conversion Features ⬜
+**Plan**:
+- Feature A: PDF → Image (canvas render → PNG/JPEG download)
+- Feature B: Image → PDF (pdf-lib embedPng/Jpg → multi-page PDF)
+- Feature C: PDF → Markdown (pdfjs text extraction → positional Markdown reconstruction)
+- Feature D: PDF → Word/Excel — postponed (post-MVP, desktop-only via LibreOffice)
 
-*Not started.*
+**Key decision**: 0 new npm dependencies — all 3 browser features reuse pdfjs-dist, pdf-lib, and jszip.
+Image files for Feature B managed in local component state (not AppContext, which is PDF-only).
+
+*Ready for implementation.*
 
 ### Phase 4: Polish & Extras ⬜
 
