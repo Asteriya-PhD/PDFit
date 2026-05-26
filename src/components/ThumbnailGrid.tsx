@@ -1,12 +1,8 @@
+import '@/lib/pdfWorker'
 import { useEffect, useRef, useState } from 'react'
 import { useApp } from '@/contexts/AppContext'
-import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist'
+import { getDocument } from 'pdfjs-dist'
 import { Maximize2, Minimize2 } from 'lucide-react'
-
-GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.mjs',
-  import.meta.url
-).toString()
 
 const THUMB_HEIGHT = 200
 const EXPANDED_HEIGHT = 500
