@@ -3,7 +3,10 @@ import { useApp } from '@/contexts/AppContext'
 import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist'
 import { Maximize2, Minimize2 } from 'lucide-react'
 
-GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.mjs`
+GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url
+).toString()
 
 export default function ThumbnailGrid() {
   const { files, activeFileId } = useApp()
@@ -92,8 +95,11 @@ function PagePreview({
         ctx.fillRect(0, 0, cvs.width, cvs.height)
 
         await page.render({ canvasContext: ctx, viewport }).promise
-      } catch {
-        if (!cancelled) setError(true)
+      } catch (err) {
+        if (!cancelled) {
+          console.error('PagePreview render error:', err)
+          setError(true)
+        }
       }
     })()
 
