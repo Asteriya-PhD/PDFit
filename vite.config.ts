@@ -10,5 +10,5 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
-  base: '/PDFit/',
+  base: process.env.VITE_BASE || '/PDFit/',
 })
