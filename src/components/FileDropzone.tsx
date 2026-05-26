@@ -1,6 +1,8 @@
 import { useCallback, useRef } from 'react'
 import { useApp } from '@/contexts/AppContext'
 import { Upload } from 'lucide-react'
+import { openFileDialog } from '@/lib/tauri'
+import { isDesktop } from '@/lib/desktop'
 
 export default function FileDropzone({ compact = false }: { compact?: boolean }) {
   const { addFiles } = useApp()
@@ -15,7 +17,23 @@ export default function FileDropzone({ compact = false }: { compact?: boolean })
     [addFiles]
   )
 
-  const handleClick = () => inputRef.current?.click()
+  const handleClick = async () => {
+    if (isDesktop()) {
+      const file = await openFileDialog({
+        filters: [{ name: 'PDF', extensions: ['pdf'] }],
+        multiple: true
+      })
+      if (file) {
+        if (Array.isArray(file)) {
+          addFiles(file)
+        } else {
+          addFiles([file])
+        }
+      }
+    } else {
+      inputRef.current?.click()
+    }
+  }
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) addFiles(Array.from(e.target.files))
