@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useApp } from '@/contexts/AppContext'
-import { extractPages, splitPDFByRanges } from '@/lib/pdfEngine'
+import { extractPages, splitPDFByRanges, parsePageSpec } from '@/lib/pdfEngine'
 import { Download, Plus, X } from 'lucide-react'
 
 interface RangeInput {
@@ -28,14 +28,10 @@ export default function SplitTool() {
   }
 
   const handleExtract = async () => {
-    const indices = spec
-      .split(',')
-      .map(s => parseInt(s.trim(), 10))
-      .filter(n => !isNaN(n) && n >= 1 && n <= activeFile.pageCount)
-      .map(n => n - 1)
+    const indices = parsePageSpec(spec, activeFile.pageCount)
 
     if (indices.length === 0) {
-      alert('请输入有效的页码')
+      alert('请输入有效的页码，支持范围如 1,3,5-7')
       return
     }
 
