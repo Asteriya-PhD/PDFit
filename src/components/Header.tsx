@@ -1,12 +1,15 @@
 import { useApp } from '@/contexts/AppContext'
 import type { ToolType } from '@/types'
-import { Combine, Split, Trash2, RotateCw, FileText } from 'lucide-react'
+import { Combine, Split, Trash2, RotateCw, FileText, Image, FileImage } from 'lucide-react'
 
 const tools: { type: ToolType; label: string; icon: typeof Combine }[] = [
   { type: 'merge', label: '合并', icon: Combine },
   { type: 'split', label: '分割', icon: Split },
   { type: 'delete', label: '删除页面', icon: Trash2 },
   { type: 'rotate', label: '旋转', icon: RotateCw },
+  { type: 'pdf-to-image', label: 'PDF转图片', icon: Image },
+  { type: 'image-to-pdf', label: '图片转PDF', icon: FileImage },
+  { type: 'pdf-to-md', label: '提取Markdown', icon: FileText },
 ]
 
 export default function Header() {
@@ -26,7 +29,8 @@ export default function Header() {
           {tools.map(tool => {
             const Icon = tool.icon
             const isActive = activeTool === tool.type
-            const disabled = files.length === 0
+            const needsPdf = tool.type !== 'image-to-pdf'
+            const disabled = files.length === 0 && needsPdf
             return (
               <button
                 key={tool.type}

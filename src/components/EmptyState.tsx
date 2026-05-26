@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { useApp } from '@/contexts/AppContext'
-import { Upload, FileText, Combine, Split, Trash2, RotateCw } from 'lucide-react'
+import { Upload, FileText, Combine, Split, Trash2, RotateCw, Image, FileImage } from 'lucide-react'
 
 export default function EmptyState() {
   const { addFiles } = useApp()
@@ -40,12 +40,15 @@ export default function EmptyState() {
         <p className="text-sm text-gray-400 mt-1">或点击选择文件</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 w-full mt-2">
+      <div className="grid grid-cols-3 gap-3 w-full mt-2">
         {[
           { icon: Combine, label: '合并 PDF' },
           { icon: Split, label: '分割页面' },
           { icon: Trash2, label: '删除页面' },
           { icon: RotateCw, label: '旋转页面' },
+          { icon: Image, label: 'PDF转图片' },
+          { icon: FileImage, label: '图片转PDF' },
+          { icon: FileText, label: '提取Markdown' },
         ].map(({ icon: Icon, label }) => (
           <div key={label} className="flex items-center gap-2 text-sm text-gray-500 bg-gray-50 rounded-lg px-3 py-2">
             <Icon className="w-4 h-4 text-gray-400 shrink-0" />
