@@ -28,17 +28,19 @@ A lightweight, privacy-first PDF manipulation tool that runs **entirely in the b
 
 ---
 
-### Phase 2: Desktop App (Tauri + Windows Installer) ⬜
+### Phase 2: Desktop App (Tauri + Windows Installer) ✅
 
-**Goal**: Package the web app as a native Windows desktop application.
+**Goal**: Package the web app as a native Windows/macOS/Linux desktop application.
 
 **Deliverables**:
-- [ ] Tauri v2 project setup in the same repo
-- [ ] React SPA embedded in WebView
-- [ ] Native file dialogs (open/save)
-- [ ] Windows .msi installer
-- [ ] PDF file association
-- [ ] Auto-updater
+- [x] Tauri v2 project setup in the same repo (`src-tauri/`)
+- [x] React SPA embedded in WebView (100% code reuse)
+- [x] Native file dialogs (open/save) via `@tauri-apps/plugin-dialog`
+- [x] Windows .msi installer via WiX
+- [x] PDF file association (`ext: ["pdf"]`)
+- [x] Auto-updater via GitHub Releases API
+- [x] Cross-platform abstraction layer (`desktop.ts`, `tauri.ts`, `download.ts`)
+- [x] macOS `.dmg` + Linux AppImage build targets
 
 **Considerations**:
 - Tauri binary: ~5MB, Electron alternative would be ~150MB

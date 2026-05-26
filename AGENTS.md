@@ -7,7 +7,7 @@ PDFit is a privacy-first, browser-based PDF manipulation tool. All operations ru
 ## Tech Stack
 
 | Layer | Choice |
-|---|---|
+|---|---|---|
 | Framework | React 19 + TypeScript 5.7 |
 | Build | Vite 6 |
 | Styling | Tailwind CSS 4 |
@@ -15,7 +15,9 @@ PDFit is a privacy-first, browser-based PDF manipulation tool. All operations ru
 | PDF Preview | pdfjs-dist 4.10 (rendering) |
 | Icons | lucide-react |
 | ZIP | jszip (multi-file split export) |
-| Deployment | GitHub Pages (via GitHub Actions) |
+| Desktop Shell | Tauri v2 (Rust) |
+| Desktop Plugins | dialog, fs, updater |
+| Deployment | GitHub Pages (web) + Tauri (desktop installers) |
 
 ## Project Structure
 
@@ -27,7 +29,10 @@ PDFit/
 │   ├── index.css                 # Tailwind + global styles
 │   ├── vite-env.d.ts
 │   ├── lib/
-│   │   └── pdfEngine.ts          # Core PDF operations (pure functions)
+│   │   ├── pdfEngine.ts          # Core PDF operations (pure functions)
+│   │   ├── desktop.ts            # Desktop environment detection
+│   │   ├── tauri.ts              # File dialog abstraction (desktop/web)
+│   │   └── download.ts           # Cross-platform download helper
 │   ├── types/
 │   │   └── index.ts              # Shared type definitions
 │   ├── contexts/
@@ -44,14 +49,23 @@ PDFit/
 │           ├── SplitTool.tsx       # Extract pages + split by ranges
 │           ├── DeleteTool.tsx      # Delete pages (input or click)
 │           └── RotateTool.tsx      # Rotate 90/180/270 (all or selected)
+├── src-tauri/
+│   ├── Cargo.toml                # Rust dependencies (tauri + plugins)
+│   ├── build.rs                  # Tauri build script
+│   ├── tauri.conf.json           # App config, bundle targets, plugins
+│   ├── capabilities/default.json # Permission scopes
+│   ├── icons/                    # App icons (png, ico, icns)
+│   └── src/
+│       ├── main.rs               # Entry point → calls lib.rs
+│       └── lib.rs                # Tauri builder with plugins
 ├── docs/
-│   ├── architecture.md            # Tech decisions, code conventions
-│   ├── plan.md                    # Development roadmap
-│   └── progress.md                # Implementation log
+│   ├── architecture.md           # Tech decisions, code conventions
+│   ├── plan.md                   # Development roadmap
+│   └── progress.md               # Implementation log
 ├── public/
 │   └── pdfx.svg
-├── .github/workflows/deploy.yml   # GitHub Actions → Pages
-├── AGENTS.md                      # This file
+├── .github/workflows/deploy.yml  # GitHub Actions → Pages
+├── AGENTS.md                     # This file
 └── package.json
 ```
 
@@ -72,12 +86,18 @@ Thumbnails are rendered to a fixed pixel height (200px default, 500px expanded),
 ### 5. PDF.js worker must match installed version
 The worker is bundled locally via Vite (`new URL(...)`), NOT loaded from CDN. This avoids version mismatch.
 
+### 6. Desktop abstraction layer for Tauri/web dual-target
+The `src/lib/` desktop layer (`desktop.ts`, `tauri.ts`, `download.ts`) auto-detects the runtime (Tauri vs browser) and routes to native dialogs or DOM fallbacks. Components call the abstraction, never Tauri APIs directly — `isDesktop()` check always gates platform-specific code.
+
+### 7. VITE_BASE env var for dual deployment
+Web deploys to GitHub Pages at `/PDFit/`. Tauri WebView needs base `/`. The `vite.config.ts` uses `process.env.VITE_BASE || '/PDFit/'`, and `tauri.conf.json` sets `VITE_BASE=/` in `beforeBuildCommand`.
+
 ## Current Status
 
-- **Phase**: 1 (Core PDF operations — split/merge/delete/rotate)
-- **Platform**: Web only (GitHub Pages)
-- **Deployment**: Auto-deploys on push to `main` via GitHub Actions
-- **Next up**: Phase 2 — Tauri desktop shell, Windows installer
+- **Phase**: 2 (Desktop app via Tauri v2 — split/merge/delete/rotate, native installers)
+- **Platform**: Web (GitHub Pages) + Desktop (macOS dmg / Windows msi / Linux AppImage)
+- **Deployment**: GitHub Actions auto-deploy (web), `npm run tauri:build` (desktop)
+- **Next up**: Phase 3 — PDF conversion features (to Markdown, Image, Word)
 
 ## Conventions
 

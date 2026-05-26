@@ -104,6 +104,73 @@ rotateSelectedPages(buffer: ArrayBuffer, pageIndices: number[], angle: RotationA
 splitPDFByRanges(buffer: ArrayBuffer, ranges: PageRange[]): Promise<{name: string, data: Uint8Array}[]>
 ```
 
+## Desktop Architecture (Tauri v2)
+
+### Architecture Overview
+
+```
+┌──────────────────────────────────────────────────────┐
+│  Tauri Shell (Rust)                                  │
+│  ┌────────────────────────────────────────────────┐  │
+│  │  WebView (React SPA — same code as web)        │  │
+│  │  ┌──────────── App ──────────────────────────┐ │  │
+│  │  │  ...same component tree as GitHub Pages... │ │  │
+│  │  └────────────────────────────────────────────┘ │  │
+│  │  ┌────────────────────────────────────────────┐ │  │
+│  │  │  Desktop Abstraction Layer                  │ │  │
+│  │  │  ┌──────────────┐ ┌───────────┐ ┌────────┐ │ │  │
+│  │  │  │  desktop.ts  │ │ tauri.ts  │ │ dwnld. │ │ │  │
+│  │  │  │  (detection) │ │ (dialogs) │ │ (blob) │ │ │  │
+│  │  │  └──────────────┘ └───────────┘ └────────┘ │ │  │
+│  │  └────────────────────────────────────────────┘ │  │
+│  └────────────────────────────────────────────────┘  │
+│  ┌────────────────────────────────────────────────┐  │
+│  │  Rust Plugins                                   │  │
+│  │  dialog │ fs │ updater │ protocol-asset        │  │
+│  └────────────────────────────────────────────────┘  │
+└──────────────────────────────────────────────────────┘
+```
+
+### Desktop Layer
+
+| File | Purpose | Key API |
+|---|---|---|
+| `desktop.ts` | Detect Tauri environment (3 methods) | `isDesktop()`, `getPlatform()` |
+| `tauri.ts` | File dialog abstraction (native / web fallback) | `openFileDialog()`, `saveFileDialog()` |
+| `download.ts` | Cross-platform download trigger | `downloadBlob()`, `triggerDownload()` |
+
+The abstraction layer auto-detects the runtime environment:
+- **Desktop**: Calls Tauri plugin APIs (`dialog.open`, `dialog.save`, `fs.readFile`, `fs.writeFile`)
+- **Web**: Falls back to DOM APIs (`<input>`, `<a download>`)
+
+### Tauri Plugins
+
+| Plugin | Version | Usage |
+|---|---|---|
+| `dialog` | 2 | Native open/save file dialogs |
+| `fs` | 2 | Read/write PDF files from native filesystem |
+| `updater` | 2 | Auto-update via GitHub Releases |
+
+### Build Targets
+
+| Platform | Command | Output |
+|---|---|---|
+| macOS | `npm run tauri:build:macos` | `.app` + `.dmg` |
+| Windows | `npm run tauri:build:windows` | `.msi` installer |
+| Linux | `npm run tauri:build:linux` | AppImage |
+
+### Dual Deployment
+
+- **Web**: GitHub Pages — auto-deploys on push to `main` via GitHub Actions
+- **Desktop**: `npm run tauri:build` — produces native installers
+- 100% code shared between both targets — build-time `VITE_BASE` env controls asset path
+
+### Code Convention (Desktop)
+- All Tauri-specific logic in `src/lib/` — never in components
+- `isDesktop()` check before calling any Tauri API (web fallback otherwise)
+- `openFileDialog()` handles both single and multiple file selection (`File \| File[]`)
+- Type-safe: leverage `@tauri-apps/plugin-dialog` generics for `OpenDialogReturn<T>`
+
 ## Code Conventions
 
 ### TypeScript

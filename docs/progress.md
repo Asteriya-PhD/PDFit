@@ -52,7 +52,89 @@
 
 ---
 
-### Phase 2: Desktop App ⬜
+### Phase 2: Desktop App (Tauri v2) 🚧 In Progress
+
+#### 2026-05-26 — Tauri v2 Setup & Configuration
+
+**Implemented**:
+- Tauri CLI v2.11.2 installed via cargo
+- Tauri project scaffolded in `src-tauri/` directory
+- React SPA embedded via WebView (100% code reuse)
+- Native file dialogs (open/save PDF) via `@tauri-apps/plugin-dialog`
+- File system access via `@tauri-apps/plugin-fs`
+- Cross-platform desktop abstraction layer (`src/lib/desktop.ts`, `src/lib/tauri.ts`)
+- Windows .msi installer build configured via WiX
+- PDF file association on Windows (`ext: ["pdf"]`, `mimeType: "application/pdf"`)
+- Auto-updater configured via GitHub Releases API
+- GitHub Pages + Tauri dual deployment support
+
+**Project Structure**:
+```
+src-tauri/
+├── Cargo.toml          # Rust dependencies (tauri + plugins)
+├── build.rs            # Tauri build script
+├── tauri.conf.json     # App config, bundle targets, plugins
+└── src/
+    ├── main.rs         # Entry point → calls lib.rs
+    ├── lib.rs          # Tauri builder with plugins
+    └── commands.rs     # (reserved for custom commands)
+
+src/lib/
+├── desktop.ts          # Desktop environment detection
+├── tauri.ts            # File dialog abstraction (desktop/web)
+└── download.ts         # Cross-platform download helper
+```
+
+**Build Outputs**:
+- macOS: `PDFit.app` + `PDFit_0.1.0_aarch64.dmg`
+- Windows (cross-compile): Requires `x86_64-pc-windows-msvc` target
+- Linux: AppImage via `x86_64-unknown-linux-gnu` target
+
+**NPM Scripts**:
+```json
+"tauri": "tauri",
+"tauri:dev": "tauri dev",
+"tauri:build": "tauri build",
+"tauri:build:windows": "tauri build --target x86_64-pc-windows-msvc",
+"tauri:build:macos": "tauri build",
+"tauri:build:linux": "tauri build --target x86_64-unknown-linux-gnu"
+```
+
+**Known Issues**:
+- None at this stage
+- Windows cross-compilation requires MinGW-w64 or similar toolchain
+
+---
+
+#### 2026-05-26 — Phase 2 Bug Fixes & Polish
+
+**Commits**:
+- *(current)* — Phase 2 fixes: edition, CLI deps, multi-file dialog, project docs
+
+**Fixes**:
+
+| Bug | Root Cause | Fix |
+|---|---|---|
+| `npm run tauri:build` fails with command not found | `@tauri-apps/cli` not installed as npm dependency | Add `@tauri-apps/cli@2.11.2` to `devDependencies` |
+| Cargo edition warning | `Cargo.toml` missing `edition` field | Add `edition = "2021"` |
+| Desktop multi-file open crashes | `open()` returns `string[]` when `multiple: true`, but code treated it as `string` | Rewrite `openFileDialog` to handle both `string` and `string[]`; return `File \| File[] \| null` |
+
+**Desktop Layer**:
+- `desktop.ts` — desktop environment detection with 3 fallback methods
+- `tauri.ts` — file dialog abstraction (Tauri native dialog / web `<input>`)
+- `download.ts` — cross-platform download helper
+- `FileDropzone.tsx` — Tauri-aware: uses native dialog on desktop, web input fallback
+- `vite.config.ts` — base path `process.env.VITE_BASE || '/PDFit/'` (Tauri needs `/`)
+- `index.html` — favicon path relative (works in both WebView and browser)
+
+**All builds pass**:
+- `tsc --noEmit` ✅
+- `cargo build` ✅ (no warnings)
+- `npm run build` ✅
+
+---
+
+### Phase 3: Conversion Features ⬜
 
 *Not started.*
 
