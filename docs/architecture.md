@@ -219,6 +219,27 @@ The abstraction layer auto-detects the runtime environment:
 - `openFileDialog()` handles both single and multiple file selection (`File \| File[]`)
 - Type-safe: leverage `@tauri-apps/plugin-dialog` generics for `OpenDialogReturn<T>`
 
+## Extra Architecture Decisions
+
+### Auto-select tool on file upload
+When files are added via drag-and-drop or file picker and no tool is currently active, the `ADD_FILES` reducer in `AppContext` auto-sets `activeTool` to `'merge'`. This eliminates the extra click to select a tool after uploading.
+
+### MinerU API key via environment variable
+The MinerU document conversion API key is configured via `VITE_MINERU_API_KEY` environment variable (not hardcoded, not user-provided):
+- **Dev**: `.env.local` (gitignored)
+- **Prod**: GitHub Actions Secret `MINERU_API_KEY → VITE_MINERU_API_KEY`
+- **Privacy gate**: Consent checkbox required before first data transmission; persisted in localStorage
+- **Fallback**: Manual config UI shown when env var not set
+- **Security**: Key is bundled into client-side JS at build time; use a restricted-permission key
+
+### Watermark visual preview via Canvas overlay
+The Watermark tool renders a real-time preview before applying:
+1. PDF first page rendered at 320px height using pdfjs-dist
+2. Watermark text drawn on a separate transparent Canvas overlaid on the PDF render
+3. PDF canvas is cached (re-renders only when file changes)
+4. Watermark overlay re-renders with 200ms debounce on parameter change
+5. Canvas positioning matches pdf-lib: centered at (pageWidth/2, pageHeight/2 + fontSize/3), baseline-left rotation origin
+
 ## Code Conventions
 
 ### TypeScript

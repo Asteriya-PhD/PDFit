@@ -55,7 +55,7 @@ A lightweight, privacy-first PDF manipulation tool that runs **entirely in the b
 
 **Strategy**:
 - All 3 browser-safe features (**PDF→Markdown**, **PDF→Image**, **Image→PDF**) run in-browser — no server needed
-- **PDF→Word/Excel**: Desktop-only via LibreOffice CLI; Web version uses optional remote API (MinerU)
+- **PDF→Word/Excel**: Desktop-only via LibreOffice CLI; Web version uses MinerU API (pre-configured via env var, privacy-gated)
 - 0 new npm dependencies needed for browser features (reuse pdfjs-dist, pdf-lib, jszip)
 
 ---
@@ -163,7 +163,7 @@ A lightweight, privacy-first PDF manipulation tool that runs **entirely in the b
 
 **Technical approach**:
 - Desktop-only: Tauri Rust command → `exec` / `Command` → `libreoffice --headless --convert-to docx`
-- Web: Optional MinerU API call (configurable endpoint)
+- Web: MinerU API call (pre-configured via `VITE_MINERU_API_KEY` env var, privacy-gated)
 - Desktop guide: If LibreOffice not found, show download link
 
 **When to implement**: After A/B/C are stable and tested.
@@ -413,10 +413,15 @@ Dark Mode ─→ Keyboard Shortcuts ─→ Page Numbering ─→ Watermark ─�
 | `src/components/EmptyState.tsx` | MODIFY | Add feature badge |
 
 **UI states**:
-- **File loaded, default**: Text input, opacity slider, rotation dropdown, font size, preview of watermark position
+- **File loaded, default**: Text input, opacity slider, rotation dropdown, font size, color picker, scope selector, **live Canvas preview** (pdfjs first page + watermark overlay)
+- **Preview**: Renders PDF first page via pdfjs-dist, overlays watermark text using Canvas 2D API with matching position/rotation/opacity/color
 - **Loading**: Processing
 - **Success**: Download watermarked PDF
 - **Error**: Message with error info
+
+**Post-delivery fixes** (2026-05-27):
+- Default opacity 0.2→0.4, color `#cccccc`→`#999999` for visible default watermark
+- Added visual Canvas-based preview (replaced text-only parameter display)
 
 ---
 
@@ -474,6 +479,17 @@ src/i18n/
 - If more than 2 languages are needed later, migrate to i18next
 
 ---
+
+### Post-Phase-4 Bug Fixes (2026-05-27) ✅
+
+**Completed fixes**:
+- [x] Auto-select tool ('merge') on file upload (ADD_FILES reducer)
+- [x] Watermark defaults: opacity 0.2→0.4, color `#cccccc`→`#999999`
+- [x] Watermark visual Canvas preview (pdfjs page + Canvas 2D overlay)
+- [x] MinerU API key via `VITE_MINERU_API_KEY` env var + privacy consent gate
+- [x] Dark mode file list/header: red → blue for better contrast
+- [x] `.github/workflows/deploy.yml` injects `MINERU_API_KEY` secret
+- [x] `.env.example` template for local development
 
 #### Feature 6: Drag-and-Drop Page Reordering
 
@@ -538,6 +554,7 @@ src/i18n/
 
 - **MinerU**: Lightweight API for heavy document conversions (PDF→Word/Excel).
   Consider using as an optional enhancement for the web version.
+- **MinerU API Key**: Now configured via `VITE_MINERU_API_KEY` environment variable (`.env.local` for dev, GitHub Secret for production). Privacy consent gate shown first before any data transmission. Fallback to manual input when env var not set.
 - **WASM PDF engine**: If pdf-lib performance becomes a bottleneck for very large
   files, evaluate pdf.js or other WASM-based alternatives.
 - **PWA**: Adding a service worker would allow offline use and "install" capability

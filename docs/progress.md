@@ -549,3 +549,46 @@ Image files for Feature B managed in local component state (not AppContext, whic
 | Offline support | No | Yes (PWA SW) |
 | Firefox scrollbar | Broken (invisible) | Working |
 | Build time | 2.37s | 2.22s |
+
+---
+
+## Post-Phase-4 Bug Fixes & UX Improvements (2026-05-27)
+
+**Commits**: *(not yet committed)*
+
+**Fixed Issues**:
+
+| # | Issue | Root Cause | Fix |
+|---|-------|------------|-----|
+| 1 | 上传 PDF 后仍需手动点击功能栏 | `ADD_FILES` reducer 不设置 `activeTool`，保持 `null` | Auto-set `activeTool` to `'merge'` on `ADD_FILES` when `activeTool` is null |
+| 2 | 水印功能看起来「失败」 | 默认透明度 0.2 + 颜色 `#cccccc` — 水印实际存在但几乎不可见 | 默认 opacity 0.2 → 0.4，颜色 `#cccccc` → `#999999` |
+| 3 | 水印无法预览实际效果 | 只有文本参数预览，无视觉渲染 | 新增 Canvas 预览：用 pdfjs-dist 渲染 PDF 第一页 + Canvas 2D 叠加水印文字（实时响应参数变化，200ms 防抖） |
+| 4 | MinerU API 需用户手动输入 | UI 要求用户配置 endpoint + API key，隐私提示在配置页面内 | 改用 `VITE_MINERU_API_KEY` 环境变量（`.env.local` / GitHub Secret），新增独立隐私同意门（checkbox），用户确认后自动使用内置 Key。未设置 env var 时保留手动配置作为 fallback |
+| 5 | 深色模式文件列表红色对比度不足 | `dark:bg-red-900/30` + `dark:text-red-400` 在深色背景上不明显 | 改为 `dark:bg-blue-900/30` + `dark:text-blue-400` + `dark:border-blue-800`，Header 活动状态同步修改 |
+
+**Files changed**:
+
+| File | Changes |
+|------|---------|
+| `src/contexts/AppContext.tsx` | ADD_FILES auto-selects `'merge'` when no tool active |
+| `src/lib/watermark.ts` | Default opacity 0.2→0.4, color `#cccccc`→`#999999` |
+| `src/components/tools/WatermarkTool.tsx` | Canvas visual preview (pdfjs-dist first page + Canvas 2D overlay), defaults sync |
+| `src/components/tools/MineruTool.tsx` | Refactored: privacy-gate-first flow, env var API key, fallback manual config |
+| `src/lib/mineru.ts` | Added `hasConsent()`, `saveConsent()`, `getBuiltInApiKey()` |
+| `src/vite-env.d.ts` | Added `ImportMetaEnv` with `VITE_MINERU_API_KEY` |
+| `src/components/FileList.tsx` | Dark mode active color red→blue |
+| `src/components/Header.tsx` | Dark mode active color red→blue |
+| `src/i18n/zh.ts` | Updated MinerU translation keys (privacy detail, consent, notice) |
+| `src/i18n/en.ts` | Updated MinerU translation keys (privacy detail, consent, notice) |
+| `.github/workflows/deploy.yml` | Inject `VITE_MINERU_API_KEY` from GitHub Secrets |
+| `.env.example` | **New** — Environment variable template |
+
+**New Files**:
+| File | Purpose |
+|------|---------|
+| `.env.example` | Template for `VITE_MINERU_API_KEY` (gitignored `.env` / `.env.local`) |
+
+**Verification**:
+- `tsc --noEmit` ✅
+- `npm run build` ✅ (1813 modules, 2.37s)
+- LSP diagnostics: 0 errors across all changed files

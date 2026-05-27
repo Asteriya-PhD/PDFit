@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-PDFit is a privacy-first, browser-based PDF manipulation tool. All operations run locally in the browser — no files are ever uploaded to a server. Supports split, merge, delete pages, rotate pages, page numbering, watermark, PDF↔Image conversion, and Markdown extraction. Currently in Phase 4 (Polish & Extras).
+PDFit is a privacy-first, browser-based PDF manipulation tool. All operations run locally in the browser — no files are ever uploaded to a server. Supports split, merge, delete pages, rotate pages, page numbering (with real-time preview), watermark (with Canvas visual preview), PDF↔Image conversion, Markdown extraction, and MinerU document conversion (privacy-gated, pre-configured API key). Post-Phase-4 bug fixes completed (2026-05-27): auto-tool-select on upload, watermark defaults + preview, MinerU env-based key + consent gate, dark mode color improvements.
 
 ## Tech Stack
 
@@ -61,7 +61,7 @@ PDFit/
 │           ├── DeleteTool.tsx      # Delete pages (input or click)
 │           ├── RotateTool.tsx      # Rotate 90/180/270 (all or selected)
 │           ├── PageNumberingTool.tsx # Add page number overlays
-│           ├── WatermarkTool.tsx     # Add text watermark overlays
+│           ├── WatermarkTool.tsx     # Add text watermark overlays (Canvas preview)
 │           ├── PdfToImageTool.tsx  # PDF → PNG/JPEG export
 │           ├── ImageToPdfTool.tsx  # Image files → PDF
 │           └── PdfToMdTool.tsx     # PDF → Markdown extraction
@@ -111,6 +111,15 @@ Web deploys to GitHub Pages at `/PDFit/`. Tauri WebView needs base `/`. The `vit
 ### 8. Global keyboard shortcuts via capture-phase keydown hook
 Shortcuts are defined declaratively in `src/lib/shortcuts.ts` as a typed array. The `useKeyboardShortcuts` hook attaches a `capture: true` keydown listener on `window`. Before matching, it checks `document.activeElement` to suppress shortcuts when the user is typing in an `INPUT`/`TEXTAREA`/`SELECT`/`contenteditable`. Each shortcut includes exact modifier state (ctrl/cmd, shift, alt) to prevent e.g. `Ctrl+Shift+M` from matching `Ctrl+M`. All tool shortcuts toggle (pressing the active shortcut deselects the tool), matching the Header button behavior.
 
+### 9. Auto-select tool on file upload
+When files are added and no tool is active, the `ADD_FILES` reducer auto-sets `activeTool` to `'merge'`. The user no longer needs to manually click a toolbar button after uploading files.
+
+### 10. MinerU API key via environment variable
+The MinerU document conversion uses `VITE_MINERU_API_KEY` env var — set in `.env.local` for dev, GitHub Secret for production. A privacy consent checkbox must be checked before any data transmission. Falls back to manual config when env var is absent. The key is bundled into client-side JS at build time.
+
+### 11. Watermark visual preview via Canvas overlay
+The Watermark tool renders a live preview: PDF first page at 320px via pdfjs-dist, watermark text overlaid on a transparent Canvas 2D layer. PDF canvas cached (file-change only); overlay re-renders with 200ms debounce on parameter change. Positioning matches pdf-lib output exactly.
+
 ## Current Status
 
 - **Phase**: 4 ✅ Complete — All 6 features (Dark Mode, Keyboard Shortcuts, Page Numbering, Watermark, i18n, Drag-and-Drop Reorder) delivered
@@ -118,6 +127,7 @@ Shortcuts are defined declaratively in `src/lib/shortcuts.ts` as a typed array. 
 - **Deployment**: GitHub Actions auto-deploy (web), `npm run tauri:build` (desktop)
 - **Build**: `tsc --noEmit` + `npm run build` + `cargo check` all clean
 - **Polish done (2026-05-27)**: Firefox scrollbar CSS, Vite chunk splitting (app 1.1MB→297KB), PWA (offline SW + install manifest), MinerU API (optional cloud doc conversion, privacy-gated)
+- **Post-Phase-4 fixes (2026-05-27)**: Auto-tool-select on upload, watermark defaults + visual Canvas preview, MinerU env-based API key + privacy consent gate, dark mode color improvements (blue instead of red)
 - **Next up**: (none — feature complete)
 
 ## Conventions

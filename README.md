@@ -17,7 +17,7 @@
 | PDF 转图片 | 将 PDF 页面导出为 PNG/JPEG，支持自定义 DPI |
 | 图片转 PDF | 将 PNG/JPEG/WebP 图片合成为 PDF |
 | 提取 Markdown | 从 PDF 提取文本内容并格式化为 Markdown |
-| 文档转换 ⚡ | 通过 MinerU API 将 PDF/Office 文档解析为 Markdown（可选、需配置 API） |
+| 文档转换 ⚡ | 通过 MinerU API 将 PDF/Office 文档解析为 Markdown（需同意隐私条款，Key 已内置） |
 | 离线可用 | PWA 支持，安装后可在无网络时使用 |
 | 快捷键 | `Ctrl+O` 打开文件，`Ctrl+M/S/D/E/⇧R/N/W/I` 切换工具，`1`-`0` 快速切换，`Esc` 取消选择 |
 
