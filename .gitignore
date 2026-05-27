@@ -37,6 +37,7 @@ coverage/
 .cache/
 
 # Development
+.omc/
 .omo/
 .playwright-mcp/
 test-files/
