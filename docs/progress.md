@@ -304,13 +304,58 @@ Image files for Feature B managed in local component state (not AppContext, whic
 
 ---
 
+---
+
+### 2026-05-27 — Watermark
+
+**Goal**: Add custom text watermarks to PDF pages before download.
+
+**Commits**:
+- *(current)* — feat: Phase 4 Watermark — pdf-lib drawText with rotation, opacity, and diagonal positioning
+
+**Implemented**:
+- `src/lib/watermark.ts` — Pure function `addWatermark(buffer, options)`: embeds Helvetica font, draws rotated semi-transparent text centered on each page
+- `src/components/tools/WatermarkTool.tsx` — UI: text input, font size picker (24–120pt), opacity slider (1–100%), rotation grid (−45°/0°/45°/90°), color presets + custom picker, page scope all/custom with range input, live preview
+
+**Options**:
+| Option | Default | Values |
+|--------|---------|--------|
+| Font size | 60pt | 24, 36, 48, 60, 72, 96, 120 |
+| Opacity | 20% | 1–100% slider |
+| Rotation | −45° | −45°, 0°, 45°, 90° |
+| Color | `#cccccc` | 6 presets + custom color picker |
+| Page scope | All | All pages or custom range (e.g. `1,3,5-7`) |
+
+**Rotation behavior**: pdf-lib's `degrees()` helper rotates text around its start position. Text is centered on the page so diagonal watermarks span from center.
+
+**Files created**:
+| File | Purpose |
+|------|---------|
+| `src/lib/watermark.ts` | Core engine: add text watermark to PDF pages |
+| `src/components/tools/WatermarkTool.tsx` | UI: text input, opacity, rotation, font size, scope |
+
+**Files modified**:
+| File | Changes |
+|------|---------|
+| `src/types/index.ts` | Added `'watermark'` to `ToolType`, `WatermarkOptions` |
+| `src/components/Header.tsx` | Added nav button (💧 icon) between 页码 and PDF→Image |
+| `src/components/ToolPanel.tsx` | Added `<WatermarkTool />` route entry |
+| `src/lib/shortcuts.ts` | Added `Ctrl+Shift+W` shortcut; inserted `watermark` at TOOL_ORDER index 5 |
+| `src/components/EmptyState.tsx` | Added "添加水印" badge |
+
+**Verification**:
+- `tsc --noEmit` ✅
+- `npm run build` ✅
+
+---
+
 ### Remaining Phase 4 Features
 
 **Features** (in recommended order):
 1. ✅ **Dark Mode** — Completed
 2. ✅ **Keyboard Shortcuts** — Completed
 3. ✅ **Page Numbering** — Completed
-4. ⬜ Watermark — pdf-lib rotated semi-transparent text
+4. ✅ **Watermark** — Completed
 5. ⬜ i18n (EN/CN) — Custom Context-based i18n, `src/i18n/`, ~15 files with `t()` calls
 6. ⬜ Drag-and-Drop Page Reordering — Native HTML5 DnD or @dnd-kit
 7. ⬜ Compress PDF — pdf-lib object streams + optional image re-encoding via canvas

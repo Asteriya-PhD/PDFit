@@ -21,6 +21,7 @@ export const TOOL_ORDER: ToolType[] = [
   'delete',
   'rotate',
   'page-numbering',
+  'watermark',
   'pdf-to-image',
   'image-to-pdf',
   'pdf-to-md',
@@ -126,6 +127,16 @@ export const SHORTCUTS: ShortcutDef[] = [
     alt: false,
     action: { type: 'SET_TOOL', tool: 'page-numbering' },
     label: 'Switch to Page Numbering',
+  },
+
+  // Ctrl+Shift+W — Watermark
+  {
+    key: 'w',
+    ctrl: true,
+    shift: true,
+    alt: false,
+    action: { type: 'SET_TOOL', tool: 'watermark' },
+    label: 'Switch to Watermark',
   },
 
   // Ctrl+Shift+M — Extract Markdown

@@ -4,6 +4,7 @@ import SplitTool from '@/components/tools/SplitTool'
 import DeleteTool from '@/components/tools/DeleteTool'
 import RotateTool from '@/components/tools/RotateTool'
 import PageNumberingTool from '@/components/tools/PageNumberingTool'
+import WatermarkTool from '@/components/tools/WatermarkTool'
 import PdfToImageTool from '@/components/tools/PdfToImageTool'
 import ImageToPdfTool from '@/components/tools/ImageToPdfTool'
 import PdfToMdTool from '@/components/tools/PdfToMdTool'
@@ -18,6 +19,7 @@ export default function ToolPanel() {
     delete: <DeleteTool />,
     rotate: <RotateTool />,
     'page-numbering': <PageNumberingTool />,
+    watermark: <WatermarkTool />,
     'pdf-to-image': <PdfToImageTool />,
     'image-to-pdf': <ImageToPdfTool />,
     'pdf-to-md': <PdfToMdTool />,

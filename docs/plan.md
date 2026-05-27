@@ -227,7 +227,7 @@ Each feature is independently revertible (one commit per feature). If a feature 
 
 ---
 
-### Phase 4: Polish & Extras ✅ (Dark Mode, Shortcuts, Page Numbering completed)
+### Phase 4: Polish & Extras ✅ (Dark Mode, Shortcuts, Page Numbering, Watermark completed)
 
 **Goal**: Elevate the app from functional to polished — dark mode, i18n, UX shortcuts, and advanced PDF manipulations.
 
@@ -383,7 +383,7 @@ Dark Mode ─→ Keyboard Shortcuts ─→ Page Numbering ─→ Watermark ─�
 
 ---
 
-#### Feature 4: Watermark
+#### Feature 4: Watermark ✅
 
 **Goal**: Add custom text watermarks to PDF pages.
 

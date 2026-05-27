@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { useApp } from '@/contexts/AppContext'
-import { Upload, FileText, Combine, Split, Trash2, RotateCw, Hash, Image, FileImage } from 'lucide-react'
+import { Upload, FileText, Combine, Split, Trash2, RotateCw, Hash, Image, FileImage, Droplets } from 'lucide-react'
 
 export default function EmptyState() {
   const { addFiles } = useApp()
@@ -47,6 +47,7 @@ export default function EmptyState() {
           { icon: Trash2, label: '删除页面' },
           { icon: RotateCw, label: '旋转页面' },
           { icon: Hash, label: '添加页码' },
+          { icon: Droplets, label: '添加水印' },
           { icon: Image, label: 'PDF转图片' },
           { icon: FileImage, label: '图片转PDF' },
           { icon: FileText, label: '提取Markdown' },

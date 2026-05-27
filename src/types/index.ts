@@ -7,7 +7,7 @@ export interface PDFFileInfo {
   pageCount: number
 }
 
-export type ToolType = 'merge' | 'split' | 'delete' | 'rotate' | 'pdf-to-image' | 'image-to-pdf' | 'pdf-to-md' | 'page-numbering' | null
+export type ToolType = 'merge' | 'split' | 'delete' | 'rotate' | 'page-numbering' | 'watermark' | 'pdf-to-image' | 'image-to-pdf' | 'pdf-to-md' | null
 
 export interface PageRange {
   start: number // 1-based inclusive
@@ -26,4 +26,13 @@ export interface PageNumberingOptions {
   prefix: string
   suffix: string
   showTotalPages: boolean
+}
+
+export interface WatermarkOptions {
+  text: string
+  fontSize: number
+  opacity: number
+  rotation: number
+  color: string
+  pageScope: 'all' | string
 }
