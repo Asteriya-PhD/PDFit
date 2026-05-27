@@ -15,7 +15,7 @@ export default function DeleteTool() {
 
   if (!activeFile) {
     return (
-      <div className="max-w-lg mx-auto text-center text-gray-400 text-sm py-12">
+      <div className="max-w-lg mx-auto text-center text-gray-500 dark:text-gray-400 text-sm py-12">
         {t('delete.noFile')}
       </div>
     )
@@ -108,7 +108,7 @@ export default function DeleteTool() {
 
       <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
         {t('delete.currentFile')}<span className="font-medium text-gray-700 dark:text-gray-200">{activeFile.name}</span>
-        <span className="text-gray-400 ml-2">{t('delete.pageCount', { count: activeFile.pageCount })}</span>
+        <span className="text-gray-500 dark:text-gray-400 ml-2">{t('delete.pageCount', { count: activeFile.pageCount })}</span>
       </p>
 
       {selectMode === 'manual' ? (
@@ -117,7 +117,7 @@ export default function DeleteTool() {
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               {t('delete.manual.label')}
             </label>
-            <p className="text-xs text-gray-400 mb-2">
+<p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
               {t('delete.manual.hint')}
             </p>
             <input
@@ -131,7 +131,7 @@ export default function DeleteTool() {
         </div>
       ) : (
         <div className="mb-4">
-          <p className="text-xs text-gray-400 mb-2">{t('delete.select.hint')}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">{t('delete.select.hint')}</p>
           <div className="grid grid-cols-6 sm:grid-cols-8 gap-2 max-h-64 overflow-y-auto p-2 bg-gray-50 dark:bg-gray-900 rounded-lg">
             {Array.from({ length: activeFile.pageCount }, (_, i) => (
               <button
@@ -149,7 +149,7 @@ export default function DeleteTool() {
               </button>
             ))}
           </div>
-          <p className="text-xs text-gray-400 mt-2">
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
             {t('delete.select.count', { count: selectedPages.size, remaining: activeFile.pageCount - selectedPages.size })}
           </p>
         </div>

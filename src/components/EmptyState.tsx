@@ -25,24 +25,27 @@ export default function EmptyState() {
   }, [addFiles])
 
   return (
-    <div
-      onDragOver={e => e.preventDefault()}
-      onDrop={handleDrop}
-      onClick={handleClick}
-      className="flex flex-col items-center justify-center gap-6 max-w-lg mx-auto cursor-pointer
-        border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-12
-        hover:border-red-400 hover:bg-red-50/30 dark:hover:border-red-500 dark:hover:bg-red-900/20 transition-colors"
-    >
-      <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
-        <Upload className="w-8 h-8 text-red-500" />
+    <div className="flex flex-col items-center justify-center gap-6 max-w-lg mx-auto">
+      {/* Dropzone only */}
+      <div
+        onDragOver={e => e.preventDefault()}
+        onDrop={handleDrop}
+        onClick={handleClick}
+        className="w-full cursor-pointer
+          border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-12
+          hover:border-red-400 hover:bg-red-50/30 dark:hover:border-red-500 dark:hover:bg-red-900/20 transition-colors"
+      >
+        <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+          <Upload className="w-8 h-8 text-red-500" />
+        </div>
+        <div className="text-center">
+          <p className="text-lg font-medium text-gray-700 dark:text-gray-200">{t('emptyState.dropzone.text')}</p>
+          <p className="text-sm text-gray-400 mt-1">{t('emptyState.dropzone.hint')}</p>
+        </div>
       </div>
 
-      <div className="text-center">
-        <p className="text-lg font-medium text-gray-700 dark:text-gray-200">{t('emptyState.dropzone.text')}</p>
-        <p className="text-sm text-gray-400 mt-1">{t('emptyState.dropzone.hint')}</p>
-      </div>
-
-      <div className="grid grid-cols-3 gap-3 w-full mt-2">
+      {/* Feature grid - non-interactive, outside dropzone */}
+      <div className="grid grid-cols-3 gap-3 w-full">
         {[
           { icon: Combine, label: t('emptyState.feature.merge') },
           { icon: Split, label: t('emptyState.feature.split') },

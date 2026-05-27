@@ -48,10 +48,10 @@ export default function MergeTool() {
           if (!file) return null
           return (
             <div key={fileId} className="flex items-center gap-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3">
-              <span className="text-sm font-medium text-gray-400 w-6">{index + 1}</span>
+              <span className="text-sm font-medium text-gray-500 dark:text-gray-400 w-6">{index + 1}</span>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-700 dark:text-gray-200 truncate">{file.name}</p>
-                <p className="text-xs text-gray-400">{t('merge.pageCount', { count: file.pageCount })}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{t('merge.pageCount', { count: file.pageCount })}</p>
               </div>
               <div className="flex gap-1">
                 <button

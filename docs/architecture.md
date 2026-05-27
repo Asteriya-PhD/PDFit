@@ -240,6 +240,19 @@ The Watermark tool renders a real-time preview before applying:
 4. Watermark overlay re-renders with 200ms debounce on parameter change
 5. Canvas positioning matches pdf-lib: centered at (pageWidth/2, pageHeight/2 + fontSize/3), baseline-left rotation origin
 
+### Image-to-PDF standalone rendering
+When no PDF files are loaded (`files.length === 0`) and the user selects the Image-to-PDF tool, the `ImageToPdfTool` is rendered directly in the main content area. This allows image upload and conversion without needing a PDF file first, providing a streamlined workflow for users who only need image-to-PDF conversion.
+
+### EmptyState layout separation
+The landing page consists of two distinct zones:
+1. **Upload zone** — a large dashed-border dropzone that responds to drag-and-drop and click events
+2. **Feature grid** — a static 3-column grid of tool descriptions (non-interactive)
+
+These are rendered as sibling elements rather than a single container, preventing accidental tool selection when clicking feature badges. The feature grid is purely informational.
+
+### Dark mode color system
+All gray-scale text uses `gray-500` in light mode and `dark:text-gray-400` in dark mode, providing consistent readability across both themes. Active/selected states use red in light mode and blue in dark mode (`blue-900/30` bg, `blue-400` text, `blue-800` border) for sufficient contrast.
+
 ## Code Conventions
 
 ### TypeScript

@@ -121,7 +121,7 @@ export default function ReorderTool() {
 
   if (!activeFile) {
     return (
-      <div className="max-w-lg mx-auto text-center text-gray-400 text-sm py-12">
+      <div className="max-w-lg mx-auto text-center text-gray-500 dark:text-gray-400 text-sm py-12">
         {t('reorder.noFile')}
       </div>
     )
@@ -138,10 +138,10 @@ export default function ReorderTool() {
 
       <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
         {t('reorder.currentFile')}<span className="font-medium text-gray-700 dark:text-gray-200">{activeFile.name}</span>
-        <span className="text-gray-400 ml-2">{t('reorder.pageCount', { count: pageCount })}</span>
+        <span className="text-gray-500 dark:text-gray-400 ml-2">{t('reorder.pageCount', { count: pageCount })}</span>
       </p>
 
-      <p className="text-xs text-gray-400 mb-3">{t('reorder.dragHint')}</p>
+      <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">{t('reorder.dragHint')}</p>
 
       <div
         ref={stripRef}
@@ -170,7 +170,7 @@ export default function ReorderTool() {
                 pageIndex={pageIdx}
                 targetPx={THUMB_HEIGHT}
               />
-              <span className="font-medium text-[10px] text-gray-400">{pageIdx + 1}</span>
+              <span className="font-medium text-[10px] text-gray-500 dark:text-gray-400">{pageIdx + 1}</span>
             </div>
           </div>
         ))}
@@ -182,7 +182,7 @@ export default function ReorderTool() {
       </div>
 
       {isModified && (
-        <p className="text-xs text-gray-400 mt-1 mb-3">
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3">
           {t('reorder.original')}: {order.map(i => i + 1).join(' → ')}
         </p>
       )}
@@ -261,7 +261,7 @@ function PagePreview({
   if (error) {
     return (
       <div
-        className="bg-white dark:bg-gray-800 rounded border border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center text-xs text-gray-400"
+        className="bg-white dark:bg-gray-800 rounded border border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center text-xs text-gray-500 dark:text-gray-400"
         style={{ width: targetPx * 0.7, height: targetPx }}
       >
         ✕

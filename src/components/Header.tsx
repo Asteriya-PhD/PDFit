@@ -37,8 +37,7 @@ export default function Header() {
           {tools.map(tool => {
             const Icon = tool.icon
             const isActive = activeTool === tool.type
-            const needsPdf = tool.type !== 'image-to-pdf'
-            const disabled = files.length === 0 && needsPdf
+            const disabled = tool.type !== 'image-to-pdf' && files.length === 0
             return (
               <button
                 key={tool.type}

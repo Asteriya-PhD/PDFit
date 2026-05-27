@@ -33,7 +33,7 @@ export default function WatermarkTool() {
 
   if (!activeFile) {
     return (
-      <div className="max-w-lg mx-auto text-center text-gray-400 text-sm py-12">
+      <div className="max-w-lg mx-auto text-center text-gray-500 dark:text-gray-400 text-sm py-12">
         {t('watermark.noFile')}
       </div>
     )
@@ -161,30 +161,33 @@ export default function WatermarkTool() {
 
       <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
         {t('watermark.currentFile')}<span className="font-medium text-gray-700 dark:text-gray-200">{activeFile.name}</span>
-        <span className="text-gray-400 ml-2">{t('watermark.pageCount', { count: activeFile.pageCount })}</span>
+        <span className="text-gray-500 dark:text-gray-400 ml-2">{t('watermark.pageCount', { count: activeFile.pageCount })}</span>
       </p>
 
-      {/* Visual Preview */}
-      {previewReady && text.trim() && (
-        <div className="mb-5 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <p className="text-xs text-gray-400 px-3 pt-2 pb-1">{t('watermark.preview')}</p>
-          <div
-            className="relative mx-auto"
-            style={{ width: previewSize.w, height: previewSize.h, maxWidth: '100%' }}
-          >
-            <canvas
-              ref={pdfCanvasRef}
-              className="absolute inset-0 w-full h-full"
-              style={{ objectFit: 'contain' }}
-            />
-            <canvas
-              ref={overlayCanvasRef}
-              className="absolute inset-0 w-full h-full"
-              style={{ objectFit: 'contain' }}
-            />
-          </div>
+      {/* Visual Preview - always show container when file is loaded */}
+      <div className="mb-5 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <p className="text-xs text-gray-500 dark:text-gray-400 px-3 pt-2 pb-1">{t('watermark.preview')}</p>
+        <div
+          className="relative mx-auto"
+          style={{ width: previewSize.w, height: previewSize.h, maxWidth: '100%' }}
+        >
+          <canvas
+            ref={pdfCanvasRef}
+            className="absolute inset-0"
+            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+          />
+          <canvas
+            ref={overlayCanvasRef}
+            className="absolute inset-0"
+            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+          />
+          {!previewReady && (
+            <div className="absolute inset-0 flex items-center justify-center text-gray-400 dark:text-gray-500 text-sm">
+              {t('watermark.noFile')}
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
       <div className="space-y-5 mb-6">
         {/* Watermark Text */}
@@ -233,7 +236,7 @@ export default function WatermarkTool() {
             onChange={e => setOpacity(parseInt(e.target.value, 10) / 100)}
             className="w-full accent-red-600"
           />
-          <div className="flex justify-between text-xs text-gray-400 mt-1">
+          <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
             <span>{t('watermark.opacityLow')}</span>
             <span>{t('watermark.opacityHigh')}</span>
           </div>
@@ -283,7 +286,7 @@ export default function WatermarkTool() {
                 onChange={e => setColor(e.target.value)}
                 className="absolute inset-0 opacity-0 w-8 h-8 cursor-pointer"
               />
-              <div className="w-8 h-8 rounded-full border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center text-xs text-gray-400 hover:border-gray-400">
+              <div className="w-8 h-8 rounded-full border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center text-xs text-gray-500 dark:text-gray-400 hover:border-gray-400">
                 +
               </div>
             </label>

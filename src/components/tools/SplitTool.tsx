@@ -23,7 +23,7 @@ export default function SplitTool() {
 
   if (!activeFile) {
     return (
-      <div className="max-w-lg mx-auto text-center text-gray-400 text-sm py-12">
+      <div className="max-w-lg mx-auto text-center text-gray-500 dark:text-gray-400 text-sm py-12">
         {t('split.noFile')}
       </div>
     )
@@ -121,7 +121,7 @@ export default function SplitTool() {
 
       <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
         {t('split.currentFile')}<span className="font-medium text-gray-700 dark:text-gray-200">{activeFile.name}</span>
-        <span className="text-gray-400 ml-2">{t('split.pageCount', { count: activeFile.pageCount })}</span>
+        <span className="text-gray-500 dark:text-gray-400 ml-2">{t('split.pageCount', { count: activeFile.pageCount })}</span>
       </p>
 
       {mode === 'extract' ? (
@@ -130,7 +130,7 @@ export default function SplitTool() {
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               {t('split.extract.label')}
             </label>
-            <p className="text-xs text-gray-400 mb-2">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
               {t('split.extract.hint')}
             </p>
             <input
@@ -165,7 +165,7 @@ export default function SplitTool() {
                 placeholder={t('split.split.placeholderStart')}
                 className="w-24 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
               />
-              <span className="text-gray-400">—</span>
+              <span className="text-gray-500 dark:text-gray-400">—</span>
               <input
                 type="number"
                 min={1}
@@ -178,7 +178,7 @@ export default function SplitTool() {
               {ranges.length > 1 && (
                 <button
                   onClick={() => removeRange(range.id)}
-                  className="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400 hover:text-red-500"
+                  className="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-red-500"
                 >
                   <X className="w-4 h-4" />
                 </button>

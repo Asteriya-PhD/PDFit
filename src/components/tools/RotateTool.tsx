@@ -17,7 +17,7 @@ export default function RotateTool() {
 
   if (!activeFile) {
     return (
-      <div className="max-w-lg mx-auto text-center text-gray-400 text-sm py-12">
+      <div className="max-w-lg mx-auto text-center text-gray-500 dark:text-gray-400 text-sm py-12">
         {t('rotate.noFile')}
       </div>
     )
@@ -87,7 +87,7 @@ export default function RotateTool() {
 
       <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
         {t('rotate.currentFile')}<span className="font-medium text-gray-700 dark:text-gray-200">{activeFile.name}</span>
-        <span className="text-gray-400 ml-2">{t('rotate.pageCount', { count: activeFile.pageCount })}</span>
+        <span className="text-gray-500 dark:text-gray-400 ml-2">{t('rotate.pageCount', { count: activeFile.pageCount })}</span>
       </p>
 
       <div className="space-y-4 mb-6">
@@ -138,7 +138,7 @@ export default function RotateTool() {
 
         {scope === 'selected' && (
           <div className="space-y-3">
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               {t('rotate.selectedHint')}
             </p>
             <input
@@ -165,7 +165,7 @@ export default function RotateTool() {
                 </button>
               ))}
             </div>
-            <p className="text-xs text-gray-400">{t('rotate.selectedCount', { count: selectedPages.size })}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{t('rotate.selectedCount', { count: selectedPages.size })}</p>
           </div>
         )}
       </div>

@@ -19,7 +19,7 @@ export default function PdfToImageTool() {
 
   if (!activeFile) {
     return (
-      <div className="max-w-lg mx-auto text-center text-gray-400 text-sm py-12">
+      <div className="max-w-lg mx-auto text-center text-gray-500 dark:text-gray-400 text-sm py-12">
         {t('pdfToImage.noFile')}
       </div>
     )
@@ -84,7 +84,7 @@ export default function PdfToImageTool() {
 
       <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
         {t('pdfToImage.currentFile')}<span className="font-medium text-gray-700 dark:text-gray-200">{activeFile.name}</span>
-        <span className="text-gray-400 ml-2">{t('pdfToImage.pageCount', { count: activeFile.pageCount })}</span>
+        <span className="text-gray-500 dark:text-gray-400 ml-2">{t('pdfToImage.pageCount', { count: activeFile.pageCount })}</span>
       </p>
 
       <div className="space-y-5 mb-6">
@@ -186,7 +186,7 @@ export default function PdfToImageTool() {
               </button>
             ))}
           </div>
-          <p className="text-xs text-gray-400 mt-1">
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
             {dpi === 72 && t('pdfToImage.dpi.72')}
             {dpi === 150 && t('pdfToImage.dpi.150')}
             {dpi === 200 && t('pdfToImage.dpi.200')}

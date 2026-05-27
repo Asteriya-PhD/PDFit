@@ -554,7 +554,7 @@ Image files for Feature B managed in local component state (not AppContext, whic
 
 ## Post-Phase-4 Bug Fixes & UX Improvements (2026-05-27)
 
-**Commits**: *(not yet committed)*
+**Commits**: *(not yet committed)* — fix: Post-Phase-4 UI/UX bug fixes
 
 **Fixed Issues**:
 
@@ -591,4 +591,46 @@ Image files for Feature B managed in local component state (not AppContext, whic
 **Verification**:
 - `tsc --noEmit` ✅
 - `npm run build` ✅ (1813 modules, 2.37s)
+- LSP diagnostics: 0 errors across all changed files
+
+---
+
+## Post-Phase-4 Bug Fixes v2 (2026-05-27)
+
+**Commits**: *(not yet committed)* — fix: 5 UI/UX bug fixes
+
+**Fixed Issues**:
+
+| # | Issue | Root Cause | Fix |
+|---|-------|------------|-----|
+| 1 | 深色模式灰色文字看不清 | `text-gray-400` 在深色背景 `gray-900` 上对比度不足 | 改为 `text-gray-500 dark:text-gray-400`，所有灰色文字级别统一升级为 500（亮色）/400（暗色） |
+| 2 | EmptyState 上传框与功能介绍重叠 | 整个区域是一个可点击的 `<div>`，功能网格也在其中，点击功能介绍时触发上传 | 将上传拖拽框和功能介绍网格拆分为两个独立元素，功能网格不可交互 |
+| 3 | 上传 PDF 前 image-to-pdf 工具不可选 | `disabled = files.length === 0 && needsPdf`，`needsPdf = tool.type !== 'image-to-pdf'` 为 false，但 `image-to-pdf` 仍然被禁用 | 修正为 `disabled = tool.type !== 'image-to-pdf' && files.length === 0`，`image-to-pdf` 不再因文件数量被禁用 |
+| 4 | 上传图片后选择图片转 PDF 需重新上传 | 上传发生在 EmptyState 层（仅接收 PDF），图片文件无法进入应用状态 | 在 `App.tsx` 增加条件：当 `activeTool === 'image-to-pdf'` 且 `files.length === 0` 时，直接在主区域渲染 `ImageToPdfTool`，用户上传图片后直接进入转换 |
+| 5 | 水印预览显示不出来 | 预览容器仅在 `previewReady && text.trim()` 时渲染，两个 canvas 使用 `absolute inset-0 w-full h-full` + `object-fit: contain` 导致尺寸不匹配 | 预览区域始终渲染；修复 canvas 样式为 `width: 100%; height: 100%; object-fit: contain` 确保正确定位 |
+
+**Files changed** (13):
+
+| File | Changes |
+|------|---------|
+| `src/App.tsx` | 当 `activeTool === 'image-to-pdf'` 且无文件时渲染 `ImageToPdfTool` |
+| `src/components/EmptyState.tsx` | 上传框与功能网格拆分为独立元素 |
+| `src/components/Header.tsx` | 修正 `disabled` 逻辑，`image-to-pdf` 上传前可选 |
+| `src/components/tools/WatermarkTool.tsx` | 预览容器始终显示，修复 canvas 定位 |
+| `src/components/tools/PdfToImageTool.tsx` | `text-gray-400` → `text-gray-500 dark:text-gray-400` (3处) |
+| `src/components/tools/DeleteTool.tsx` | `text-gray-400` → `text-gray-500 dark:text-gray-400` (5处) |
+| `src/components/tools/ReorderTool.tsx` | `text-gray-400` → `text-gray-500 dark:text-gray-400` (6处) |
+| `src/components/tools/PageNumberingTool.tsx` | `text-gray-400` → `text-gray-500 dark:text-gray-400` (6处) |
+| `src/components/tools/WatermarkTool.tsx` | `text-gray-400` → `text-gray-500 dark:text-gray-400` (4处) |
+| `src/components/tools/PdfToMdTool.tsx` | `text-gray-400` → `text-gray-500 dark:text-gray-400` (5处) |
+| `src/components/tools/RotateTool.tsx` | `text-gray-400` → `text-gray-500 dark:text-gray-400` (4处) |
+| `src/components/tools/SplitTool.tsx` | `text-gray-400` → `text-gray-500 dark:text-gray-400` (5处) |
+| `src/components/tools/MergeTool.tsx` | `text-gray-400` → `text-gray-500 dark:text-gray-400` (2处) |
+| `src/components/tools/ImageToPdfTool.tsx` | `text-gray-400` → `text-gray-500 dark:text-gray-400` (5处) |
+| `src/components/FileList.tsx` | `text-gray-400` → `text-gray-500 dark:text-gray-400` (1处) |
+| `src/components/ThumbnailGrid.tsx` | `text-gray-400` → `text-gray-500 dark:text-gray-400` (3处) |
+
+**Verification**:
+- `tsc --noEmit` ✅
+- `npm run build` ✅ (2.21s, zero errors)
 - LSP diagnostics: 0 errors across all changed files

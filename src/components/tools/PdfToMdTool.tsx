@@ -17,7 +17,7 @@ export default function PdfToMdTool() {
 
   if (!activeFile) {
     return (
-      <div className="max-w-lg mx-auto text-center text-gray-400 text-sm py-12">
+      <div className="max-w-lg mx-auto text-center text-gray-500 dark:text-gray-400 text-sm py-12">
         {t('pdfToMd.noFile')}
       </div>
     )
@@ -83,7 +83,7 @@ export default function PdfToMdTool() {
 
       <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
         {t('pdfToMd.currentFile')}<span className="font-medium text-gray-700 dark:text-gray-200">{activeFile.name}</span>
-        <span className="text-gray-400 ml-2">{t('pdfToMd.pageCount', { count: activeFile.pageCount })}</span>
+        <span className="text-gray-500 dark:text-gray-400 ml-2">{t('pdfToMd.pageCount', { count: activeFile.pageCount })}</span>
       </p>
 
       {!showResult && (
@@ -91,7 +91,7 @@ export default function PdfToMdTool() {
           <p className="text-sm text-gray-500 dark:text-gray-400">
             {t('pdfToMd.description')}
           </p>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-gray-500 dark:text-gray-400">
             {t('pdfToMd.limitation')}
           </p>
 
@@ -125,7 +125,7 @@ export default function PdfToMdTool() {
       {isEmpty && (
         <div className="text-center py-8">
           <p className="text-gray-500 dark:text-gray-400 text-sm mb-2">{t('pdfToMd.empty.title')}</p>
-          <p className="text-gray-400 text-xs">
+          <p className="text-gray-500 dark:text-gray-400 text-xs">
             {t('pdfToMd.empty.hint')}
           </p>
         </div>
@@ -164,7 +164,7 @@ export default function PdfToMdTool() {
             className="w-full h-80 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-mono text-gray-700 dark:text-gray-200
               bg-gray-50 dark:bg-gray-800 resize-y focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
           />
-          <p className="text-xs text-gray-400 text-right">
+          <p className="text-xs text-gray-500 dark:text-gray-400 text-right">
             {t('pdfToMd.stats', { count: markdown.length, lines: markdown.split('\n').length })}
           </p>
         </div>

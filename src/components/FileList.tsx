@@ -41,7 +41,7 @@ export default function FileList() {
             <FileIcon className="w-4 h-4 shrink-0 text-gray-400 dark:text-gray-500" />
             <div className="flex-1 min-w-0">
               <p className="truncate font-medium">{file.name}</p>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-gray-500 dark:text-gray-400">
                 {t('fileList.pageCount', { count: file.pageCount, size: formatSize(file.size) })}
               </p>
             </div>

@@ -110,7 +110,7 @@ export default function ImageToPdfTool() {
           </div>
           <div className="text-center">
             <p className="text-base font-medium text-gray-600 dark:text-gray-300">{t('imageToPdf.empty.text')}</p>
-            <p className="text-sm text-gray-400 mt-1">{t('imageToPdf.empty.hint')}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t('imageToPdf.empty.hint')}</p>
             <p className="text-xs text-gray-300 mt-1">{t('imageToPdf.empty.formats')}</p>
           </div>
         </div>
@@ -130,14 +130,14 @@ export default function ImageToPdfTool() {
               <button
                 onClick={() => moveImage(index, -1)}
                 disabled={index === 0}
-                className="p-0.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400 hover:text-gray-600 disabled:opacity-20 disabled:cursor-not-allowed"
+                className="p-0.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-600 disabled:opacity-20 disabled:cursor-not-allowed"
               >
                 <ArrowUpDown className="w-3.5 h-3.5 rotate-180" />
               </button>
               <button
                 onClick={() => moveImage(index, 1)}
                 disabled={index === images.length - 1}
-                className="p-0.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400 hover:text-gray-600 disabled:opacity-20 disabled:cursor-not-allowed"
+                className="p-0.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-600 disabled:opacity-20 disabled:cursor-not-allowed"
               >
                 <ArrowUpDown className="w-3.5 h-3.5" />
               </button>
@@ -149,13 +149,13 @@ export default function ImageToPdfTool() {
             />
             <div className="flex-1 min-w-0">
               <p className="text-sm text-gray-700 dark:text-gray-200 truncate">{img.file.name}</p>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-gray-500 dark:text-gray-400">
                 {t('imageToPdf.sizeInfo', { size: (img.file.size / 1024).toFixed(1), format: img.file.type.replace('image/', '') })}
               </p>
             </div>
             <button
               onClick={() => removeImage(img.id)}
-              className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400 hover:text-red-500 shrink-0"
+              className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-red-500 shrink-0"
             >
               <X className="w-4 h-4" />
             </button>

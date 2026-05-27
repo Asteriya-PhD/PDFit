@@ -24,7 +24,7 @@ export default function PageNumberingTool() {
 
   if (!activeFile) {
     return (
-      <div className="max-w-lg mx-auto text-center text-gray-400 text-sm py-12">
+      <div className="max-w-lg mx-auto text-center text-gray-500 dark:text-gray-400 text-sm py-12">
         {t('pageNumbering.noFile')}
       </div>
     )
@@ -66,7 +66,7 @@ export default function PageNumberingTool() {
 
       <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
         {t('pageNumbering.currentFile')}<span className="font-medium text-gray-700 dark:text-gray-200">{activeFile.name}</span>
-        <span className="text-gray-400 ml-2">{t('pageNumbering.pageCount', { count: activeFile.pageCount })}</span>
+        <span className="text-gray-500 dark:text-gray-400 ml-2">{t('pageNumbering.pageCount', { count: activeFile.pageCount })}</span>
       </p>
 
       <div className="space-y-5 mb-6">
@@ -146,7 +146,7 @@ export default function PageNumberingTool() {
                 onChange={e => setColor(e.target.value)}
                 className="absolute inset-0 opacity-0 w-8 h-8 cursor-pointer"
               />
-              <div className="w-8 h-8 rounded-full border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center text-xs text-gray-400 hover:border-gray-400">
+              <div className="w-8 h-8 rounded-full border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center text-xs text-gray-500 dark:text-gray-400 hover:border-gray-400">
                 +
               </div>
             </label>
@@ -190,13 +190,13 @@ export default function PageNumberingTool() {
 
         {/* Preview */}
         <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-          <p className="text-xs text-gray-400 mb-1">{t('pageNumbering.preview')}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{t('pageNumbering.preview')}</p>
           <p className="text-sm text-gray-600 dark:text-gray-300 font-mono">
             {prefix}{showTotalPages ? `${startNumber} / ${activeFile.pageCount}` : startNumber}{suffix}
-            <span className="text-gray-400 ml-1">{t('pageNumbering.previewPage', { n: 1 })}</span>
+            <span className="text-gray-500 dark:text-gray-400 ml-1">{t('pageNumbering.previewPage', { n: 1 })}</span>
           </p>
           {activeFile.pageCount > 1 && (
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               {prefix}{showTotalPages ? `${startNumber + 1} / ${activeFile.pageCount}` : startNumber + 1}{suffix}
               <span className="ml-1">{t('pageNumbering.previewPage', { n: 2 })}</span>
               {activeFile.pageCount > 2 && (

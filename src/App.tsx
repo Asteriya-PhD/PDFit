@@ -5,17 +5,24 @@ import FileList from '@/components/FileList'
 import ThumbnailGrid from '@/components/ThumbnailGrid'
 import ToolPanel from '@/components/ToolPanel'
 import EmptyState from '@/components/EmptyState'
+import ImageToPdfTool from '@/components/tools/ImageToPdfTool'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 
 export default function App() {
   useKeyboardShortcuts()
-  const { files } = useApp()
+  const { files, activeTool } = useApp()
+
+  const showImageToPdf = activeTool === 'image-to-pdf' && files.length === 0
 
   return (
     <div className="flex flex-col h-full">
       <Header />
 
-      {files.length === 0 ? (
+      {showImageToPdf ? (
+        <div className="flex-1 flex items-center justify-center p-8">
+          <ImageToPdfTool />
+        </div>
+      ) : files.length === 0 ? (
         <div className="flex-1 flex items-center justify-center p-8">
           <EmptyState />
         </div>

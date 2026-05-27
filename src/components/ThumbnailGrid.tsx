@@ -31,12 +31,12 @@ export default function ThumbnailGrid() {
       style={{ height: stripH, minHeight: stripH, maxHeight: stripH }}
     >
       <div className="flex items-center justify-between px-4 py-1.5 shrink-0">
-        <span className="text-xs text-gray-400">
+        <span className="text-xs text-gray-500 dark:text-gray-400">
           {t('thumbnailGrid.info', { name: activeFile.name, count: activeFile.pageCount })}
         </span>
         <button
           onClick={() => setExpanded(v => !v)}
-          className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+          className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
         >
           {expanded ? (
             <><Minimize2 className="w-3.5 h-3.5" /> {t('thumbnailGrid.collapse')}</>
@@ -119,7 +119,7 @@ function PagePreview({
   if (error) {
     return (
       <div
-        className="bg-white dark:bg-gray-800 rounded border border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center shrink-0 text-xs text-gray-400"
+        className="bg-white dark:bg-gray-800 rounded border border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center shrink-0 text-xs text-gray-500 dark:text-gray-400"
         style={{ width: targetPx * 0.7, height: targetPx }}
       >
          {t('thumbnailGrid.loadError')}
