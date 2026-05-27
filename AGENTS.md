@@ -113,10 +113,12 @@ Shortcuts are defined declaratively in `src/lib/shortcuts.ts` as a typed array. 
 
 ## Current Status
 
-- **Phase**: 4 (Polish & Extras — dark mode, keyboard shortcuts, page numbering, watermark; i18n upcoming)
+- **Phase**: 4 ✅ Complete — All 6 features (Dark Mode, Keyboard Shortcuts, Page Numbering, Watermark, i18n, Drag-and-Drop Reorder) delivered
 - **Platform**: Web (GitHub Pages) + Desktop (macOS dmg / Windows msi / Linux AppImage)
 - **Deployment**: GitHub Actions auto-deploy (web), `npm run tauri:build` (desktop)
-- **Next up**: Phase 4 remaining — i18n (EN/CN), Drag-and-Drop Reorder
+- **Build**: `tsc --noEmit` + `npm run build` + `cargo check` all clean
+- **Polish done (2026-05-27)**: Firefox scrollbar CSS, Vite chunk splitting (app 1.1MB→297KB), PWA (offline SW + install manifest), MinerU API (optional cloud doc conversion, privacy-gated)
+- **Next up**: (none — feature complete)
 
 ## Conventions
 

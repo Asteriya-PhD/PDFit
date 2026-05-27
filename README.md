@@ -11,12 +11,15 @@
 | 分割 | 提取指定页面，或按页码范围分割成多个文件 |
 | 删除页面 | 输入页码或点选页面，快速删除不需要的内容 |
 | 旋转页面 | 90°/180°/270°，可旋转全部页面或指定页码 |
+| 页面排序 | 拖拽缩略图调整 PDF 页面顺序 |
 | 添加页码 | 自定义位置、字号、颜色、前缀后缀，支持"X / Y"格式 |
 | 添加水印 | 自定义文字、字号、透明度、旋转角度、颜色，支持指定页面范围 |
 | PDF 转图片 | 将 PDF 页面导出为 PNG/JPEG，支持自定义 DPI |
 | 图片转 PDF | 将 PNG/JPEG/WebP 图片合成为 PDF |
 | 提取 Markdown | 从 PDF 提取文本内容并格式化为 Markdown |
-| 快捷键 | `Ctrl+O` 打开文件，`Ctrl+M/S/D/R/N/W/I` 切换工具，`1`-`9` 快速切换，`Esc` 取消选择 |
+| 文档转换 ⚡ | 通过 MinerU API 将 PDF/Office 文档解析为 Markdown（可选、需配置 API） |
+| 离线可用 | PWA 支持，安装后可在无网络时使用 |
+| 快捷键 | `Ctrl+O` 打开文件，`Ctrl+M/S/D/E/⇧R/N/W/I` 切换工具，`1`-`0` 快速切换，`Esc` 取消选择 |
 
 ## 🚀 在线使用
 
@@ -31,6 +34,7 @@ https://asteriya-phd.github.io/PDFit/
 - **样式**: Tailwind CSS 4
 - **PDF 引擎**: pdf-lib (操作) + pdfjs-dist (预览)
 - **部署**: GitHub Pages + GitHub Actions
+- **PWA**: Service Worker + 离线缓存 (vite-plugin-pwa)
 
 ## 📦 本地开发
 

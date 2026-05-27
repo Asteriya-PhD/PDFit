@@ -227,7 +227,7 @@ Each feature is independently revertible (one commit per feature). If a feature 
 
 ---
 
-### Phase 4: Polish & Extras ✅ (Dark Mode, Shortcuts, Page Numbering, Watermark completed)
+### Phase 4: Polish & Extras ✅ (All 6 features completed)
 
 **Goal**: Elevate the app from functional to polished — dark mode, i18n, UX shortcuts, and advanced PDF manipulations.
 
@@ -235,7 +235,7 @@ Each feature is independently revertible (one commit per feature). If a feature 
 
 **Implementation Order**:
 ```
-Dark Mode ─→ Keyboard Shortcuts ─→ Page Numbering ─→ Watermark ─→ i18n ─→ Drag-and-Drop Page Reordering ─→ Compress PDF ─→ Batch Queue
+Dark Mode ─→ Keyboard Shortcuts ─→ Page Numbering ─→ Watermark ─→ ✅ i18n ─→ Drag-and-Drop Page Reordering ─→ Compress PDF ─→ Batch Queue
 ```
 
 **New dependencies considered** (added only per feature):
@@ -329,7 +329,7 @@ Dark Mode ─→ Keyboard Shortcuts ─→ Page Numbering ─→ Watermark ─�
 | `Ctrl+M` / `Cmd+M` | Switch to Merge | Global |
 | `Ctrl+S` / `Cmd+S` | Switch to Split | Global |
 | `Ctrl+D` / `Cmd+D` | Switch to Delete | Global |
-| `Ctrl+R` / `Cmd+R` | Switch to Rotate | Global |
+| `Ctrl+E` / `Cmd+E` | Switch to Rotate (Ctrl+R conflicts with browser reload) | Global |
 | `Ctrl+I` / `Cmd+I` | Switch to PDF→Image | Global |
 | `Ctrl+Shift+I` | Switch to Image→PDF | Global |
 | `Ctrl+Shift+M` | Switch to Extract Markdown | Global |
@@ -420,7 +420,7 @@ Dark Mode ─→ Keyboard Shortcuts ─→ Page Numbering ─→ Watermark ─�
 
 ---
 
-#### Feature 5: i18n (English + Chinese)
+#### Feature 5: i18n (English + Chinese) ✅
 
 **Goal**: Full bilingual support — Chinese (zh-CN) and English (en). Auto-detect browser language, allow manual switch.
 
@@ -517,109 +517,6 @@ src/i18n/
 - **Error**: Reorder failed (memory limit on very large documents)
 
 ---
-
-#### Feature 7: Compress PDF
-
-**Goal**: Reduce PDF file size by recompressing content objects.
-
-**Technical approach**:
-- pdf-lib's `PDFDocument.create()` with `useObjectStreams: true` and `objectsPerTick: 100`
-- pdf-lib `save()` offers `useObjectStreams: true` flag which compresses cross-reference tables and object streams
-- For deeper compression: re-encode images to JPEG via canvas (`canvas.toBlob('image/jpeg', quality)`) → embed back via pdf-lib
-- Two modes:
-  - **Fast**: Object stream compression only (~10-20% size reduction, lossless)
-  - **Deep**: Re-compress images to JPEG quality 60 (30-70% size reduction, lossy)
-- Deep mode renders each page via pdfjs canvas → exports as JPEG → creates new PDF with compressed images
-- This is the same approach as "render all pages as images and make a new PDF" — very effective but converts text to images (lossy)
-- **⚠️ Deep mode caveat**: Text becomes image; no selectable text; file may be larger for text-heavy PDFs
-
-**Important limitation**: pdf-lib's native compression is weak. True compression requires either WASM (qpdf/pyramid) or server-side. For the browser-only scope, this feature offers modest gains.
-
-**Files to create/modify**:
-
-| File | Action | Purpose |
-|------|--------|---------|
-| `src/lib/compressPdf.ts` | CREATE | Core engine: lossless (object streams) + lossy (image re-compression) |
-| `src/components/tools/CompressTool.tsx` | CREATE | UI: mode selector (fast/deep), quality slider for deep mode |
-| `src/types/index.ts` | MODIFY | Add `'compress'` to `ToolType` |
-| `src/components/Header.tsx` | MODIFY | Add nav button |
-| `src/components/ToolPanel.tsx` | MODIFY | Add route entry |
-| `src/components/EmptyState.tsx` | MODIFY | Add feature badge |
-
-**UI states**:
-- **File loaded, default**: Show current file size (KB/MB), select compression mode
-- **Fast mode**: One-click compress; shows compression ratio after
-- **Deep mode**: Quality slider + warning that text becomes image-based
-- **Loading**: Processing with progress
-- **Success**: Shows "压缩前 X KB → 压缩后 Y KB (节省 Z%)", download button
-- **Warning**: If compressed size is larger, show message and offer download of original
-
----
-
-#### Feature 8: Batch Processing Queue
-
-**Goal**: Queue multiple PDFs for sequential processing with progress tracking.
-
-**Technical approach**:
-- New `QueueContext` (separate from AppContext) managing a queue of `QueueItem[]`
-- Each QueueItem: `{ id, file, operation, status: 'pending' | 'processing' | 'done' | 'error', result?, error? }`
-- Operations can be any existing tool function (merge, split, rotate, etc.)
-- Process queue sequentially: dequeue → execute → update status → next
-- Show progress: "处理中 3/10" with per-item status list
-- Results: individual downloads or "全部下载" ZIP
-- ⚠️ **Complexity**: Most tools are designed for single-file operation; the queue abstraction layer needs to wrap each tool's logic
-
-**This feature is structurally complex** because:
-- Different tools have different inputs and outputs
-- The UI needs to show progress for heterogeneous operations
-- State management across tools needs rethinking
-
-**Simplified approach (recommended)**:
-- Rather than a full queue system, add "batch" support to the existing Split tool (already outputs multiple files)
-- For other tools, single-session batch isn't a common use case for a browser-only tool
-- **Reprioritize**: Only implement if user feedback demands it
-
-**Files to create/modify** (if proceeding):
-
-| File | Action | Purpose |
-|------|--------|---------|
-| `src/contexts/QueueContext.tsx` | CREATE | Queue state + processor |
-| `src/components/QueuePanel.tsx` | CREATE | Queue status UI |
-| `src/lib/processQueue.ts` | CREATE | Sequential queue executor |
-| `src/types/index.ts` | MODIFY | Add queue-related types |
-| `src/components/Header.tsx` | MODIFY | Add queue status badge |
-| `src/App.tsx` | MODIFY | Add queue panel when active |
-
-**UI states**:
-- **Empty queue**: No items, hidden from view
-- **Items added**: Queue panel shows list with status badges
-- **Processing**: Progress bar + current item name, cancel button
-- **Complete**: Download buttons per item + "全部下载 ZIP"
-- **Error**: Red badge on failed item, retry button
-
----
-
-### Phase 4 Feature Summary
-
-| Priority | Feature | Effort | New Dependencies | Value |
-|----------|---------|--------|-----------------|-------|
-| 1 | Dark Mode | Medium | None | High (daily UX) |
-| 2 | Keyboard Shortcuts | Low | None | Medium (power users) |
-| 3 | Page Numbering | Low | None | High (common need) |
-| 4 | Watermark | Medium | None | Medium (specific need) |
-| 5 | i18n (EN/CN) | High | i18next + react-i18next (optional) | High (reach) |
-| 6 | Drag-and-Drop Reorder | Medium | @dnd-kit (optional) | Medium |
-| 7 | Compress PDF | Medium | None | Medium (limitations) |
-| 8 | Batch Queue | High | None | Low (browser context) |
-
-**Implementation rationale**:
-1. **Dark Mode first** — Touches the most files, so doing it early avoids conflicts with other features
-2. **Keyboard Shortcuts** — Cheap win, 2 new files, minimal conflict
-3. **Page Numbering / Watermark** — Similar pdf-lib drawText patterns; can share helper code
-4. **i18n** — Mechanical text replacement; works best after all UI features are stable
-5. **DnD Reorder** — Standalone feature; can be implemented any time
-6. **Compress PDF** — Technical caveats; lowest confidence feature; implement last when we know whether it's useful
-7. **Batch Queue** — Most complex; only if user demand exists
 
 ---
 

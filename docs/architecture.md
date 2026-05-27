@@ -126,6 +126,7 @@ handleAction(action)
 4. **Toggle semantics** — All tool shortcuts toggle (press again to deselect), matching Header button behavior exactly.
 5. **Cross-platform Ctrl/Cmd** — The check uses `e.ctrlKey || e.metaKey`, so both Windows (`Ctrl`) and Mac (`Cmd`) work for the same shortcut.
 6. **Tauri-aware file open** — `Ctrl+O` calls `isDesktop()` and routes to Tauri native dialog or DOM file picker accordingly.
+7. **Ctrl+R conflict avoidance** — Rotate uses `Ctrl+E` instead of `Ctrl+R` because browser-level Ctrl+R reload cannot be suppressed via `preventDefault` in capture phase.
 
 ## Core Engine API (`src/lib/pdfEngine.ts`)
 
