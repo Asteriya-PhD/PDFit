@@ -1,6 +1,7 @@
 import { useApp } from '@/contexts/AppContext'
 import type { ToolType } from '@/types'
 import { Combine, Split, Trash2, RotateCw, FileText, Image, FileImage } from 'lucide-react'
+import ThemeToggle from '@/components/ThemeToggle'
 
 const tools: { type: ToolType; label: string; icon: typeof Combine }[] = [
   { type: 'merge', label: '合并', icon: Combine },
@@ -16,13 +17,13 @@ export default function Header() {
   const { files, activeTool, setTool } = useApp()
 
   return (
-    <header className="border-b border-gray-200 bg-white shrink-0">
+    <header className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shrink-0">
       <div className="flex items-center h-14 px-4 gap-4">
         <div className="flex items-center gap-2 mr-2">
           <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
             <FileText className="w-5 h-5 text-white" />
           </div>
-          <span className="font-bold text-lg text-gray-800">PdfX</span>
+          <span className="font-bold text-lg text-gray-800 dark:text-gray-100">PdfX</span>
         </div>
 
         <nav className="flex items-center gap-1">
@@ -39,10 +40,10 @@ export default function Header() {
                 className={`
                   flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors
                   ${isActive
-                    ? 'bg-red-50 text-red-700 border border-red-200'
+                    ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
                     : disabled
-                      ? 'text-gray-300 cursor-not-allowed'
-                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800'
+                      ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
+                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-800 dark:hover:text-gray-200'
                   }
                 `}
               >
@@ -52,6 +53,10 @@ export default function Header() {
             )
           })}
         </nav>
+
+        <div className="ml-auto">
+          <ThemeToggle />
+        </div>
       </div>
     </header>
   )

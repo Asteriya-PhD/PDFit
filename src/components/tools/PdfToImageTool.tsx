@@ -78,24 +78,24 @@ export default function PdfToImageTool() {
 
   return (
     <div className="max-w-lg mx-auto">
-      <h2 className="text-lg font-semibold text-gray-800 mb-4">PDF 转图片</h2>
+      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">PDF 转图片</h2>
 
-      <p className="text-sm text-gray-500 mb-4">
-        当前文件: <span className="font-medium text-gray-700">{activeFile.name}</span>
+      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+        当前文件: <span className="font-medium text-gray-700 dark:text-gray-200">{activeFile.name}</span>
         <span className="text-gray-400 ml-2">({activeFile.pageCount} 页)</span>
       </p>
 
       <div className="space-y-5 mb-6">
         {/* Page selection */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">导出页面</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">导出页面</label>
           <div className="flex gap-2 mb-2">
             <button
               onClick={() => setPageScope('all')}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 pageScope === 'all'
-                  ? 'bg-red-50 text-red-700 border border-red-200'
-                  : 'bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100'
+                  ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
+                  : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
               全部
@@ -104,8 +104,8 @@ export default function PdfToImageTool() {
               onClick={() => setPageScope('custom')}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 pageScope === 'custom'
-                  ? 'bg-red-50 text-red-700 border border-red-200'
-                  : 'bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100'
+                  ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
+                  : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
               指定页面
@@ -117,21 +117,21 @@ export default function PdfToImageTool() {
               value={customSpec}
               onChange={e => setCustomSpec(e.target.value)}
               placeholder="例: 1,3,5-7"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
             />
           )}
         </div>
 
         {/* Format */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">图片格式</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">图片格式</label>
           <div className="flex gap-2">
             <button
               onClick={() => setFormat('png')}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 format === 'png'
-                  ? 'bg-red-50 text-red-700 border border-red-200'
-                  : 'bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100'
+                  ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
+                  : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
               PNG（无损）
@@ -140,8 +140,8 @@ export default function PdfToImageTool() {
               onClick={() => setFormat('jpeg')}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 format === 'jpeg'
-                  ? 'bg-red-50 text-red-700 border border-red-200'
-                  : 'bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100'
+                  ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
+                  : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
               JPEG（可压缩）
@@ -152,7 +152,7 @@ export default function PdfToImageTool() {
         {/* JPEG quality */}
         {format === 'jpeg' && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
               JPEG 质量: {quality}%
             </label>
             <input
@@ -168,7 +168,7 @@ export default function PdfToImageTool() {
 
         {/* DPI */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">分辨率 (DPI)</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">分辨率 (DPI)</label>
           <div className="flex gap-2">
             {[72, 150, 200, 300].map(v => (
               <button
@@ -176,8 +176,8 @@ export default function PdfToImageTool() {
                 onClick={() => setDpi(v)}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   dpi === v
-                    ? 'bg-red-50 text-red-700 border border-red-200'
-                    : 'bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100'
+                    ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
+                    : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
                 {v}
@@ -200,7 +200,7 @@ export default function PdfToImageTool() {
             <span>处理中 {progress.done}/{progress.total} 页</span>
             <span>{Math.round((progress.done / progress.total) * 100)}%</span>
           </div>
-          <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
             <div
               className="h-full bg-red-600 rounded-full transition-all duration-200"
               style={{ width: `${(progress.done / progress.total) * 100}%` }}
@@ -213,7 +213,7 @@ export default function PdfToImageTool() {
         onClick={handleExport}
         disabled={loading || (showPageInput && !customSpec.trim())}
         className="w-full flex items-center justify-center gap-2 bg-red-600 text-white rounded-lg px-4 py-2.5 text-sm font-medium
-          hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+          hover:bg-red-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
       >
         <Download className="w-4 h-4" />
         {loading ? '处理中...' : '导出图片'}

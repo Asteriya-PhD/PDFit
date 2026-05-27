@@ -81,16 +81,16 @@ export default function RotateTool() {
 
   return (
     <div className="max-w-lg mx-auto">
-      <h2 className="text-lg font-semibold text-gray-800 mb-4">旋转页面</h2>
+      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">旋转页面</h2>
 
-      <p className="text-sm text-gray-500 mb-4">
-        当前文件: <span className="font-medium text-gray-700">{activeFile.name}</span>
+      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+        当前文件: <span className="font-medium text-gray-700 dark:text-gray-200">{activeFile.name}</span>
         <span className="text-gray-400 ml-2">({activeFile.pageCount} 页)</span>
       </p>
 
       <div className="space-y-4 mb-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">旋转角度</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">旋转角度</label>
           <div className="flex gap-2">
             {angles.map(a => (
               <button
@@ -98,8 +98,8 @@ export default function RotateTool() {
                 onClick={() => setAngle(a.value)}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   angle === a.value
-                    ? 'bg-red-50 text-red-700 border border-red-200'
-                    : 'bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100'
+                    ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
+                    : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
                 {a.label}
@@ -109,14 +109,14 @@ export default function RotateTool() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">应用范围</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">应用范围</label>
           <div className="flex gap-2">
             <button
               onClick={() => setScope('all')}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 scope === 'all'
-                  ? 'bg-red-50 text-red-700 border border-red-200'
-                  : 'bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100'
+                  ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
+                  : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
               全部页面
@@ -125,8 +125,8 @@ export default function RotateTool() {
               onClick={() => setScope('selected')}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 scope === 'selected'
-                  ? 'bg-red-50 text-red-700 border border-red-200'
-                  : 'bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100'
+                  ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
+                  : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
               指定页面
@@ -144,9 +144,9 @@ export default function RotateTool() {
               value={spec}
               onChange={e => setSpec(e.target.value)}
               placeholder="也可在此输入页码，例: 1,3,5-7"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
             />
-            <div className="grid grid-cols-6 sm:grid-cols-8 gap-2 max-h-48 overflow-y-auto p-2 bg-gray-50 rounded-lg">
+            <div className="grid grid-cols-6 sm:grid-cols-8 gap-2 max-h-48 overflow-y-auto p-2 bg-gray-50 dark:bg-gray-900 rounded-lg">
               {Array.from({ length: activeFile.pageCount }, (_, i) => (
                 <button
                   key={i}
@@ -154,8 +154,8 @@ export default function RotateTool() {
                   className={`
                     aspect-[3/4] flex items-center justify-center rounded border text-sm font-medium transition-all
                     ${selectedPages.has(i)
-                      ? 'bg-blue-100 border-blue-300 text-blue-700'
-                      : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
+                      ? 'bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-400'
+                      : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-gray-300'
                     }
                   `}
                 >
@@ -172,7 +172,7 @@ export default function RotateTool() {
         onClick={handleRotate}
         disabled={loading}
         className="w-full flex items-center justify-center gap-2 bg-red-600 text-white rounded-lg px-4 py-2.5 text-sm font-medium
-          hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+          hover:bg-red-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
       >
         <Download className="w-4 h-4" />
         {loading ? '处理中...' : `旋转 ${scope === 'all' ? '全部页面' : selectedPages.size > 0 ? selectedPages.size + ' 页' : '所选页面'}`}

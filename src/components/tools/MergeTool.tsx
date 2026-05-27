@@ -35,8 +35,8 @@ export default function MergeTool() {
 
   return (
     <div className="max-w-lg mx-auto">
-      <h2 className="text-lg font-semibold text-gray-800 mb-4">合并 PDF</h2>
-      <p className="text-sm text-gray-500 mb-6">
+      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">合并 PDF</h2>
+      <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
         将多个 PDF 文件合并为一个文档。拖拽调整文件顺序。
       </p>
 
@@ -45,24 +45,24 @@ export default function MergeTool() {
           const file = files.find(f => f.id === fileId)
           if (!file) return null
           return (
-            <div key={fileId} className="flex items-center gap-3 bg-white border border-gray-200 rounded-lg px-4 py-3">
+            <div key={fileId} className="flex items-center gap-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3">
               <span className="text-sm font-medium text-gray-400 w-6">{index + 1}</span>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-700 truncate">{file.name}</p>
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-200 truncate">{file.name}</p>
                 <p className="text-xs text-gray-400">{file.pageCount} 页</p>
               </div>
               <div className="flex gap-1">
                 <button
                   onClick={() => moveFile(index, -1)}
                   disabled={index === 0}
-                  className="p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600 disabled:opacity-20 disabled:cursor-not-allowed"
+                  className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400 hover:text-gray-600 disabled:opacity-20 disabled:cursor-not-allowed"
                 >
                   <ArrowUpDown className="w-4 h-4 rotate-180" />
                 </button>
                 <button
                   onClick={() => moveFile(index, 1)}
                   disabled={index === order.length - 1}
-                  className="p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-600 disabled:opacity-20 disabled:cursor-not-allowed"
+                  className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400 hover:text-gray-600 disabled:opacity-20 disabled:cursor-not-allowed"
                 >
                   <ArrowUpDown className="w-4 h-4" />
                 </button>
@@ -76,7 +76,7 @@ export default function MergeTool() {
         onClick={handleMerge}
         disabled={order.length < 2 || loading}
         className="w-full flex items-center justify-center gap-2 bg-red-600 text-white rounded-lg px-4 py-2.5 text-sm font-medium
-          hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+          hover:          bg-red-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
       >
         <Download className="w-4 h-4" />
         {loading ? '处理中...' : `合并 ${order.length} 个文件`}

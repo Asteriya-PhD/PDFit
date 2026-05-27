@@ -28,15 +28,15 @@ export default function EmptyState() {
       onDrop={handleDrop}
       onClick={handleClick}
       className="flex flex-col items-center justify-center gap-6 max-w-lg mx-auto cursor-pointer
-        border-2 border-dashed border-gray-300 rounded-2xl p-12
-        hover:border-red-400 hover:bg-red-50/30 transition-colors"
+        border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-12
+        hover:border-red-400 hover:bg-red-50/30 dark:hover:border-red-500 dark:hover:bg-red-900/20 transition-colors"
     >
-      <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+      <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
         <Upload className="w-8 h-8 text-red-500" />
       </div>
 
       <div className="text-center">
-        <p className="text-lg font-medium text-gray-700">拖拽 PDF 文件到此处</p>
+        <p className="text-lg font-medium text-gray-700 dark:text-gray-200">拖拽 PDF 文件到此处</p>
         <p className="text-sm text-gray-400 mt-1">或点击选择文件</p>
       </div>
 
@@ -50,8 +50,8 @@ export default function EmptyState() {
           { icon: FileImage, label: '图片转PDF' },
           { icon: FileText, label: '提取Markdown' },
         ].map(({ icon: Icon, label }) => (
-          <div key={label} className="flex items-center gap-2 text-sm text-gray-500 bg-gray-50 rounded-lg px-3 py-2">
-            <Icon className="w-4 h-4 text-gray-400 shrink-0" />
+          <div key={label} className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2">
+            <Icon className="w-4 h-4 text-gray-400 dark:text-gray-500 shrink-0" />
             <span>{label}</span>
           </div>
         ))}

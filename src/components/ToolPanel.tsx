@@ -26,7 +26,7 @@ export default function ToolPanel() {
       <div className="flex-1 flex items-center justify-center">
         <div className="text-center">
           <p className="text-gray-400 text-sm">从上方工具栏选择一个操作</p>
-          <p className="text-gray-300 text-xs mt-1">
+          <p className="text-gray-300 dark:text-gray-600 text-xs mt-1">
             {files.length > 0 ? '当前已加载 ' + files.length + ' 个文件' : '请先导入 PDF 文件'}
           </p>
         </div>

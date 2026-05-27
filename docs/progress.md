@@ -149,6 +149,96 @@ Image files for Feature B managed in local component state (not AppContext, whic
 
 *Ready for implementation.*
 
-### Phase 4: Polish & Extras ⬜
+## Phase 4: Polish & Extras ✅
 
-*Not started.*
+### 2026-05-27 — Dark Mode
+
+**Goal**: Full dark mode with class-based toggle, system preference detection, and localStorage persistence.
+
+**Commits**:
+- *(current)* — feat: Phase 4 Dark Mode
+
+**Implemented**:
+- `ThemeContext` — theme state (`light` | `dark` | `system`), toggle, localStorage persistence, `prefers-color-scheme` listener
+- `ThemeToggle` — Sun/Moon icon button in header
+
+**Files created**:
+| File | Purpose |
+|---|---|
+| `src/contexts/ThemeContext.tsx` | Theme provider + `useTheme` hook |
+| `src/components/ThemeToggle.tsx` | Toggle button (Sun/Moon icons) |
+
+**Files modified with `dark:` variants**:
+| File | Changes |
+|---|---|
+| `src/index.css` | `@custom-variant dark`, scrollbar dark colors |
+| `src/main.tsx` | Wrapped with `<ThemeProvider>` |
+| `src/components/Header.tsx` | Added ThemeToggle, dark variants for header/border/buttons |
+| `src/App.tsx` | Sidebar background + border dark variants |
+| `src/components/EmptyState.tsx` | Border, hover, icon bg, feature card dark variants |
+| `src/components/FileList.tsx` | Item selected/normal states, remove button, empty state |
+| `src/components/FileDropzone.tsx` | Compact + full mode border, hover, icon, text |
+| `src/components/ThumbnailGrid.tsx` | Container, canvas wrapper, error placeholder, no-file state |
+| `src/components/ToolPanel.tsx` | Hint text colors |
+| `src/components/tools/MergeTool.tsx` | File cards, move buttons, disabled state |
+| `src/components/tools/SplitTool.tsx` | Mode toggles, inputs, range rows, disabled buttons |
+| `src/components/tools/DeleteTool.tsx` | Mode toggles, page grid (selected/unselected), input |
+| `src/components/tools/RotateTool.tsx` | Angle/scope toggles, page grid (blue selected), input |
+| `src/components/tools/PdfToImageTool.tsx` | Scope/format/DPI toggles, input, progress bar |
+| `src/components/tools/ImageToPdfTool.tsx` | Empty dropzone, image cards, page-size toggle |
+| `src/components/tools/PdfToMdTool.tsx` | Copy/download/reset buttons, textarea, progress bar |
+| `src/lib/desktop.ts` | Added `getSystemTheme()` (Tauri theme detection) |
+
+**Color mapping**:
+| Element | Light | Dark |
+|---|---|---|
+| Page background | `white` / `gray-50` | `gray-900` |
+| Card/surface | `white` | `gray-800` |
+| Borders | `gray-200` | `gray-700` |
+| Primary text | `gray-800` / `gray-700` | `gray-100` / `gray-200` |
+| Secondary text | `gray-400` / `gray-500` | unchanged |
+| Active accent | `red-50` / `red-700` / `red-200` | `red-900/30` / `red-400` / `red-800` |
+| Hover bg | `gray-100` | `gray-800` |
+| Dashed border | `gray-300` | `gray-600` |
+| Selected (blue) | `blue-100` / `blue-700` / `blue-300` | `blue-900/30` / `blue-400` / `blue-700` |
+
+**Verification**:
+- `tsc --noEmit` ✅
+- `npm run build` ✅
+
+**Theme behavior**:
+- Default: follows `prefers-color-scheme` system preference
+- Manual toggle: sun/moon button in header — saves to `localStorage` as `pdfx-theme`
+- Three states: `light`, `dark`, `system` (follows OS)
+- Live update: when in `system` mode, changing OS theme updates the app instantly
+
+---
+
+### Remaining Phase 4 Features
+
+**Features** (in recommended order):
+1. ✅ **Dark Mode** — Completed
+2. ⬜ Keyboard Shortcuts — `useKeyboardShortcuts` hook, `src/lib/shortcuts.ts`
+3. ⬜ Page Numbering — pdf-lib `drawText()` footer overlays
+4. ⬜ Watermark — pdf-lib rotated semi-transparent text
+5. ⬜ i18n (EN/CN) — Custom Context-based i18n, `src/i18n/`, ~15 files with `t()` calls
+6. ⬜ Drag-and-Drop Page Reordering — Native HTML5 DnD or @dnd-kit
+7. ⬜ Compress PDF — pdf-lib object streams + optional image re-encoding via canvas
+8. ⬜ Batch Processing Queue — Sequential queue with progress tracking (contingent on demand)
+
+---
+
+## Phase 3: Conversion Features 🚧 (Planned)
+
+**Goal**: PDF ↔ Image, PDF → Markdown conversion (browser-side).
+
+**Plan**:
+- Feature A: PDF → Image (canvas render → PNG/JPEG download)
+- Feature B: Image → PDF (pdf-lib embedPng/Jpg → multi-page PDF)
+- Feature C: PDF → Markdown (pdfjs text extraction → positional Markdown reconstruction)
+- Feature D: PDF → Word/Excel — postponed (post-MVP, desktop-only via LibreOffice)
+
+**Key decision**: 0 new npm dependencies — all 3 browser features reuse pdfjs-dist, pdf-lib, and jszip.
+Image files for Feature B managed in local component state (not AppContext, which is PDF-only).
+
+*Already implemented during Phase 3 — see above for details.*

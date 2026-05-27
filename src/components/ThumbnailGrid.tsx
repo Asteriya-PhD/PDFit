@@ -14,7 +14,7 @@ export default function ThumbnailGrid() {
 
   if (!activeFile) {
     return (
-      <div className="h-32 border-t border-gray-200 bg-gray-50 flex items-center justify-center text-sm text-gray-400 shrink-0">
+      <div className="h-32 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 flex items-center justify-center text-sm text-gray-400 dark:text-gray-500 shrink-0">
         选择文件以查看预览
       </div>
     )
@@ -25,7 +25,7 @@ export default function ThumbnailGrid() {
 
   return (
     <div
-      className="border-t border-gray-200 bg-gray-50 shrink-0 flex flex-col transition-all duration-200"
+      className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 shrink-0 flex flex-col transition-all duration-200"
       style={{ height: stripH, minHeight: stripH, maxHeight: stripH }}
     >
       <div className="flex items-center justify-between px-4 py-1.5 shrink-0">
@@ -34,7 +34,7 @@ export default function ThumbnailGrid() {
         </span>
         <button
           onClick={() => setExpanded(v => !v)}
-          className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-700 transition-colors"
+          className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
         >
           {expanded ? (
             <><Minimize2 className="w-3.5 h-3.5" /> 收起预览</>
@@ -116,7 +116,7 @@ function PagePreview({
   if (error) {
     return (
       <div
-        className="bg-white rounded border border-dashed border-gray-300 flex items-center justify-center shrink-0 text-xs text-gray-400"
+        className="bg-white dark:bg-gray-800 rounded border border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center shrink-0 text-xs text-gray-400"
         style={{ width: targetPx * 0.7, height: targetPx }}
       >
         加载失败
@@ -126,7 +126,7 @@ function PagePreview({
 
   return (
     <div className="flex flex-col items-center gap-1 shrink-0">
-      <div className="bg-white rounded border border-gray-200 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
         <canvas
           ref={canvasRef}
           className="block"

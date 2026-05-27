@@ -19,7 +19,7 @@ export default function App() {
         </div>
       ) : (
         <div className="flex-1 flex overflow-hidden">
-          <aside className="w-72 border-r border-gray-200 bg-white flex flex-col shrink-0">
+          <aside className="w-72 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 flex flex-col shrink-0">
             <FileDropzone compact />
             <FileList />
           </aside>

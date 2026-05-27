@@ -42,3 +42,18 @@ export function getPlatform(): 'windows' | 'macos' | 'linux' | 'web' {
   
   return 'web';
 }
+
+/**
+ * Check if the OS is in dark mode (Tauri desktop only).
+ * Returns null when running on web (no Tauri API available).
+ */
+export async function getSystemTheme(): Promise<'light' | 'dark' | null> {
+  if (!isDesktop()) return null
+  try {
+    const { getCurrentWindow } = await import('@tauri-apps/api/window')
+    const theme = await getCurrentWindow().theme()
+    return theme ?? null
+  } catch {
+    return null
+  }
+}
