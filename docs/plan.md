@@ -227,7 +227,7 @@ Each feature is independently revertible (one commit per feature). If a feature 
 
 ---
 
-### Phase 4: Polish & Extras ⬜
+### Phase 4: Polish & Extras ✅ (Dark Mode, Shortcuts, Page Numbering completed)
 
 **Goal**: Elevate the app from functional to polished — dark mode, i18n, UX shortcuts, and advanced PDF manipulations.
 
@@ -351,7 +351,7 @@ Dark Mode ─→ Keyboard Shortcuts ─→ Page Numbering ─→ Watermark ─�
 
 ---
 
-#### Feature 3: Page Numbering
+#### Feature 3: Page Numbering ✅
 
 **Goal**: Add page numbers as footer overlays to PDF pages before download.
 
@@ -359,23 +359,24 @@ Dark Mode ─→ Keyboard Shortcuts ─→ Page Numbering ─→ Watermark ─�
 - pdf-lib `page.drawText()` to render page numbers at configurable positions
 - Operates as a post-processing step on the output PDF of any operation
 - Or as a standalone tool: load PDF → preview with numbering options → download
-- Options: position (bottom-center / bottom-left / bottom-right / top-center), start number, font size, font color, prefix/suffix ("- 1 -", "Page 1 of N")
+- Options: position (bottom-center / bottom-left / bottom-right / top-center / top-left / top-right), start number, font size, font color, prefix/suffix ("- 1 -", "Page 1 of N"), "X of Y" mode
 - Embeds the same standard font (Helvetica) for minimal file size impact
 - `pageNumbering.ts` exports a pure function `addPageNumbers(buffer: ArrayBuffer, options)` → `Uint8Array`
 
-**Files to create/modify**:
+**Files created/modified**:
 
 | File | Action | Purpose |
 |------|--------|---------|
 | `src/lib/pageNumbering.ts` | CREATE | Core engine: draw page numbers on each page |
 | `src/components/tools/PageNumberingTool.tsx` | CREATE | UI: position, font size, start number, preview |
-| `src/types/index.ts` | MODIFY | Add `'page-numbering'` to `ToolType` |
-| `src/components/Header.tsx` | MODIFY | Add nav button |
+| `src/types/index.ts` | MODIFY | Add `'page-numbering'` to `ToolType`, add `PageNumberPosition` + `PageNumberingOptions` types |
+| `src/components/Header.tsx` | MODIFY | Add nav button (Hash icon) |
 | `src/components/ToolPanel.tsx` | MODIFY | Add route entry |
+| `src/lib/shortcuts.ts` | MODIFY | Add `Ctrl+Shift+N` shortcut, insert at TOOL_ORDER index 4 |
 | `src/components/EmptyState.tsx` | MODIFY | Add feature badge |
 
 **UI states**:
-- **File loaded, default**: Position selector (bottom-center / bottom-left / etc.), font size slider, start number input, prefix/suffix input
+- **File loaded, default**: Position grid (6 options), font size picker (8–24px), color presets + custom, start number input, prefix/suffix input, "X of Y" toggle, live preview
 - **Loading**: Processing overlay
 - **Success**: Download numbered PDF
 - **Error**: Message with error details

@@ -3,6 +3,7 @@ import MergeTool from '@/components/tools/MergeTool'
 import SplitTool from '@/components/tools/SplitTool'
 import DeleteTool from '@/components/tools/DeleteTool'
 import RotateTool from '@/components/tools/RotateTool'
+import PageNumberingTool from '@/components/tools/PageNumberingTool'
 import PdfToImageTool from '@/components/tools/PdfToImageTool'
 import ImageToPdfTool from '@/components/tools/ImageToPdfTool'
 import PdfToMdTool from '@/components/tools/PdfToMdTool'
@@ -16,6 +17,7 @@ export default function ToolPanel() {
     split: <SplitTool />,
     delete: <DeleteTool />,
     rotate: <RotateTool />,
+    'page-numbering': <PageNumberingTool />,
     'pdf-to-image': <PdfToImageTool />,
     'image-to-pdf': <ImageToPdfTool />,
     'pdf-to-md': <PdfToMdTool />,

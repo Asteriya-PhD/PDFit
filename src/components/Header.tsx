@@ -1,6 +1,6 @@
 import { useApp } from '@/contexts/AppContext'
 import type { ToolType } from '@/types'
-import { Combine, Split, Trash2, RotateCw, FileText, Image, FileImage } from 'lucide-react'
+import { Combine, Split, Trash2, RotateCw, FileText, Image, FileImage, Hash } from 'lucide-react'
 import ThemeToggle from '@/components/ThemeToggle'
 
 const tools: { type: ToolType; label: string; icon: typeof Combine }[] = [
@@ -8,6 +8,7 @@ const tools: { type: ToolType; label: string; icon: typeof Combine }[] = [
   { type: 'split', label: '分割', icon: Split },
   { type: 'delete', label: '删除页面', icon: Trash2 },
   { type: 'rotate', label: '旋转', icon: RotateCw },
+  { type: 'page-numbering', label: '页码', icon: Hash },
   { type: 'pdf-to-image', label: 'PDF转图片', icon: Image },
   { type: 'image-to-pdf', label: '图片转PDF', icon: FileImage },
   { type: 'pdf-to-md', label: '提取Markdown', icon: FileText },

@@ -262,12 +262,54 @@ Image files for Feature B managed in local component state (not AppContext, whic
 
 ---
 
+### 2026-05-27 — Page Numbering
+
+**Goal**: Add page numbers as configurable overlays to PDF pages before download.
+
+**Commits**:
+- *(current)* — feat: Phase 4 Page Numbering — pdf-lib drawText footer/header overlays
+
+**Implemented**:
+- `src/lib/pageNumbering.ts` — Pure function `addPageNumbers(buffer, options)`: embeds Helvetica font, draws text on each page at configurable position/size/color
+- `src/components/tools/PageNumberingTool.tsx` — UI: position grid (6 options), font size picker (8–24pt), color presets + custom picker, start number, prefix/suffix, "Page X of Y" toggle, live preview
+
+**Options**:
+| Option | Default | Values |
+|--------|---------|--------|
+| Position | `bottom-center` | bottom-center/left/right, top-center/left/right |
+| Font size | 12px | 8, 10, 12, 14, 16, 20, 24 |
+| Color | `#000000` | 6 presets + custom color picker |
+| Start number | 1 | 1+ |
+| Prefix/Suffix | '' | Free text (e.g., `- 1 -`, `Page 1`) |
+| Show total pages | off | `1 / 10` format |
+
+**Files created**:
+| File | Purpose |
+|---|---|
+| `src/lib/pageNumbering.ts` | Core engine: draw page numbers on each page |
+| `src/components/tools/PageNumberingTool.tsx` | UI: position, font size, start number, preview, download |
+
+**Files modified**:
+| File | Changes |
+|---|---|
+| `src/types/index.ts` | Added `'page-numbering'` to `ToolType`, `PageNumberPosition`, `PageNumberingOptions` |
+| `src/components/Header.tsx` | Added nav button (# icon) between Rotate and PDF→Image |
+| `src/components/ToolPanel.tsx` | Added `<PageNumberingTool />` route entry |
+| `src/lib/shortcuts.ts` | Added `Ctrl+Shift+N` shortcut; inserted `page-numbering` at TOOL_ORDER index 4 |
+| `src/components/EmptyState.tsx` | Added "添加页码" badge |
+
+**Verification**:
+- `tsc --noEmit` ✅
+- `npm run build` ✅
+
+---
+
 ### Remaining Phase 4 Features
 
 **Features** (in recommended order):
 1. ✅ **Dark Mode** — Completed
 2. ✅ **Keyboard Shortcuts** — Completed
-3. ⬜ Page Numbering — pdf-lib `drawText()` footer overlays
+3. ✅ **Page Numbering** — Completed
 4. ⬜ Watermark — pdf-lib rotated semi-transparent text
 5. ⬜ i18n (EN/CN) — Custom Context-based i18n, `src/i18n/`, ~15 files with `t()` calls
 6. ⬜ Drag-and-Drop Page Reordering — Native HTML5 DnD or @dnd-kit

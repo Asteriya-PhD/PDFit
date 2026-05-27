@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-PDFit is a privacy-first, browser-based PDF manipulation tool. All operations run locally in the browser — no files are ever uploaded to a server. Supports split, merge, delete pages, rotate pages, PDF↔Image conversion, and Markdown extraction. Currently in Phase 4 (Polish & Extras).
+PDFit is a privacy-first, browser-based PDF manipulation tool. All operations run locally in the browser — no files are ever uploaded to a server. Supports split, merge, delete pages, rotate pages, page numbering, PDF↔Image conversion, and Markdown extraction. Currently in Phase 4 (Polish & Extras).
 
 ## Tech Stack
 
@@ -31,6 +31,7 @@ PDFit/
 │   ├── lib/
 │   │   ├── pdfEngine.ts          # Core PDF operations (pure functions)
 │   │   ├── pdfToImage.ts         # PDF page → canvas → PNG/JPEG blob
+│   │   ├── pageNumbering.ts      # Add page number overlays via pdf-lib
 │   │   ├── imageToPdf.ts         # Image files → PDF document
 │   │   ├── pdfToMarkdown.ts      # PDF text extraction → Markdown
 │   │   ├── pdfWorker.ts          # Centralized pdfjs worker initialization
@@ -58,6 +59,7 @@ PDFit/
 │           ├── SplitTool.tsx       # Extract pages + split by ranges
 │           ├── DeleteTool.tsx      # Delete pages (input or click)
 │           ├── RotateTool.tsx      # Rotate 90/180/270 (all or selected)
+│           ├── PageNumberingTool.tsx # Add page number overlays
 │           ├── PdfToImageTool.tsx  # PDF → PNG/JPEG export
 │           ├── ImageToPdfTool.tsx  # Image files → PDF
 │           └── PdfToMdTool.tsx     # PDF → Markdown extraction
@@ -109,10 +111,10 @@ Shortcuts are defined declaratively in `src/lib/shortcuts.ts` as a typed array. 
 
 ## Current Status
 
-- **Phase**: 4 (Polish & Extras — dark mode, keyboard shortcuts; page numbering, watermark, i18n upcoming)
+- **Phase**: 4 (Polish & Extras — dark mode, keyboard shortcuts, page numbering; watermark, i18n upcoming)
 - **Platform**: Web (GitHub Pages) + Desktop (macOS dmg / Windows msi / Linux AppImage)
 - **Deployment**: GitHub Actions auto-deploy (web), `npm run tauri:build` (desktop)
-- **Next up**: Phase 4 remaining — Page Numbering, Watermark, i18n (EN/CN), Drag-and-Drop Reorder
+- **Next up**: Phase 4 remaining — Watermark, i18n (EN/CN), Drag-and-Drop Reorder
 
 ## Conventions
 

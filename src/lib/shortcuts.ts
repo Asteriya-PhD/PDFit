@@ -14,12 +14,13 @@ export interface ShortcutDef {
   label: string
 }
 
-/** Ordered tool list for number-key quick-switch (1-7) */
+/** Ordered tool list for number-key quick-switch */
 export const TOOL_ORDER: ToolType[] = [
   'merge',
   'split',
   'delete',
   'rotate',
+  'page-numbering',
   'pdf-to-image',
   'image-to-pdf',
   'pdf-to-md',
@@ -117,6 +118,16 @@ export const SHORTCUTS: ShortcutDef[] = [
     label: 'Switch to Image→PDF',
   },
 
+  // Ctrl+Shift+N — Page Numbering
+  {
+    key: 'n',
+    ctrl: true,
+    shift: true,
+    alt: false,
+    action: { type: 'SET_TOOL', tool: 'page-numbering' },
+    label: 'Switch to Page Numbering',
+  },
+
   // Ctrl+Shift+M — Extract Markdown
   {
     key: 'm',
@@ -127,6 +138,6 @@ export const SHORTCUTS: ShortcutDef[] = [
     label: 'Switch to Extract Markdown',
   },
 
-  // Numeric shortcuts (1-7)
+  // Numeric shortcuts (1-8)
   ...buildNumericShortcuts(),
 ]
