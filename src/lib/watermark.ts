@@ -4,9 +4,9 @@ import type { WatermarkOptions } from '@/types'
 const DEFAULT_OPTIONS: WatermarkOptions = {
   text: '',
   fontSize: 60,
-  opacity: 0.2,
+  opacity: 0.4,
   rotation: -45,
-  color: '#cccccc',
+  color: '#999999',
   pageScope: 'all',
 }
 

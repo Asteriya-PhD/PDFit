@@ -1,12 +1,15 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useApp } from '@/contexts/AppContext'
 import { useI18n } from '@/i18n'
 import { addWatermark } from '@/lib/watermark'
 import { triggerDownload } from '@/lib/download'
 import { Download } from 'lucide-react'
+import '@/lib/pdfWorker'
+import { getDocument } from 'pdfjs-dist'
 
 const FONT_SIZES = [24, 36, 48, 60, 72, 96, 120]
 const COLOR_PRESETS = ['#cccccc', '#999999', '#666666', '#333333', '#e53e3e', '#3182ce']
+const PREVIEW_HEIGHT = 320
 
 export default function WatermarkTool() {
   const { files, activeFileId, setLoading, loading } = useApp()
@@ -15,11 +18,18 @@ export default function WatermarkTool() {
 
   const [text, setText] = useState('')
   const [fontSize, setFontSize] = useState(60)
-  const [opacity, setOpacity] = useState(0.2)
+  const [opacity, setOpacity] = useState(0.4)
   const [rotation, setRotation] = useState(-45)
-  const [color, setColor] = useState('#cccccc')
+  const [color, setColor] = useState('#999999')
   const [pageScope, setPageScope] = useState<'all' | 'custom'>('all')
   const [customPages, setCustomPages] = useState('')
+
+  // Preview state
+  const pdfCanvasRef = useRef<HTMLCanvasElement>(null)
+  const overlayCanvasRef = useRef<HTMLCanvasElement>(null)
+  const [previewSize, setPreviewSize] = useState({ w: 0, h: 0, scale: 1 })
+  const [previewReady, setPreviewReady] = useState(false)
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(null)
 
   if (!activeFile) {
     return (
@@ -61,6 +71,90 @@ export default function WatermarkTool() {
     }
   }
 
+  // Render PDF first page for preview
+  useEffect(() => {
+    let cancelled = false
+    const canvas = pdfCanvasRef.current
+    if (!canvas || !activeFile) return
+
+    setPreviewReady(false)
+
+    ;(async () => {
+      try {
+        const pdf = await getDocument({ data: activeFile.arrayBuffer.slice(0) }).promise
+        if (cancelled) return
+
+        const page = await pdf.getPage(1)
+        if (cancelled) return
+
+        const rotationAngle = page.rotate
+        const unscaled = page.getViewport({ scale: 1, rotation: rotationAngle })
+        const renderScale = PREVIEW_HEIGHT / unscaled.height
+        const viewport = page.getViewport({ scale: renderScale, rotation: rotationAngle })
+
+        canvas.width = viewport.width
+        canvas.height = viewport.height
+
+        const ctx = canvas.getContext('2d')
+        if (!ctx) return
+        ctx.fillStyle = '#fff'
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+        await page.render({ canvasContext: ctx, viewport }).promise
+
+        if (!cancelled) {
+          setPreviewSize({ w: canvas.width, h: canvas.height, scale: renderScale })
+          setPreviewReady(true)
+        }
+      } catch (err) {
+        console.error('Watermark preview render error:', err)
+      }
+    })()
+
+    return () => { cancelled = true }
+  }, [activeFile])
+
+  // Render watermark overlay on parameter change (debounced)
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+
+    if (!previewReady || !text.trim() || previewSize.w === 0) return
+
+    debounceRef.current = setTimeout(() => {
+      const canvas = overlayCanvasRef.current
+      if (!canvas) return
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return
+
+      canvas.width = previewSize.w
+      canvas.height = previewSize.h
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+      const pageWidth = previewSize.w
+      const pageHeight = previewSize.h
+      const scaledFontSize = fontSize * previewSize.scale
+
+      ctx.save()
+      ctx.globalAlpha = opacity
+      ctx.fillStyle = color
+      ctx.font = `${scaledFontSize}px Helvetica, Arial, sans-serif`
+      ctx.textBaseline = 'alphabetic'
+
+      const textWidth = ctx.measureText(text).width
+      const x = (pageWidth - textWidth) / 2
+      const y = pageHeight / 2 + scaledFontSize / 3
+
+      ctx.translate(x, y)
+      ctx.rotate((rotation * Math.PI) / 180)
+      ctx.fillText(text, 0, 0)
+      ctx.restore()
+    }, 200)
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+    }
+  }, [text, fontSize, opacity, rotation, color, previewReady, previewSize])
+
   return (
     <div className="max-w-lg mx-auto">
       <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{t('watermark.title')}</h2>
@@ -69,6 +163,28 @@ export default function WatermarkTool() {
         {t('watermark.currentFile')}<span className="font-medium text-gray-700 dark:text-gray-200">{activeFile.name}</span>
         <span className="text-gray-400 ml-2">{t('watermark.pageCount', { count: activeFile.pageCount })}</span>
       </p>
+
+      {/* Visual Preview */}
+      {previewReady && text.trim() && (
+        <div className="mb-5 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <p className="text-xs text-gray-400 px-3 pt-2 pb-1">{t('watermark.preview')}</p>
+          <div
+            className="relative mx-auto"
+            style={{ width: previewSize.w, height: previewSize.h, maxWidth: '100%' }}
+          >
+            <canvas
+              ref={pdfCanvasRef}
+              className="absolute inset-0 w-full h-full"
+              style={{ objectFit: 'contain' }}
+            />
+            <canvas
+              ref={overlayCanvasRef}
+              className="absolute inset-0 w-full h-full"
+              style={{ objectFit: 'contain' }}
+            />
+          </div>
+        </div>
+      )}
 
       <div className="space-y-5 mb-6">
         {/* Watermark Text */}
@@ -209,26 +325,6 @@ export default function WatermarkTool() {
             />
           )}
         </div>
-
-        {/* Preview */}
-        {text.trim() && (
-          <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-            <p className="text-xs text-gray-400 mb-1">{t('watermark.preview')}</p>
-            <p className="text-sm text-gray-600 dark:text-gray-300 font-mono">
-              {text.trim()}
-              <span className="text-gray-400 ml-1">
-                {t('watermark.previewInfo', {
-                  fontSize,
-                  opacity: Math.round(opacity * 100),
-                  rotation,
-                  pages: pageScope === 'all'
-                    ? t('watermark.previewAll', { count: activeFile.pageCount })
-                    : t('watermark.previewCustom'),
-                })}
-              </span>
-            </p>
-          </div>
-        )}
       </div>
 
       <button
