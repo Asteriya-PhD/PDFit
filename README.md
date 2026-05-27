@@ -14,6 +14,7 @@
 | PDF 转图片 | 将 PDF 页面导出为 PNG/JPEG，支持自定义 DPI |
 | 图片转 PDF | 将 PNG/JPEG/WebP 图片合成为 PDF |
 | 提取 Markdown | 从 PDF 提取文本内容并格式化为 Markdown |
+| 快捷键 | `Ctrl+O` 打开文件，`Ctrl+M/S/D/R/I` 切换工具，`1`-`7` 快速切换，`Esc` 取消选择 |
 
 ## 🚀 在线使用
 

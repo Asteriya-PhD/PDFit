@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-PDFit is a privacy-first, browser-based PDF manipulation tool. All operations run locally in the browser — no files are ever uploaded to a server. Supports split, merge, delete pages, and rotate pages. Currently in Phase 1 (MVP).
+PDFit is a privacy-first, browser-based PDF manipulation tool. All operations run locally in the browser — no files are ever uploaded to a server. Supports split, merge, delete pages, rotate pages, PDF↔Image conversion, and Markdown extraction. Currently in Phase 4 (Polish & Extras).
 
 ## Tech Stack
 
@@ -30,15 +30,24 @@ PDFit/
 │   ├── vite-env.d.ts
 │   ├── lib/
 │   │   ├── pdfEngine.ts          # Core PDF operations (pure functions)
+│   │   ├── pdfToImage.ts         # PDF page → canvas → PNG/JPEG blob
+│   │   ├── imageToPdf.ts         # Image files → PDF document
+│   │   ├── pdfToMarkdown.ts      # PDF text extraction → Markdown
+│   │   ├── pdfWorker.ts          # Centralized pdfjs worker initialization
 │   │   ├── desktop.ts            # Desktop environment detection
 │   │   ├── tauri.ts              # File dialog abstraction (desktop/web)
-│   │   └── download.ts           # Cross-platform download helper
+│   │   ├── download.ts           # Cross-platform download helper
+│   │   └── shortcuts.ts          # Keyboard shortcut definitions
+│   ├── hooks/
+│   │   └── useKeyboardShortcuts.ts  # Global keydown listener hook
 │   ├── types/
 │   │   └── index.ts              # Shared type definitions
 │   ├── contexts/
-│   │   └── AppContext.tsx         # Global state (useReducer)
+│   │   ├── AppContext.tsx         # Global state (useReducer)
+│   │   └── ThemeContext.tsx       # Theme state (light/dark/system)
 │   └── components/
-│       ├── Header.tsx             # Navigation + tool selector
+│       ├── Header.tsx             # Navigation + tool selector + ThemeToggle
+│       ├── ThemeToggle.tsx        # Sun/Moon theme switch
 │       ├── EmptyState.tsx         # Landing page / dropzone
 │       ├── FileDropzone.tsx       # Drag-and-drop + file picker
 │       ├── FileList.tsx           # Loaded files sidebar
@@ -48,7 +57,10 @@ PDFit/
 │           ├── MergeTool.tsx       # Merge with reorder
 │           ├── SplitTool.tsx       # Extract pages + split by ranges
 │           ├── DeleteTool.tsx      # Delete pages (input or click)
-│           └── RotateTool.tsx      # Rotate 90/180/270 (all or selected)
+│           ├── RotateTool.tsx      # Rotate 90/180/270 (all or selected)
+│           ├── PdfToImageTool.tsx  # PDF → PNG/JPEG export
+│           ├── ImageToPdfTool.tsx  # Image files → PDF
+│           └── PdfToMdTool.tsx     # PDF → Markdown extraction
 ├── src-tauri/
 │   ├── Cargo.toml                # Rust dependencies (tauri + plugins)
 │   ├── build.rs                  # Tauri build script
@@ -92,12 +104,15 @@ The `src/lib/` desktop layer (`desktop.ts`, `tauri.ts`, `download.ts`) auto-dete
 ### 7. VITE_BASE env var for dual deployment
 Web deploys to GitHub Pages at `/PDFit/`. Tauri WebView needs base `/`. The `vite.config.ts` uses `process.env.VITE_BASE || '/PDFit/'`, and `tauri.conf.json` sets `VITE_BASE=/` in `beforeBuildCommand`.
 
+### 8. Global keyboard shortcuts via capture-phase keydown hook
+Shortcuts are defined declaratively in `src/lib/shortcuts.ts` as a typed array. The `useKeyboardShortcuts` hook attaches a `capture: true` keydown listener on `window`. Before matching, it checks `document.activeElement` to suppress shortcuts when the user is typing in an `INPUT`/`TEXTAREA`/`SELECT`/`contenteditable`. Each shortcut includes exact modifier state (ctrl/cmd, shift, alt) to prevent e.g. `Ctrl+Shift+M` from matching `Ctrl+M`. All tool shortcuts toggle (pressing the active shortcut deselects the tool), matching the Header button behavior.
+
 ## Current Status
 
-- **Phase**: 2 (Desktop app via Tauri v2 — split/merge/delete/rotate, native installers)
+- **Phase**: 4 (Polish & Extras — dark mode, keyboard shortcuts; page numbering, watermark, i18n upcoming)
 - **Platform**: Web (GitHub Pages) + Desktop (macOS dmg / Windows msi / Linux AppImage)
 - **Deployment**: GitHub Actions auto-deploy (web), `npm run tauri:build` (desktop)
-- **Next up**: Phase 3 — PDF conversion features (PDF→Image, Image→PDF, PDF→Markdown)
+- **Next up**: Phase 4 remaining — Page Numbering, Watermark, i18n (EN/CN), Drag-and-Drop Reorder
 
 ## Conventions
 

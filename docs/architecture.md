@@ -76,9 +76,56 @@ AppContext (useReducer)
     ├──► ThumbnailGrid (preview)
     │       └── pdfjs-dist → canvas rendering
     │
-    └──► downloadBlob()
-            └── Blob URL → <a download>
+    ├──► downloadBlob()
+    │       └── Blob URL → <a download>
+    │
+    └──► useKeyboardShortcuts (capture keydown)
+            └── shortcuts.ts → dispatch to AppContext
 ```
+
+## Keyboard Shortcuts
+
+### Architecture
+
+```
+src/lib/shortcuts.ts          ← Declarative shortcut map (typed array)
+src/hooks/useKeyboardShortcuts.ts  ← Hook: capture-phase keydown listener
+src/App.tsx                   ← Mounts the hook at root
+```
+
+### Dispatch Flow
+
+```
+KeyDown (capture)
+  │
+  ▼
+isEditableTarget? ──Yes──→ ignore
+  │No
+  ▼
+Match against SHORTCUTS[]
+  │  e.key check
+  │  ctrl/meta check
+  │  shift check
+  │  alt check
+  │
+  ▼
+e.preventDefault()
+  │
+  ▼
+handleAction(action)
+  ├── SET_TOOL      → setTool(toggle if active)
+  ├── DESELECT_TOOL → setTool(null)
+  └── OPEN_FILE     → isDesktop() ? Tauri dialog : click hidden <input>
+```
+
+### Key Design Decisions
+
+1. **Declarative shortcut definitions** — `SHORTCUTS[]` is a config array, not scattered switch cases. Easy to add/remove/modify.
+2. **Exact modifier matching** — Each shortcut explicitly lists `ctrl`, `shift`, `alt` booleans. This prevents `Ctrl+Shift+M` from matching `Ctrl+M` (the latter has `shift: false`, and if `e.shiftKey` is true, the match fails).
+3. **Editable-target suppression** — `isEditableTarget()` checks `document.activeElement` before any matching. Shortcuts never fire while typing.
+4. **Toggle semantics** — All tool shortcuts toggle (press again to deselect), matching Header button behavior exactly.
+5. **Cross-platform Ctrl/Cmd** — The check uses `e.ctrlKey || e.metaKey`, so both Windows (`Ctrl`) and Mac (`Cmd`) work for the same shortcut.
+6. **Tauri-aware file open** — `Ctrl+O` calls `isDesktop()` and routes to Tauri native dialog or DOM file picker accordingly.
 
 ## Core Engine API (`src/lib/pdfEngine.ts`)
 

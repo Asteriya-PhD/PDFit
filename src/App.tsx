@@ -5,8 +5,10 @@ import FileList from '@/components/FileList'
 import ThumbnailGrid from '@/components/ThumbnailGrid'
 import ToolPanel from '@/components/ToolPanel'
 import EmptyState from '@/components/EmptyState'
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 
 export default function App() {
+  useKeyboardShortcuts()
   const { files } = useApp()
 
   return (

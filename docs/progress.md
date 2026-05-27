@@ -109,7 +109,7 @@ src/lib/
 #### 2026-05-26 — Phase 2 Bug Fixes & Polish
 
 **Commits**:
-- *(current)* — Phase 2 fixes: edition, CLI deps, multi-file dialog, project docs
+- *(included in Phase 2 commit history)* — Phase 2 fixes: edition, CLI deps, multi-file dialog, project docs
 
 **Fixes**:
 
@@ -156,7 +156,7 @@ Image files for Feature B managed in local component state (not AppContext, whic
 **Goal**: Full dark mode with class-based toggle, system preference detection, and localStorage persistence.
 
 **Commits**:
-- *(current)* — feat: Phase 4 Dark Mode
+- `be566c4` — feat: Phase 4 Dark Mode — class-based theme toggle with system preference detection
 
 **Implemented**:
 - `ThemeContext` — theme state (`light` | `dark` | `system`), toggle, localStorage persistence, `prefers-color-scheme` listener
@@ -214,31 +214,62 @@ Image files for Feature B managed in local component state (not AppContext, whic
 
 ---
 
+### 2026-05-27 — Keyboard Shortcuts
+
+**Goal**: Common keyboard shortcuts for faster workflows — tool switching, file open, deselection.
+
+**Commits**:
+- *(current)* — feat: Phase 4 Keyboard Shortcuts
+
+**Implemented**:
+- `src/lib/shortcuts.ts` — Shortcut map definition (`SHORTCUTS[]`) with typed actions (`SET_TOOL`, `DESELECT_TOOL`, `OPEN_FILE`)
+- `src/hooks/useKeyboardShortcuts.ts` — `keydown` listener on `window` (capture phase), editable-target suppression, exact modifier matching, toggle-on-repress behavior matching Header buttons
+
+**Files created**:
+| File | Purpose |
+|---|---|
+| `src/lib/shortcuts.ts` | Shortcut map + `TOOL_ORDER` for numeric quick-switch |
+| `src/hooks/useKeyboardShortcuts.ts` | Hook: listen, match, dispatch |
+
+**Files modified**:
+| File | Changes |
+|---|---|
+| `src/App.tsx` | Mounts `useKeyboardShortcuts()` hook |
+
+**Shortcuts**:
+| Shortcut | Action |
+|---|---|
+| `Ctrl+O` / `Cmd+O` | Open PDF (Tauri native dialog on desktop, `<input>` click on web) |
+| `Escape` | Deselect current tool |
+| `Ctrl+M` / `Cmd+M` | Merge |
+| `Ctrl+S` / `Cmd+S` | Split |
+| `Ctrl+D` / `Cmd+D` | Delete |
+| `Ctrl+R` / `Cmd+R` | Rotate |
+| `Ctrl+I` / `Cmd+I` | PDF→Image |
+| `Ctrl+Shift+I` | Image→PDF |
+| `Ctrl+Shift+M` | Extract Markdown |
+| `1`-`7` | Quick tool switch by Header position |
+
+**Behavior**:
+- Shortcuts suppressed when `INPUT`/`TEXTAREA`/`SELECT`/`contenteditable` is focused
+- `Ctrl+O` uses `isDesktop()` check → Tauri native dialog on desktop, DOM file picker on web
+- All tool shortcuts toggle (pressing active tool again deselects it) — mirrors Header button behavior
+- `Ctrl` matches either `ctrlKey` or `metaKey` (cross-platform Cmd/Ctrl)
+
+**Verification**:
+- `tsc --noEmit` ✅
+- `npm run build` ✅
+
+---
+
 ### Remaining Phase 4 Features
 
 **Features** (in recommended order):
 1. ✅ **Dark Mode** — Completed
-2. ⬜ Keyboard Shortcuts — `useKeyboardShortcuts` hook, `src/lib/shortcuts.ts`
+2. ✅ **Keyboard Shortcuts** — Completed
 3. ⬜ Page Numbering — pdf-lib `drawText()` footer overlays
 4. ⬜ Watermark — pdf-lib rotated semi-transparent text
 5. ⬜ i18n (EN/CN) — Custom Context-based i18n, `src/i18n/`, ~15 files with `t()` calls
 6. ⬜ Drag-and-Drop Page Reordering — Native HTML5 DnD or @dnd-kit
 7. ⬜ Compress PDF — pdf-lib object streams + optional image re-encoding via canvas
 8. ⬜ Batch Processing Queue — Sequential queue with progress tracking (contingent on demand)
-
----
-
-## Phase 3: Conversion Features 🚧 (Planned)
-
-**Goal**: PDF ↔ Image, PDF → Markdown conversion (browser-side).
-
-**Plan**:
-- Feature A: PDF → Image (canvas render → PNG/JPEG download)
-- Feature B: Image → PDF (pdf-lib embedPng/Jpg → multi-page PDF)
-- Feature C: PDF → Markdown (pdfjs text extraction → positional Markdown reconstruction)
-- Feature D: PDF → Word/Excel — postponed (post-MVP, desktop-only via LibreOffice)
-
-**Key decision**: 0 new npm dependencies — all 3 browser features reuse pdfjs-dist, pdf-lib, and jszip.
-Image files for Feature B managed in local component state (not AppContext, which is PDF-only).
-
-*Already implemented during Phase 3 — see above for details.*
