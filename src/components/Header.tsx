@@ -47,7 +47,7 @@ export default function Header() {
                 className={`
                   flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors
                   ${isActive
-                    ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
+                    ? 'bg-red-50 dark:bg-blue-900/30 text-red-700 dark:text-blue-400 border border-red-200 dark:border-blue-800'
                     : disabled
                       ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
                       : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-800 dark:hover:text-gray-200'

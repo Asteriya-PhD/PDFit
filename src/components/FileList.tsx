@@ -33,7 +33,7 @@ export default function FileList() {
             className={`
               flex items-center gap-2 px-3 py-2 rounded-md cursor-pointer text-sm transition-colors group
               ${activeFileId === file.id
-                ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
+                ? 'bg-red-50 dark:bg-blue-900/30 text-red-700 dark:text-blue-400 border border-red-200 dark:border-blue-800'
                 : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 border border-transparent'
               }
             `}
