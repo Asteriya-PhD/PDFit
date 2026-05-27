@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { useApp } from '@/contexts/AppContext'
+import { useI18n } from '@/i18n'
 import { mergePDFs } from '@/lib/pdfEngine'
 import { ArrowUpDown, Download } from 'lucide-react'
 
 export default function MergeTool() {
   const { files, setLoading, loading } = useApp()
+  const { t } = useI18n()
   const [order, setOrder] = useState<string[]>(() => files.map(f => f.id))
 
   if (order.length !== files.length || order.some(id => !files.find(f => f.id === id))) {
@@ -27,7 +29,7 @@ export default function MergeTool() {
       const result = await mergePDFs(sorted)
       downloadBlob(result, 'merged.pdf')
     } catch (err) {
-      alert('合并失败: ' + (err instanceof Error ? err.message : '未知错误'))
+      alert(t('merge.error', { message: err instanceof Error ? err.message : t('common.error.default') }))
     } finally {
       setLoading(false)
     }
@@ -35,9 +37,9 @@ export default function MergeTool() {
 
   return (
     <div className="max-w-lg mx-auto">
-      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">合并 PDF</h2>
+      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{t('merge.title')}</h2>
       <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
-        将多个 PDF 文件合并为一个文档。拖拽调整文件顺序。
+        {t('merge.description')}
       </p>
 
       <div className="space-y-2 mb-6">
@@ -49,7 +51,7 @@ export default function MergeTool() {
               <span className="text-sm font-medium text-gray-400 w-6">{index + 1}</span>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-700 dark:text-gray-200 truncate">{file.name}</p>
-                <p className="text-xs text-gray-400">{file.pageCount} 页</p>
+                <p className="text-xs text-gray-400">{t('merge.pageCount', { count: file.pageCount })}</p>
               </div>
               <div className="flex gap-1">
                 <button
@@ -76,10 +78,10 @@ export default function MergeTool() {
         onClick={handleMerge}
         disabled={order.length < 2 || loading}
         className="w-full flex items-center justify-center gap-2 bg-red-600 text-white rounded-lg px-4 py-2.5 text-sm font-medium
-          hover:          bg-red-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
+          hover:bg-red-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
       >
         <Download className="w-4 h-4" />
-        {loading ? '处理中...' : `合并 ${order.length} 个文件`}
+        {loading ? t('merge.loading') : t('merge.button', { count: order.length })}
       </button>
     </div>
   )

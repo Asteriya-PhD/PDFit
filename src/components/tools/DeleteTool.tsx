@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { useApp } from '@/contexts/AppContext'
+import { useI18n } from '@/i18n'
 import { deleteSelectedPages } from '@/lib/pdfEngine'
 import { Download } from 'lucide-react'
 
 export default function DeleteTool() {
   const { files, activeFileId, setLoading, loading } = useApp()
+  const { t } = useI18n()
   const activeFile = files.find(f => f.id === activeFileId)
 
   const [selectMode, setSelectMode] = useState<'manual' | 'select'>('manual')
@@ -14,7 +16,7 @@ export default function DeleteTool() {
   if (!activeFile) {
     return (
       <div className="max-w-lg mx-auto text-center text-gray-400 text-sm py-12">
-        请先选择一个 PDF 文件
+        {t('delete.noFile')}
       </div>
     )
   }
@@ -40,30 +42,29 @@ export default function DeleteTool() {
         })
 
       if (indices.length === 0) {
-        alert('请输入有效的页码')
+        alert(t('delete.error.empty'))
         return
       }
       toDelete = new Set(indices)
     } else {
       if (selectedPages.size === 0) {
-        alert('请选择要删除的页面')
+        alert(t('delete.error.select'))
         return
       }
       toDelete = selectedPages
     }
 
     if (toDelete.size >= activeFile.pageCount) {
-      alert('不能删除所有页面 — PDF 至少保留一页')
+      alert(t('delete.error.allPages'))
       return
     }
 
     setLoading(true)
     try {
       const result = await deleteSelectedPages(activeFile.arrayBuffer, toDelete)
-      const kept = activeFile.pageCount - toDelete.size
       downloadBlob(result, `trimmed_${activeFile.name}`)
     } catch (err) {
-      alert('删除失败: ' + (err instanceof Error ? err.message : '未知错误'))
+      alert(t('delete.error', { message: err instanceof Error ? err.message : t('common.error.default') }))
     } finally {
       setLoading(false)
     }
@@ -80,7 +81,7 @@ export default function DeleteTool() {
 
   return (
     <div className="max-w-lg mx-auto">
-      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">删除页面</h2>
+      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{t('delete.title')}</h2>
 
       <div className="flex gap-2 mb-6">
         <button
@@ -91,7 +92,7 @@ export default function DeleteTool() {
               : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
           }`}
         >
-          输入页码
+          {t('delete.tab.manual')}
         </button>
         <button
           onClick={() => setSelectMode('select')}
@@ -101,36 +102,36 @@ export default function DeleteTool() {
               : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
           }`}
         >
-          点选页面
+          {t('delete.tab.select')}
         </button>
       </div>
 
       <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-        当前文件: <span className="font-medium text-gray-700 dark:text-gray-200">{activeFile.name}</span>
-        <span className="text-gray-400 ml-2">({activeFile.pageCount} 页)</span>
+        {t('delete.currentFile')}<span className="font-medium text-gray-700 dark:text-gray-200">{activeFile.name}</span>
+        <span className="text-gray-400 ml-2">{t('delete.pageCount', { count: activeFile.pageCount })}</span>
       </p>
 
       {selectMode === 'manual' ? (
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-               输入要删除的页码
+              {t('delete.manual.label')}
             </label>
             <p className="text-xs text-gray-400 mb-2">
-              用逗号分隔，支持范围。例: 1,3,5-7
+              {t('delete.manual.hint')}
             </p>
             <input
               type="text"
               value={spec}
               onChange={e => setSpec(e.target.value)}
-              placeholder="例: 1,3,5-7"
+              placeholder={t('delete.manual.placeholder')}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
             />
           </div>
         </div>
       ) : (
         <div className="mb-4">
-          <p className="text-xs text-gray-400 mb-2">点击缩略图选中/取消（红色 = 将要删除）</p>
+          <p className="text-xs text-gray-400 mb-2">{t('delete.select.hint')}</p>
           <div className="grid grid-cols-6 sm:grid-cols-8 gap-2 max-h-64 overflow-y-auto p-2 bg-gray-50 dark:bg-gray-900 rounded-lg">
             {Array.from({ length: activeFile.pageCount }, (_, i) => (
               <button
@@ -149,7 +150,7 @@ export default function DeleteTool() {
             ))}
           </div>
           <p className="text-xs text-gray-400 mt-2">
-            已选 {selectedPages.size} 页，剩余 {activeFile.pageCount - selectedPages.size} 页
+            {t('delete.select.count', { count: selectedPages.size, remaining: activeFile.pageCount - selectedPages.size })}
           </p>
         </div>
       )}
@@ -161,7 +162,7 @@ export default function DeleteTool() {
           hover:bg-red-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
       >
         <Download className="w-4 h-4" />
-        {loading ? '处理中...' : '删除并下载'}
+        {loading ? t('delete.loading') : t('delete.button')}
       </button>
     </div>
   )

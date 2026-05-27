@@ -7,7 +7,21 @@ export interface PDFFileInfo {
   pageCount: number
 }
 
-export type ToolType = 'merge' | 'split' | 'delete' | 'rotate' | 'page-numbering' | 'watermark' | 'pdf-to-image' | 'image-to-pdf' | 'pdf-to-md' | null
+export type ToolType = 'merge' | 'split' | 'delete' | 'rotate' | 'reorder' | 'page-numbering' | 'watermark' | 'pdf-to-image' | 'image-to-pdf' | 'pdf-to-md' | 'mineru' | null
+
+export interface MineruConfig {
+  endpoint: string
+  apiKey: string
+}
+
+export interface MineruTaskStatus {
+  task_id: string
+  status: 'pending' | 'running' | 'done' | 'failed'
+  result?: {
+    markdown: string
+    images?: Record<string, string>
+  }
+}
 
 export interface PageRange {
   start: number // 1-based inclusive

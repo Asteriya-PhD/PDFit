@@ -1,6 +1,7 @@
 import '@/lib/pdfWorker'
 import { useEffect, useRef, useState } from 'react'
 import { useApp } from '@/contexts/AppContext'
+import { useI18n } from '@/i18n'
 import { getDocument } from 'pdfjs-dist'
 import { Maximize2, Minimize2 } from 'lucide-react'
 
@@ -9,13 +10,14 @@ const EXPANDED_HEIGHT = 500
 
 export default function ThumbnailGrid() {
   const { files, activeFileId } = useApp()
+  const { t } = useI18n()
   const activeFile = files.find(f => f.id === activeFileId)
   const [expanded, setExpanded] = useState(false)
 
   if (!activeFile) {
     return (
       <div className="h-32 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 flex items-center justify-center text-sm text-gray-400 dark:text-gray-500 shrink-0">
-        选择文件以查看预览
+        {t('thumbnailGrid.noFile')}
       </div>
     )
   }
@@ -30,16 +32,16 @@ export default function ThumbnailGrid() {
     >
       <div className="flex items-center justify-between px-4 py-1.5 shrink-0">
         <span className="text-xs text-gray-400">
-          {activeFile.name} · 共 {activeFile.pageCount} 页
+          {t('thumbnailGrid.info', { name: activeFile.name, count: activeFile.pageCount })}
         </span>
         <button
           onClick={() => setExpanded(v => !v)}
           className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
         >
           {expanded ? (
-            <><Minimize2 className="w-3.5 h-3.5" /> 收起预览</>
+            <><Minimize2 className="w-3.5 h-3.5" /> {t('thumbnailGrid.collapse')}</>
           ) : (
-            <><Maximize2 className="w-3.5 h-3.5" /> 放大预览</>
+            <><Maximize2 className="w-3.5 h-3.5" /> {t('thumbnailGrid.expand')}</>
           )}
         </button>
       </div>
@@ -68,6 +70,7 @@ function PagePreview({
   pageIndex: number
   targetPx: number
 }) {
+  const { t } = useI18n()
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [error, setError] = useState(false)
   const [size, setSize] = useState({ w: 0, h: 0 })
@@ -119,7 +122,7 @@ function PagePreview({
         className="bg-white dark:bg-gray-800 rounded border border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center shrink-0 text-xs text-gray-400"
         style={{ width: targetPx * 0.7, height: targetPx }}
       >
-        加载失败
+         {t('thumbnailGrid.loadError')}
       </div>
     )
   }

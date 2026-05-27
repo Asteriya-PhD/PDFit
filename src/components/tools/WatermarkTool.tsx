@@ -1,20 +1,16 @@
 import { useState } from 'react'
 import { useApp } from '@/contexts/AppContext'
+import { useI18n } from '@/i18n'
 import { addWatermark } from '@/lib/watermark'
 import { triggerDownload } from '@/lib/download'
 import { Download } from 'lucide-react'
 
 const FONT_SIZES = [24, 36, 48, 60, 72, 96, 120]
-const ROTATIONS = [
-  { value: -45, label: '-45°（斜向）' },
-  { value: 0, label: '0°（水平）' },
-  { value: 45, label: '45°（斜向）' },
-  { value: 90, label: '90°（纵向）' },
-]
 const COLOR_PRESETS = ['#cccccc', '#999999', '#666666', '#333333', '#e53e3e', '#3182ce']
 
 export default function WatermarkTool() {
   const { files, activeFileId, setLoading, loading } = useApp()
+  const { t } = useI18n()
   const activeFile = files.find(f => f.id === activeFileId)
 
   const [text, setText] = useState('')
@@ -28,14 +24,21 @@ export default function WatermarkTool() {
   if (!activeFile) {
     return (
       <div className="max-w-lg mx-auto text-center text-gray-400 text-sm py-12">
-        请先选择一个 PDF 文件
+        {t('watermark.noFile')}
       </div>
     )
   }
 
+  const rotations = [
+    { value: -45, label: t('watermark.rotation.minus45') },
+    { value: 0, label: t('watermark.rotation.zero') },
+    { value: 45, label: t('watermark.rotation.plus45') },
+    { value: 90, label: t('watermark.rotation.ninety') },
+  ]
+
   const handleApply = async () => {
     if (!text.trim()) {
-      alert('请输入水印文字')
+      alert(t('watermark.error.empty'))
       return
     }
     setLoading(true)
@@ -52,7 +55,7 @@ export default function WatermarkTool() {
       const blob = new Blob([result], { type: 'application/pdf' })
       triggerDownload(blob, `watermarked_${activeFile.name}`)
     } catch (err) {
-      alert('添加水印失败: ' + (err instanceof Error ? err.message : '未知错误'))
+      alert(t('watermark.error', { message: err instanceof Error ? err.message : t('common.error.default') }))
     } finally {
       setLoading(false)
     }
@@ -60,22 +63,22 @@ export default function WatermarkTool() {
 
   return (
     <div className="max-w-lg mx-auto">
-      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">添加水印</h2>
+      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{t('watermark.title')}</h2>
 
       <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-        当前文件: <span className="font-medium text-gray-700 dark:text-gray-200">{activeFile.name}</span>
-        <span className="text-gray-400 ml-2">({activeFile.pageCount} 页)</span>
+        {t('watermark.currentFile')}<span className="font-medium text-gray-700 dark:text-gray-200">{activeFile.name}</span>
+        <span className="text-gray-400 ml-2">{t('watermark.pageCount', { count: activeFile.pageCount })}</span>
       </p>
 
       <div className="space-y-5 mb-6">
         {/* Watermark Text */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">水印文字</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('watermark.text.label')}</label>
           <input
             type="text"
             value={text}
             onChange={e => setText(e.target.value)}
-            placeholder="请输入水印文字，如: CONFIDENTIAL"
+            placeholder={t('watermark.text.placeholder')}
             maxLength={100}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
           />
@@ -83,7 +86,7 @@ export default function WatermarkTool() {
 
         {/* Font Size */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">字号</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('watermark.fontSize')}</label>
           <div className="flex gap-2 flex-wrap">
             {FONT_SIZES.map(s => (
               <button
@@ -104,7 +107,7 @@ export default function WatermarkTool() {
         {/* Opacity */}
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-            透明度: {Math.round(opacity * 100)}%
+            {t('watermark.opacity', { value: Math.round(opacity * 100) })}
           </label>
           <input
             type="range"
@@ -115,16 +118,16 @@ export default function WatermarkTool() {
             className="w-full accent-red-600"
           />
           <div className="flex justify-between text-xs text-gray-400 mt-1">
-            <span>淡</span>
-            <span>浓</span>
+            <span>{t('watermark.opacityLow')}</span>
+            <span>{t('watermark.opacityHigh')}</span>
           </div>
         </div>
 
         {/* Rotation */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">旋转角度</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('watermark.rotation')}</label>
           <div className="grid grid-cols-4 gap-2">
-            {ROTATIONS.map(r => (
+            {rotations.map(r => (
               <button
                 key={r.value}
                 onClick={() => setRotation(r.value)}
@@ -142,7 +145,7 @@ export default function WatermarkTool() {
 
         {/* Color */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">颜色</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('watermark.color')}</label>
           <div className="flex gap-2 items-center">
             {COLOR_PRESETS.map(c => (
               <button
@@ -154,7 +157,7 @@ export default function WatermarkTool() {
                     : 'border-transparent hover:scale-110'
                 }`}
                 style={{ backgroundColor: c }}
-                aria-label={`颜色 ${c}`}
+                aria-label={t('watermark.colorLabel', { value: c })}
               />
             ))}
             <label className="relative ml-1 cursor-pointer">
@@ -173,7 +176,7 @@ export default function WatermarkTool() {
 
         {/* Page Scope */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">应用范围</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('watermark.scopeLabel')}</label>
           <div className="flex gap-2 mb-2">
             <button
               onClick={() => setPageScope('all')}
@@ -183,7 +186,7 @@ export default function WatermarkTool() {
                   : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
-              全部页面
+              {t('watermark.scope.all')}
             </button>
             <button
               onClick={() => setPageScope('custom')}
@@ -193,7 +196,7 @@ export default function WatermarkTool() {
                   : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
-              指定页面
+              {t('watermark.scope.custom')}
             </button>
           </div>
           {pageScope === 'custom' && (
@@ -201,7 +204,7 @@ export default function WatermarkTool() {
               type="text"
               value={customPages}
               onChange={e => setCustomPages(e.target.value)}
-              placeholder="如: 1,3,5-7（共 {activeFile.pageCount} 页）"
+              placeholder={t('watermark.scopePlaceholder', { count: activeFile.pageCount })}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
             />
           )}
@@ -210,14 +213,18 @@ export default function WatermarkTool() {
         {/* Preview */}
         {text.trim() && (
           <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-            <p className="text-xs text-gray-400 mb-1">预览效果</p>
+            <p className="text-xs text-gray-400 mb-1">{t('watermark.preview')}</p>
             <p className="text-sm text-gray-600 dark:text-gray-300 font-mono">
               {text.trim()}
               <span className="text-gray-400 ml-1">
-                · {fontSize}pt · {Math.round(opacity * 100)}% · {rotation}°
-                {pageScope === 'all'
-                  ? ` · ${activeFile.pageCount} 页`
-                  : ` · 指定页面`}
+                {t('watermark.previewInfo', {
+                  fontSize,
+                  opacity: Math.round(opacity * 100),
+                  rotation,
+                  pages: pageScope === 'all'
+                    ? t('watermark.previewAll', { count: activeFile.pageCount })
+                    : t('watermark.previewCustom'),
+                })}
               </span>
             </p>
           </div>
@@ -231,7 +238,7 @@ export default function WatermarkTool() {
           hover:bg-red-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
       >
         <Download className="w-4 h-4" />
-        {loading ? '处理中...' : '添加水印并下载'}
+        {loading ? t('watermark.loading') : t('watermark.button')}
       </button>
     </div>
   )

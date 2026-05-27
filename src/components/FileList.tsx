@@ -1,4 +1,5 @@
 import { useApp } from '@/contexts/AppContext'
+import { useI18n } from '@/i18n'
 import { FileText, X, File as FileIcon } from 'lucide-react'
 
 function formatSize(bytes: number): string {
@@ -9,11 +10,12 @@ function formatSize(bytes: number): string {
 
 export default function FileList() {
   const { files, activeFileId, setActiveFile, removeFile } = useApp()
+  const { t } = useI18n()
 
   if (files.length === 0) {
     return (
       <div className="flex-1 flex items-center justify-center text-sm text-gray-400 dark:text-gray-500 p-4">
-        暂无文件
+        {t('fileList.empty')}
       </div>
     )
   }
@@ -21,7 +23,7 @@ export default function FileList() {
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="px-3 py-2 text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider">
-        文件列表 ({files.length})
+        {t('fileList.header', { count: files.length })}
       </div>
       <div className="space-y-0.5 px-2 pb-2">
         {files.map(file => (
@@ -40,7 +42,7 @@ export default function FileList() {
             <div className="flex-1 min-w-0">
               <p className="truncate font-medium">{file.name}</p>
               <p className="text-xs text-gray-400">
-                {file.pageCount} 页 · {formatSize(file.size)}
+                {t('fileList.pageCount', { count: file.pageCount, size: formatSize(file.size) })}
               </p>
             </div>
             <button

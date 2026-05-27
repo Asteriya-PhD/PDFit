@@ -1,11 +1,13 @@
 import { useCallback, useRef } from 'react'
 import { useApp } from '@/contexts/AppContext'
+import { useI18n } from '@/i18n'
 import { Upload } from 'lucide-react'
 import { openFileDialog } from '@/lib/tauri'
 import { isDesktop } from '@/lib/desktop'
 
 export default function FileDropzone({ compact = false }: { compact?: boolean }) {
   const { addFiles } = useApp()
+  const { t } = useI18n()
   const inputRef = useRef<HTMLInputElement>(null)
 
   const handleDrop = useCallback(
@@ -52,7 +54,7 @@ export default function FileDropzone({ compact = false }: { compact?: boolean })
             hover:border-red-300 hover:bg-red-50/30 dark:hover:border-red-500 dark:hover:bg-red-900/20 transition-colors text-sm text-gray-500 dark:text-gray-400"
         >
           <Upload className="w-4 h-4 text-gray-400" />
-          <span>添加 PDF 文件</span>
+          <span>{t('fileDropzone.compact.text')}</span>
         </div>
       </>
     )
@@ -72,8 +74,8 @@ export default function FileDropzone({ compact = false }: { compact?: boolean })
           <Upload className="w-6 h-6 text-red-500" />
         </div>
         <div className="text-center">
-          <p className="text-base font-medium text-gray-600 dark:text-gray-300">拖拽 PDF 到此处</p>
-          <p className="text-sm text-gray-400 mt-1">或点击选择文件</p>
+          <p className="text-base font-medium text-gray-600 dark:text-gray-300">{t('fileDropzone.full.text')}</p>
+          <p className="text-sm text-gray-400 mt-1">{t('fileDropzone.full.hint')}</p>
         </div>
       </div>
     </>

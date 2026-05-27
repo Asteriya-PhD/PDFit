@@ -1,9 +1,11 @@
 import { useCallback } from 'react'
 import { useApp } from '@/contexts/AppContext'
-import { Upload, FileText, Combine, Split, Trash2, RotateCw, Hash, Image, FileImage, Droplets } from 'lucide-react'
+import { useI18n } from '@/i18n'
+import { Upload, FileText, Combine, Split, Trash2, RotateCw, Hash, Image, FileImage, Droplets, Move, FileSpreadsheet } from 'lucide-react'
 
 export default function EmptyState() {
   const { addFiles } = useApp()
+  const { t } = useI18n()
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault()
@@ -36,21 +38,23 @@ export default function EmptyState() {
       </div>
 
       <div className="text-center">
-        <p className="text-lg font-medium text-gray-700 dark:text-gray-200">拖拽 PDF 文件到此处</p>
-        <p className="text-sm text-gray-400 mt-1">或点击选择文件</p>
+        <p className="text-lg font-medium text-gray-700 dark:text-gray-200">{t('emptyState.dropzone.text')}</p>
+        <p className="text-sm text-gray-400 mt-1">{t('emptyState.dropzone.hint')}</p>
       </div>
 
       <div className="grid grid-cols-3 gap-3 w-full mt-2">
         {[
-          { icon: Combine, label: '合并 PDF' },
-          { icon: Split, label: '分割页面' },
-          { icon: Trash2, label: '删除页面' },
-          { icon: RotateCw, label: '旋转页面' },
-          { icon: Hash, label: '添加页码' },
-          { icon: Droplets, label: '添加水印' },
-          { icon: Image, label: 'PDF转图片' },
-          { icon: FileImage, label: '图片转PDF' },
-          { icon: FileText, label: '提取Markdown' },
+          { icon: Combine, label: t('emptyState.feature.merge') },
+          { icon: Split, label: t('emptyState.feature.split') },
+          { icon: Trash2, label: t('emptyState.feature.delete') },
+          { icon: RotateCw, label: t('emptyState.feature.rotate') },
+          { icon: Move, label: t('emptyState.feature.reorder') },
+          { icon: Hash, label: t('emptyState.feature.pageNumbering') },
+          { icon: Droplets, label: t('emptyState.feature.watermark') },
+          { icon: Image, label: t('emptyState.feature.pdfToImage') },
+          { icon: FileImage, label: t('emptyState.feature.imageToPdf') },
+          { icon: FileText, label: t('emptyState.feature.pdfToMd') },
+          { icon: FileSpreadsheet, label: t('emptyState.feature.mineru') },
         ].map(({ icon: Icon, label }) => (
           <div key={label} className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2">
             <Icon className="w-4 h-4 text-gray-400 dark:text-gray-500 shrink-0" />

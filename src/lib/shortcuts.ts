@@ -20,11 +20,13 @@ export const TOOL_ORDER: ToolType[] = [
   'split',
   'delete',
   'rotate',
+  'reorder',
   'page-numbering',
   'watermark',
   'pdf-to-image',
   'image-to-pdf',
   'pdf-to-md',
+  'mineru',
 ]
 
 function buildNumericShortcuts(): ShortcutDef[] {
@@ -89,9 +91,9 @@ export const SHORTCUTS: ShortcutDef[] = [
     label: 'Switch to Delete',
   },
 
-  // Ctrl+R / Cmd+R — Rotate
+  // Ctrl+E / Cmd+E — Rotate (Ctrl+R conflicts with browser reload)
   {
-    key: 'r',
+    key: 'e',
     ctrl: true,
     shift: false,
     alt: false,
@@ -117,6 +119,16 @@ export const SHORTCUTS: ShortcutDef[] = [
     alt: false,
     action: { type: 'SET_TOOL', tool: 'image-to-pdf' },
     label: 'Switch to Image→PDF',
+  },
+
+  // Ctrl+Shift+R — Reorder
+  {
+    key: 'r',
+    ctrl: true,
+    shift: true,
+    alt: false,
+    action: { type: 'SET_TOOL', tool: 'reorder' },
+    label: 'Switch to Reorder',
   },
 
   // Ctrl+Shift+N — Page Numbering

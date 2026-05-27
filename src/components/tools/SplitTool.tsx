@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useApp } from '@/contexts/AppContext'
+import { useI18n } from '@/i18n'
 import { extractPages, splitPDFByRanges, parsePageSpec } from '@/lib/pdfEngine'
 import { Download, Plus, X } from 'lucide-react'
 
@@ -11,6 +12,7 @@ interface RangeInput {
 
 export default function SplitTool() {
   const { files, activeFileId, setLoading, loading } = useApp()
+  const { t } = useI18n()
   const activeFile = files.find(f => f.id === activeFileId)
 
   const [mode, setMode] = useState<'extract' | 'split'>('extract')
@@ -22,7 +24,7 @@ export default function SplitTool() {
   if (!activeFile) {
     return (
       <div className="max-w-lg mx-auto text-center text-gray-400 text-sm py-12">
-        请先选择一个 PDF 文件
+        {t('split.noFile')}
       </div>
     )
   }
@@ -31,7 +33,7 @@ export default function SplitTool() {
     const indices = parsePageSpec(spec, activeFile.pageCount)
 
     if (indices.length === 0) {
-      alert('请输入有效的页码，支持范围如 1,3,5-7')
+      alert(t('split.extract.error'))
       return
     }
 
@@ -40,7 +42,7 @@ export default function SplitTool() {
       const result = await extractPages(activeFile.arrayBuffer, indices)
       downloadBlob(result, `extracted_${activeFile.name}`)
     } catch (err) {
-      alert('提取失败: ' + (err instanceof Error ? err.message : '未知错误'))
+      alert(t('split.error', { message: err instanceof Error ? err.message : t('common.error.default') }))
     } finally {
       setLoading(false)
     }
@@ -55,7 +57,7 @@ export default function SplitTool() {
       .filter(r => !isNaN(r.start) && !isNaN(r.end) && r.start >= 1 && r.end <= activeFile.pageCount && r.start <= r.end)
 
     if (validRanges.length === 0) {
-      alert('请至少输入一个有效的页码范围')
+      alert(t('split.split.error'))
       return
     }
 
@@ -72,7 +74,7 @@ export default function SplitTool() {
         downloadBlob(zipBlob, `${activeFile.name.replace('.pdf', '')}_split.zip`)
       }
     } catch (err) {
-      alert('分割失败: ' + (err instanceof Error ? err.message : '未知错误'))
+      alert(t('split.error', { message: err instanceof Error ? err.message : t('common.error.default') }))
     } finally {
       setLoading(false)
     }
@@ -92,7 +94,7 @@ export default function SplitTool() {
 
   return (
     <div className="max-w-lg mx-auto">
-      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">分割 PDF</h2>
+      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{t('split.title')}</h2>
 
       <div className="flex gap-2 mb-6">
         <button
@@ -103,7 +105,7 @@ export default function SplitTool() {
               : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
           }`}
         >
-          提取页面
+          {t('split.tab.extract')}
         </button>
         <button
           onClick={() => setMode('split')}
@@ -113,29 +115,29 @@ export default function SplitTool() {
               : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
           }`}
         >
-          按范围分割
+          {t('split.tab.split')}
         </button>
       </div>
 
       <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-        当前文件: <span className="font-medium text-gray-700 dark:text-gray-200">{activeFile.name}</span>
-        <span className="text-gray-400 ml-2">({activeFile.pageCount} 页)</span>
+        {t('split.currentFile')}<span className="font-medium text-gray-700 dark:text-gray-200">{activeFile.name}</span>
+        <span className="text-gray-400 ml-2">{t('split.pageCount', { count: activeFile.pageCount })}</span>
       </p>
 
       {mode === 'extract' ? (
         <div className="space-y-4">
           <div>
-<label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-               输入页码
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+              {t('split.extract.label')}
             </label>
             <p className="text-xs text-gray-400 mb-2">
-              用逗号分隔单个页码，用连字符表示范围。例如: 1,3,5-7
+              {t('split.extract.hint')}
             </p>
             <input
               type="text"
               value={spec}
               onChange={e => setSpec(e.target.value)}
-              placeholder="例: 1,3,5-7"
+              placeholder={t('split.extract.placeholder')}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
             />
           </div>
@@ -146,7 +148,7 @@ export default function SplitTool() {
               hover:bg-red-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
           >
             <Download className="w-4 h-4" />
-            {loading ? '处理中...' : '提取所选页面'}
+            {loading ? t('split.loading') : t('split.extract.button')}
           </button>
         </div>
       ) : (
@@ -160,7 +162,7 @@ export default function SplitTool() {
                 max={activeFile.pageCount}
                 value={range.start}
                 onChange={e => updateRange(range.id, 'start', e.target.value)}
-                placeholder="起始页"
+                placeholder={t('split.split.placeholderStart')}
                 className="w-24 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
               />
               <span className="text-gray-400">—</span>
@@ -170,7 +172,7 @@ export default function SplitTool() {
                 max={activeFile.pageCount}
                 value={range.end}
                 onChange={e => updateRange(range.id, 'end', e.target.value)}
-                placeholder="结束页"
+                placeholder={t('split.split.placeholderEnd')}
                 className="w-24 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
               />
               {ranges.length > 1 && (
@@ -188,17 +190,17 @@ export default function SplitTool() {
             onClick={addRange}
             className="flex items-center gap-1 text-sm text-red-600 hover:text-red-700"
           >
-            <Plus className="w-4 h-4" /> 添加范围
+            <Plus className="w-4 h-4" /> {t('split.split.addRange')}
           </button>
 
           <button
             onClick={handleSplit}
-              disabled={loading}
+            disabled={loading}
             className="w-full flex items-center justify-center gap-2 bg-red-600 text-white rounded-lg px-4 py-2.5 text-sm font-medium
               hover:bg-red-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
           >
             <Download className="w-4 h-4" />
-            {loading ? '处理中...' : '分割 PDF'}
+            {loading ? t('split.loading') : t('split.split.button')}
           </button>
         </div>
       )}

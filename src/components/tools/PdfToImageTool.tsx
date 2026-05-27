@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { useApp } from '@/contexts/AppContext'
+import { useI18n } from '@/i18n'
 import { renderPagesToImages, imageExtension, type PdfToImageOptions } from '@/lib/pdfToImage'
 import { parsePageSpec } from '@/lib/pdfEngine'
 import { Download } from 'lucide-react'
 
 export default function PdfToImageTool() {
   const { files, activeFileId, setLoading, loading } = useApp()
+  const { t } = useI18n()
   const activeFile = files.find(f => f.id === activeFileId)
 
   const [pageScope, setPageScope] = useState<'all' | 'custom'>('all')
@@ -18,7 +20,7 @@ export default function PdfToImageTool() {
   if (!activeFile) {
     return (
       <div className="max-w-lg mx-auto text-center text-gray-400 text-sm py-12">
-        请先选择一个 PDF 文件
+        {t('pdfToImage.noFile')}
       </div>
     )
   }
@@ -29,7 +31,7 @@ export default function PdfToImageTool() {
       : parsePageSpec(customSpec, activeFile.pageCount)
 
     if (pages.length === 0) {
-      alert('请输入有效的页码范围')
+      alert(t('pdfToImage.error.page'))
       return
     }
 
@@ -67,7 +69,7 @@ export default function PdfToImageTool() {
         downloadBlob(zipData, `${baseName}_images.zip`)
       }
     } catch (err) {
-      alert('导出失败: ' + (err instanceof Error ? err.message : '未知错误'))
+      alert(t('pdfToImage.error', { message: err instanceof Error ? err.message : t('common.error.default') }))
     } finally {
       setLoading(false)
       setProgress({ done: 0, total: 0 })
@@ -78,17 +80,17 @@ export default function PdfToImageTool() {
 
   return (
     <div className="max-w-lg mx-auto">
-      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">PDF 转图片</h2>
+      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{t('pdfToImage.title')}</h2>
 
       <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-        当前文件: <span className="font-medium text-gray-700 dark:text-gray-200">{activeFile.name}</span>
-        <span className="text-gray-400 ml-2">({activeFile.pageCount} 页)</span>
+        {t('pdfToImage.currentFile')}<span className="font-medium text-gray-700 dark:text-gray-200">{activeFile.name}</span>
+        <span className="text-gray-400 ml-2">{t('pdfToImage.pageCount', { count: activeFile.pageCount })}</span>
       </p>
 
       <div className="space-y-5 mb-6">
         {/* Page selection */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">导出页面</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('pdfToImage.scopeLabel')}</label>
           <div className="flex gap-2 mb-2">
             <button
               onClick={() => setPageScope('all')}
@@ -98,7 +100,7 @@ export default function PdfToImageTool() {
                   : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
-              全部
+              {t('pdfToImage.scopeAll')}
             </button>
             <button
               onClick={() => setPageScope('custom')}
@@ -108,7 +110,7 @@ export default function PdfToImageTool() {
                   : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
-              指定页面
+              {t('pdfToImage.scopeCustom')}
             </button>
           </div>
           {showPageInput && (
@@ -116,7 +118,7 @@ export default function PdfToImageTool() {
               type="text"
               value={customSpec}
               onChange={e => setCustomSpec(e.target.value)}
-              placeholder="例: 1,3,5-7"
+              placeholder={t('pdfToImage.scopePlaceholder')}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
             />
           )}
@@ -124,7 +126,7 @@ export default function PdfToImageTool() {
 
         {/* Format */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">图片格式</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('pdfToImage.format')}</label>
           <div className="flex gap-2">
             <button
               onClick={() => setFormat('png')}
@@ -134,7 +136,7 @@ export default function PdfToImageTool() {
                   : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
-              PNG（无损）
+              {t('pdfToImage.format.png')}
             </button>
             <button
               onClick={() => setFormat('jpeg')}
@@ -144,7 +146,7 @@ export default function PdfToImageTool() {
                   : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
-              JPEG（可压缩）
+              {t('pdfToImage.format.jpeg')}
             </button>
           </div>
         </div>
@@ -153,7 +155,7 @@ export default function PdfToImageTool() {
         {format === 'jpeg' && (
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-              JPEG 质量: {quality}%
+              {t('pdfToImage.jpegQuality', { value: quality })}
             </label>
             <input
               type="range"
@@ -168,7 +170,7 @@ export default function PdfToImageTool() {
 
         {/* DPI */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">分辨率 (DPI)</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('pdfToImage.dpi')}</label>
           <div className="flex gap-2">
             {[72, 150, 200, 300].map(v => (
               <button
@@ -185,10 +187,10 @@ export default function PdfToImageTool() {
             ))}
           </div>
           <p className="text-xs text-gray-400 mt-1">
-            {dpi === 72 && '屏幕分辨率，文件最小'}
-            {dpi === 150 && '推荐，适合大部分用途'}
-            {dpi === 200 && '高分辨率，适合打印'}
-            {dpi === 300 && '极高分辨率，文件较大'}
+            {dpi === 72 && t('pdfToImage.dpi.72')}
+            {dpi === 150 && t('pdfToImage.dpi.150')}
+            {dpi === 200 && t('pdfToImage.dpi.200')}
+            {dpi === 300 && t('pdfToImage.dpi.300')}
           </p>
         </div>
       </div>
@@ -197,10 +199,10 @@ export default function PdfToImageTool() {
       {loading && progress.total > 0 && (
         <div className="mb-4">
           <div className="flex justify-between text-xs text-gray-500 mb-1">
-            <span>处理中 {progress.done}/{progress.total} 页</span>
+            <span>{t('pdfToImage.progress', { done: progress.done, total: progress.total })}</span>
             <span>{Math.round((progress.done / progress.total) * 100)}%</span>
           </div>
-            <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+          <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
             <div
               className="h-full bg-red-600 rounded-full transition-all duration-200"
               style={{ width: `${(progress.done / progress.total) * 100}%` }}
@@ -216,7 +218,7 @@ export default function PdfToImageTool() {
           hover:bg-red-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
       >
         <Download className="w-4 h-4" />
-        {loading ? '处理中...' : '导出图片'}
+        {loading ? t('pdfToImage.loading') : t('pdfToImage.button')}
       </button>
     </div>
   )

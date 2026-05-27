@@ -1,22 +1,27 @@
 import { useApp } from '@/contexts/AppContext'
+import { useI18n } from '@/i18n'
 import type { ToolType } from '@/types'
-import { Combine, Split, Trash2, RotateCw, FileText, Image, FileImage, Hash, Droplets } from 'lucide-react'
+import { Combine, Split, Trash2, RotateCw, Move, FileText, Image, FileImage, Hash, Droplets, FileSpreadsheet } from 'lucide-react'
 import ThemeToggle from '@/components/ThemeToggle'
-
-const tools: { type: ToolType; label: string; icon: typeof Combine }[] = [
-  { type: 'merge', label: '合并', icon: Combine },
-  { type: 'split', label: '分割', icon: Split },
-  { type: 'delete', label: '删除页面', icon: Trash2 },
-  { type: 'rotate', label: '旋转', icon: RotateCw },
-  { type: 'page-numbering', label: '页码', icon: Hash },
-  { type: 'watermark', label: '水印', icon: Droplets },
-  { type: 'pdf-to-image', label: 'PDF转图片', icon: Image },
-  { type: 'image-to-pdf', label: '图片转PDF', icon: FileImage },
-  { type: 'pdf-to-md', label: '提取Markdown', icon: FileText },
-]
+import LocaleToggle from '@/components/LocaleToggle'
 
 export default function Header() {
   const { files, activeTool, setTool } = useApp()
+  const { t } = useI18n()
+
+  const tools: { type: ToolType; label: string; icon: typeof Combine }[] = [
+    { type: 'merge', label: t('header.tool.merge'), icon: Combine },
+    { type: 'split', label: t('header.tool.split'), icon: Split },
+    { type: 'delete', label: t('header.tool.delete'), icon: Trash2 },
+    { type: 'rotate', label: t('header.tool.rotate'), icon: RotateCw },
+    { type: 'reorder', label: t('header.tool.reorder'), icon: Move },
+    { type: 'page-numbering', label: t('header.tool.pageNumbering'), icon: Hash },
+    { type: 'watermark', label: t('header.tool.watermark'), icon: Droplets },
+    { type: 'pdf-to-image', label: t('header.tool.pdfToImage'), icon: Image },
+    { type: 'image-to-pdf', label: t('header.tool.imageToPdf'), icon: FileImage },
+    { type: 'pdf-to-md', label: t('header.tool.pdfToMd'), icon: FileText },
+    { type: 'mineru', label: t('header.tool.mineru'), icon: FileSpreadsheet },
+  ]
 
   return (
     <header className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shrink-0">
@@ -25,7 +30,7 @@ export default function Header() {
           <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
             <FileText className="w-5 h-5 text-white" />
           </div>
-          <span className="font-bold text-lg text-gray-800 dark:text-gray-100">PdfX</span>
+          <span className="font-bold text-lg text-gray-800 dark:text-gray-100">{t('header.title')}</span>
         </div>
 
         <nav className="flex items-center gap-1">
@@ -56,7 +61,8 @@ export default function Header() {
           })}
         </nav>
 
-        <div className="ml-auto">
+        <div className="flex items-center gap-1 ml-auto">
+          <LocaleToggle />
           <ThemeToggle />
         </div>
       </div>

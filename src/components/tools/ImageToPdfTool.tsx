@@ -1,10 +1,12 @@
 import { useState, useCallback, useRef } from 'react'
+import { useI18n } from '@/i18n'
 import { imagesToPdf, type ImageInput, type PageSize } from '@/lib/imageToPdf'
 import { Upload, X, Download, ArrowUpDown } from 'lucide-react'
 
 const ACCEPTED_TYPES = ['image/png', 'image/jpeg', 'image/webp']
 
 export default function ImageToPdfTool() {
+  const { t } = useI18n()
   const [images, setImages] = useState<ImageInput[]>([])
   const [pageSize, setPageSize] = useState<PageSize>('auto')
   const [margin, setMargin] = useState(20)
@@ -14,7 +16,7 @@ export default function ImageToPdfTool() {
   const addImages = useCallback(async (fileList: File[]) => {
     const valid = fileList.filter(f => ACCEPTED_TYPES.includes(f.type))
     if (valid.length !== fileList.length) {
-      alert('仅支持 PNG、JPEG 和 WebP 格式的图片')
+      alert(t('imageToPdf.error.format'))
     }
     const newImages: ImageInput[] = []
     for (const file of valid) {
@@ -26,7 +28,7 @@ export default function ImageToPdfTool() {
       })
     }
     setImages(prev => [...prev, ...newImages])
-  }, [])
+  }, [t])
 
   const removeImage = (id: string) => {
     setImages(prev => {
@@ -74,10 +76,9 @@ export default function ImageToPdfTool() {
       const name = images.length === 1
         ? (images[0]?.file.name.replace(/\.\w+$/, '') ?? 'image') + '.pdf'
         : 'converted_images.pdf'
-      downloadBlob(blob, name
-      )
+      downloadBlob(blob, name)
     } catch (err) {
-      alert('转换失败: ' + (err instanceof Error ? err.message : '未知错误'))
+      alert(t('imageToPdf.error', { message: err instanceof Error ? err.message : t('common.error.default') }))
     } finally {
       setLoading(false)
     }
@@ -86,7 +87,7 @@ export default function ImageToPdfTool() {
   if (images.length === 0) {
     return (
       <div className="max-w-lg mx-auto">
-        <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">图片转 PDF</h2>
+        <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{t('imageToPdf.title')}</h2>
 
         <input
           ref={inputRef}
@@ -108,9 +109,9 @@ export default function ImageToPdfTool() {
             <Upload className="w-7 h-7 text-red-500" />
           </div>
           <div className="text-center">
-            <p className="text-base font-medium text-gray-600 dark:text-gray-300">拖拽图片到此处</p>
-            <p className="text-sm text-gray-400 mt-1">或点击选择文件</p>
-            <p className="text-xs text-gray-300 mt-1">支持 PNG、JPEG、WebP 格式</p>
+            <p className="text-base font-medium text-gray-600 dark:text-gray-300">{t('imageToPdf.empty.text')}</p>
+            <p className="text-sm text-gray-400 mt-1">{t('imageToPdf.empty.hint')}</p>
+            <p className="text-xs text-gray-300 mt-1">{t('imageToPdf.empty.formats')}</p>
           </div>
         </div>
       </div>
@@ -119,7 +120,7 @@ export default function ImageToPdfTool() {
 
   return (
     <div className="max-w-lg mx-auto">
-      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">图片转 PDF</h2>
+      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{t('imageToPdf.title')}</h2>
 
       {/* Thumbnail list */}
       <div className="space-y-2 mb-6">
@@ -149,7 +150,7 @@ export default function ImageToPdfTool() {
             <div className="flex-1 min-w-0">
               <p className="text-sm text-gray-700 dark:text-gray-200 truncate">{img.file.name}</p>
               <p className="text-xs text-gray-400">
-                {(img.file.size / 1024).toFixed(1)} KB · {img.file.type.replace('image/', '')}
+                {t('imageToPdf.sizeInfo', { size: (img.file.size / 1024).toFixed(1), format: img.file.type.replace('image/', '') })}
               </p>
             </div>
             <button
@@ -167,7 +168,7 @@ export default function ImageToPdfTool() {
         onClick={handleClick}
         className="flex items-center gap-1 text-sm text-red-600 hover:text-red-700 mb-6"
       >
-        <Upload className="w-4 h-4" /> 添加更多图片
+        <Upload className="w-4 h-4" /> {t('imageToPdf.addMore')}
       </button>
       <input
         ref={inputRef}
@@ -181,12 +182,12 @@ export default function ImageToPdfTool() {
       {/* Options */}
       <div className="space-y-4 mb-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">页面大小</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('imageToPdf.pageSize')}</label>
           <div className="flex gap-2">
             {([
-              { value: 'auto', label: '自适应' },
-              { value: 'a4', label: 'A4' },
-              { value: 'letter', label: 'Letter' },
+              { value: 'auto', label: t('imageToPdf.pageSize.auto') },
+              { value: 'a4', label: t('imageToPdf.pageSize.a4') },
+              { value: 'letter', label: t('imageToPdf.pageSize.letter') },
             ] as const).map(opt => (
               <button
                 key={opt.value}
@@ -205,7 +206,7 @@ export default function ImageToPdfTool() {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-            边距: {margin}pt
+            {t('imageToPdf.margin', { count: margin })}
           </label>
           <input
             type="range"
@@ -225,7 +226,7 @@ export default function ImageToPdfTool() {
           hover:bg-red-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
       >
         <Download className="w-4 h-4" />
-        {loading ? '处理中...' : `转换为 PDF（${images.length} 张图片）`}
+        {loading ? t('imageToPdf.loading') : t('imageToPdf.button', { count: images.length })}
       </button>
     </div>
   )
