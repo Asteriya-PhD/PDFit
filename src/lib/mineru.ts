@@ -1,4 +1,26 @@
 const STORAGE_KEY = 'pdfx-mineru-config'
+const CONSENT_KEY = 'pdfx-mineru-consent'
+
+export function hasConsent(): boolean {
+  return localStorage.getItem(CONSENT_KEY) === 'true'
+}
+
+export function saveConsent(): void {
+  localStorage.setItem(CONSENT_KEY, 'true')
+}
+
+export function clearConsent(): void {
+  localStorage.removeItem(CONSENT_KEY)
+}
+
+/** Get the API key from env var (VITE_MINERU_API_KEY) */
+export function getBuiltInApiKey(): string | null {
+  try {
+    return import.meta.env.VITE_MINERU_API_KEY || null
+  } catch {
+    return null
+  }
+}
 
 interface PresignedUrl {
   url: string
