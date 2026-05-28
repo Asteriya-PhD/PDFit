@@ -10,17 +10,17 @@ export default function Header() {
   const { t } = useI18n()
 
   const tools: { type: ToolType; label: string; icon: typeof Combine; description: string }[] = [
-    { type: 'merge', label: t('header.tool.merge'), icon: Combine, description: 'Combine multiple PDFs' },
-    { type: 'split', label: t('header.tool.split'), icon: Split, description: 'Extract pages' },
-    { type: 'delete', label: t('header.tool.delete'), icon: Trash2, description: 'Remove pages' },
-    { type: 'rotate', label: t('header.tool.rotate'), icon: RotateCw, description: 'Rotate pages' },
-    { type: 'reorder', label: t('header.tool.reorder'), icon: Move, description: 'Rearrange pages' },
-    { type: 'page-numbering', label: t('header.tool.pageNumbering'), icon: Hash, description: 'Add page numbers' },
-    { type: 'watermark', label: t('header.tool.watermark'), icon: Droplets, description: 'Add watermark' },
-    { type: 'pdf-to-image', label: t('header.tool.pdfToImage'), icon: Image, description: 'Export as images' },
-    { type: 'image-to-pdf', label: t('header.tool.imageToPdf'), icon: FileImage, description: 'Create from images' },
-    { type: 'pdf-to-md', label: t('header.tool.pdfToMd'), icon: FileText, description: 'Extract text' },
-    { type: 'mineru', label: t('header.tool.mineru'), icon: FileSpreadsheet, description: 'AI conversion' },
+    { type: 'merge', label: t('header.tool.merge'), icon: Combine, description: t('header.tool.description.merge') },
+    { type: 'split', label: t('header.tool.split'), icon: Split, description: t('header.tool.description.split') },
+    { type: 'delete', label: t('header.tool.delete'), icon: Trash2, description: t('header.tool.description.delete') },
+    { type: 'rotate', label: t('header.tool.rotate'), icon: RotateCw, description: t('header.tool.description.rotate') },
+    { type: 'reorder', label: t('header.tool.reorder'), icon: Move, description: t('header.tool.description.reorder') },
+    { type: 'page-numbering', label: t('header.tool.pageNumbering'), icon: Hash, description: t('header.tool.description.pageNumbering') },
+    { type: 'watermark', label: t('header.tool.watermark'), icon: Droplets, description: t('header.tool.description.watermark') },
+    { type: 'pdf-to-image', label: t('header.tool.pdfToImage'), icon: Image, description: t('header.tool.description.pdfToImage') },
+    { type: 'image-to-pdf', label: t('header.tool.imageToPdf'), icon: FileImage, description: t('header.tool.description.imageToPdf') },
+    { type: 'pdf-to-md', label: t('header.tool.pdfToMd'), icon: FileText, description: t('header.tool.description.pdfToMd') },
+    { type: 'mineru', label: t('header.tool.mineru'), icon: FileSpreadsheet, description: t('header.tool.description.mineru') },
   ]
 
   return (
