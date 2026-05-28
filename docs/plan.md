@@ -242,7 +242,7 @@ Dark Mode ─→ Keyboard Shortcuts ─→ Page Numbering ─→ Watermark ─�
 | Package | When | Version | Size | Purpose |
 |---------|------|---------|------|---------|
 | `@dnd-kit/core` + `@dnd-kit/sortable` | DnD reordering | latest | ~15KB gzip | Page drag-and-drop |
-| `i18next` + `react-i18next` | i18n | latest | ~15KB gzip | Internationalization |
+| *(custom Context-based)* | i18n | — | 0KB | Internationalization (no dependency needed for 2 locales) |
 
 ---
 
@@ -477,6 +477,13 @@ src/i18n/
 - Custom i18n is lighter than react-i18next but lacks pluralization and interpolation utilities
 - For this app's needs (simple string replacement), custom is sufficient
 - If more than 2 languages are needed later, migrate to i18next
+
+**Post-implementation cleanup (2026-05-28)**:
+- **31 hardcoded English strings eliminated** across 6 components (Header, EmptyState, FileList, ToolPanel, RotateTool, WatermarkTool)
+- **31 new i18n keys** added (EN/CN sync)
+- **Total: ~175 keys per locale**, 0 hardcoded strings remain
+- Tool description tooltips, layout labels, preview captions, status text all internationalized
+- All `t()` keys verified against both locale files
 
 ---
 

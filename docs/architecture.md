@@ -250,6 +250,17 @@ The landing page consists of two distinct zones:
 
 These are rendered as sibling elements rather than a single container, preventing accidental tool selection when clicking feature badges. The feature grid is purely informational.
 
+### i18n (English + Chinese)
+The app uses a custom Context-based i18n system (no react-i18next dependency) for bilingual support:
+
+- **Architecture**: `I18nContext` provides `t(key, params?)` function via `useI18n` hook
+- **Translation files**: TypeScript modules at `src/i18n/en.ts` / `src/i18n/zh.ts` (~175 keys each)
+- **Key format**: Flat dot-separated keys (`{component}.{element}.{variant}`), `{{param}}` interpolation
+- **Locale detection**: `navigator.language` → `localStorage` persistence → manual toggle in header
+- **Fallback chain**: current locale → Chinese → raw key (never shows blank text)
+- **Zero dependencies**: Custom implementation (~30 lines of provider code) avoids adding i18next for 2 locales
+- **Complete coverage**: All user-facing strings use `t()` — verified via automated key comparison between locale files and `t()` usage in source
+
 ### Dark mode color system
 All gray-scale text uses `gray-500` in light mode and `dark:text-gray-400` in dark mode, providing consistent readability across both themes. Active/selected states use red in light mode and blue in dark mode (`blue-900/30` bg, `blue-400` text, `blue-800` border) for sufficient contrast.
 

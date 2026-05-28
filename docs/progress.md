@@ -695,3 +695,36 @@ Image files for Feature B managed in local component state (not AppContext, whic
 - `tsc --noEmit` ✅
 - `npm run build` ✅ (2.02s, zero warnings)
 - LSP diagnostics: 0 errors across all changed files
+
+---
+
+## i18n Completion — Remaining Hardcoded Strings (2026-05-28)
+
+**Goal**: Eliminate all remaining hardcoded English user-facing strings that were missed in the initial i18n pass (Phase 4, Feature 5).
+
+**Audit**: Background agents scanned all 19 component files for hardcoded English/Chinese strings and compared `t()` usage against translation keys. Found **31 hardcoded English strings** across 6 files.
+
+**Fixed strings**:
+
+| Component | Count | Strings |
+|-----------|-------|---------|
+| `Header.tsx` | 11 | Tool description tooltips (e.g., "Combine multiple PDFs", "Extract pages") |
+| `EmptyState.tsx` | 4 | Hero subtitle, Browse Files button, section title, privacy note |
+| `FileList.tsx` | 1 | "Add more files" title attribute |
+| `ToolPanel.tsx` | 1 | "Select a tool from the toolbar above to get started" |
+| `RotateTool.tsx` | 4 | Preview label, page number, status text (all/selected) |
+| `WatermarkTool.tsx` | 10 | Layout labels/descriptions, preview captions |
+
+**New i18n keys added**:
+| File | Keys Added |
+|------|------------|
+| `src/i18n/en.ts` | 31 keys (header.tool.description.*, emptyState.*, fileList.addMore, toolPanel.hint, rotate.*, watermark.layout.*) |
+| `src/i18n/zh.ts` | 31 keys (Chinese translations for all) |
+
+**Total per locale**: ~175 keys (up from 144)
+
+**Verification**:
+- `tsc --noEmit` ✅
+- `npm run build` ✅ (1813 modules, 2.53s, zero errors)
+- LSP diagnostics: 0 errors across all 8 changed files
+- No `as any`, no `@ts-ignore` — strict TypeScript compliance maintained

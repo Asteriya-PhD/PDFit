@@ -121,6 +121,9 @@ The MinerU document conversion uses `VITE_MINERU_API_KEY` env var — set in `.e
 ### 11. Watermark visual preview via Canvas overlay
 The Watermark tool renders a live preview: PDF first page at 320px via pdfjs-dist, watermark text overlaid on a transparent Canvas 2D layer. PDF canvas cached (file-change only); overlay re-renders with 200ms debounce on parameter change. Positioning matches pdf-lib output exactly.
 
+### 12. Custom Context-based i18n (English + Chinese)
+The app uses a custom Context-based i18n system (no react-i18next dependency) with ~175 translation keys per locale. Locale is auto-detected from `navigator.language`, persisted in localStorage, and toggled via a LocaleToggle in the header. The `t('key', { params })` function supports `{{param}}` interpolation. Fallback chain: current locale → Chinese → raw key.
+
 ## Current Status
 
 - **Phase**: 5 ✅ Complete — UI/UX redesign with Anthropic design system
@@ -129,6 +132,7 @@ The Watermark tool renders a live preview: PDF first page at 320px via pdfjs-dis
 - **Build**: `tsc --noEmit` + `npm run build` + `cargo check` all clean
 - **Design System**: Anthropic colors (#d97757 warm orange), Poppins/Lora typography, CSS custom properties
 - **Polish done (2026-05-28)**: Complete UI redesign, operation previews, single-screen layout, dark/light mode adaptive
+- **i18n (2026-05-28)**: All user-facing strings internationalized — 175 keys per locale (EN/CN), 0 hardcoded strings remain
 - **Next up**: (none — feature complete)
 
 ## Conventions
