@@ -105,7 +105,7 @@ export default function RotateTool() {
           >
             {activeFile.name}
           </span>
-          <span className="ml-2">({activeFile.pageCount} pages)</span>
+          <span className="ml-2">{t('rotate.pageCount', { count: activeFile.pageCount })}</span>
         </p>
 
         {/* Angle Selection */}
@@ -256,7 +256,7 @@ export default function RotateTool() {
             color: 'var(--color-text-secondary)',
           }}
         >
-          Preview
+          {t('rotate.preview')}
         </p>
         <div
           className="preview-box aspect-[3/4] max-w-xs mx-auto"
@@ -301,7 +301,7 @@ export default function RotateTool() {
                 color: 'var(--color-text-muted)',
               }}
             >
-              Page 1
+              {t('rotate.previewPage', { n: 1 })}
             </div>
           </div>
         </div>
@@ -309,7 +309,7 @@ export default function RotateTool() {
           className="text-center text-xs mt-8"
           style={{ color: 'var(--color-text-muted)' }}
         >
-          {scope === 'all' ? 'All pages will be rotated' : `${selectedPages.size} pages selected`}
+          {scope === 'all' ? t('rotate.previewStatus.all') : t('rotate.previewStatus.selected', { count: selectedPages.size })}
         </p>
       </div>
     </div>

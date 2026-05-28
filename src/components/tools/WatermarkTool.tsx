@@ -52,9 +52,9 @@ export default function WatermarkTool() {
   ]
 
   const layouts: { value: WatermarkLayout; label: string; description: string }[] = [
-    { value: 'center', label: 'Center', description: 'Single watermark in center' },
-    { value: 'tile', label: 'Tile', description: 'Repeat across page' },
-    { value: 'diagonal', label: 'Diagonal', description: 'Diagonal repeat pattern' },
+    { value: 'center', label: t('watermark.layout.center'), description: t('watermark.layout.centerDesc') },
+    { value: 'tile', label: t('watermark.layout.tile'), description: t('watermark.layout.tileDesc') },
+    { value: 'diagonal', label: t('watermark.layout.diagonal'), description: t('watermark.layout.diagonalDesc') },
   ]
 
   const handleApply = async () => {
@@ -252,7 +252,7 @@ export default function WatermarkTool() {
               color: 'var(--color-text-secondary)',
             }}
           >
-            Watermark Layout
+            {t('watermark.layout.label')}
           </label>
           <div className="grid grid-cols-3 gap-3">
             {layouts.map(l => (
@@ -516,7 +516,7 @@ export default function WatermarkTool() {
           className="text-center text-xs mt-3"
           style={{ color: 'var(--color-text-muted)' }}
         >
-          {layout === 'center' ? 'Single watermark in center' : layout === 'tile' ? 'Tiled across page' : 'Diagonal repeat pattern'}
+          {layout === 'center' ? t('watermark.layout.centerDesc') : layout === 'tile' ? t('watermark.layout.tileDesc') : t('watermark.layout.diagonalDesc')}
         </p>
       </div>
     </div>
