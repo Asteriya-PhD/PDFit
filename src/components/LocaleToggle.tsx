@@ -9,11 +9,17 @@ export default function LocaleToggle() {
   return (
     <button
       onClick={() => setLocale(next)}
-      className="p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:text-gray-300 dark:hover:bg-gray-800 transition-colors flex items-center gap-1 text-xs font-medium"
+      className="btn-icon"
+      style={{ width: 'auto', padding: '0 12px', gap: '6px' }}
       title={t(`localeToggle.title.${next}`)}
     >
       <Languages className="w-4 h-4" />
-      <span>{t(`localeToggle.label.${next}`)}</span>
+      <span
+        className="text-xs font-medium"
+        style={{ fontFamily: 'var(--font-heading)' }}
+      >
+        {t(`localeToggle.label.${next}`)}
+      </span>
     </button>
   )
 }

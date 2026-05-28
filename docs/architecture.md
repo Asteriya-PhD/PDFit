@@ -253,6 +253,34 @@ These are rendered as sibling elements rather than a single container, preventin
 ### Dark mode color system
 All gray-scale text uses `gray-500` in light mode and `dark:text-gray-400` in dark mode, providing consistent readability across both themes. Active/selected states use red in light mode and blue in dark mode (`blue-900/30` bg, `blue-400` text, `blue-800` border) for sufficient contrast.
 
+### Design System (Phase 5)
+The application uses a comprehensive CSS custom property-based design system:
+
+**Color Palette** (Anthropic official):
+- Primary: `#141413` (dark), `#faf9f5` (light)
+- Accent: `#d97757` (warm orange)
+- Secondary: `#6a9bcc` (blue), `#788c5d` (green)
+- Neutral: `#b0aea5` (mid gray), `#e8e6dc` (light gray)
+
+**Typography**:
+- Headings: Poppins (400-700 weight)
+- Body: Lora (400-600 weight)
+- Monospace: SF Mono, Fira Code
+
+**Component Classes** (defined in `index.css`):
+- `.btn-primary` — Orange accent button with hover/active states
+- `.btn-secondary` — Outlined button with border
+- `.btn-icon` — Square icon-only button
+- `.card` / `.card-elevated` — Surface containers with shadows
+- `.input` — Form input with focus ring
+- `.dropzone` — Drag-and-drop area with dashed border
+- `.tool-item` — Navigation item for tools
+- `.badge` — Status badges (orange, blue, green variants)
+- `.preview-box` — Container for operation previews
+
+**CSS Variables**:
+All colors, shadows, spacing, and transitions are defined as CSS custom properties in `:root` and `.dark` selector, enabling easy theme customization.
+
 ## Code Conventions
 
 ### TypeScript

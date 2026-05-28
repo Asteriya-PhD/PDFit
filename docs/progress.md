@@ -634,3 +634,64 @@ Image files for Feature B managed in local component state (not AppContext, whic
 - `tsc --noEmit` ✅
 - `npm run build` ✅ (2.21s, zero errors)
 - LSP diagnostics: 0 errors across all changed files
+
+---
+
+## Phase 5: UI/UX Redesign (2026-05-28)
+
+### Design System & Complete UI Overhaul
+
+**Commits**: feat: Complete UI redesign with Anthropic design system
+
+**Design System** (`src/index.css`):
+- **Color Palette**: Anthropic official colors (Dark #141413, Light #faf9f5, Orange #d97757)
+- **Typography**: Poppins (headings) + Lora (body) via Google Fonts
+- **Component Library**: Unified btn-primary, btn-secondary, btn-icon, card, input, dropzone, tool-item, badge
+- **Animations**: fadeIn, slideUp, slideDown, scaleIn with cubic-bezier easing
+- **CSS Variables**: 50+ custom properties for colors, shadows, spacing, transitions
+
+**Redesigned Components** (10 files):
+
+| Component | Changes |
+|-----------|---------|
+| `Header.tsx` | Warm orange logo, improved tool navigation with tooltips, better visual hierarchy |
+| `EmptyState.tsx` | Hero section with large dropzone, 4x3 feature grid, privacy badge, staggered animations |
+| `FileList.tsx` | Hover effects, active state highlighting, "Add More" button, better file info display |
+| `ThumbnailGrid.tsx` | Horizontal scroll with chevron buttons, expand/collapse, hover scale effect, page numbers |
+| `ToolPanel.tsx` | Better empty state with icon, centered layout, max-width container |
+| `RotateTool.tsx` | Two-column layout with live rotation preview, angle selection cards |
+| `ThemeToggle.tsx` | Uses unified btn-icon component |
+| `LocaleToggle.tsx` | Uses unified btn-icon with text label |
+| `FileDropzone.tsx` | Drag highlight, compact mode with Plus icon, better visual feedback |
+| `App.tsx` | CSS variables instead of hardcoded colors |
+
+**Key UX Improvements**:
+1. **Intuitive Operations**: Every tool has clear visual feedback and intuitive controls
+2. **Operation Previews**: RotateTool includes real-time rotation preview effect
+3. **Color Contrast**: Dark/light mode adaptive with high contrast throughout
+4. **Single-Screen Experience**: Optimized layout reduces scrolling
+5. **Visual Hierarchy**: Clear typography scale with Poppins headings and Lora body text
+
+**Technical Debt Fixed**:
+- Removed `as unknown as TextItemLike` type assertions in `pdfToMarkdown.ts`
+- Added proper type guards with `isTextItem()` function
+- Defined local `TextItem` and `TextMarkedContent` interfaces
+
+**Files changed** (12):
+- `src/index.css` — Complete design system with CSS variables
+- `src/App.tsx` — Updated to use CSS variables
+- `src/components/Header.tsx` — Redesigned with new color scheme
+- `src/components/EmptyState.tsx` — Complete redesign with animations
+- `src/components/FileList.tsx` — Redesigned with hover effects
+- `src/components/ThumbnailGrid.tsx` — Added scrolling and expand/collapse
+- `src/components/ToolPanel.tsx` — Better empty state
+- `src/components/tools/RotateTool.tsx` — Two-column layout with preview
+- `src/components/ThemeToggle.tsx` — Updated to use unified styles
+- `src/components/LocaleToggle.tsx` — Updated to use unified styles
+- `src/components/FileDropzone.tsx` — Improved drag-and-drop UX
+- `src/lib/pdfToMarkdown.ts` — Fixed type assertions
+
+**Verification**:
+- `tsc --noEmit` ✅
+- `npm run build` ✅ (2.02s, zero warnings)
+- LSP diagnostics: 0 errors across all changed files

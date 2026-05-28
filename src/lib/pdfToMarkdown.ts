@@ -1,21 +1,23 @@
 import '@/lib/pdfWorker'
 import { getDocument } from 'pdfjs-dist'
 
-interface TextItemLike {
+interface TextLine {
+  y: number
+  items: { text: string; fontSize: number; x: number }[]
+}
+
+interface TextItem {
   str: string
+  dir: string
   transform: number[]
   width: number
   height: number
   fontName: string
+  hasEOL: boolean
 }
 
-interface TextContentLike {
-  items: (TextItemLike | { type: string })[]
-}
-
-interface TextLine {
-  y: number
-  items: { text: string; fontSize: number; x: number }[]
+interface TextMarkedContent {
+  type: string
 }
 
 const BULLET_CHARS = new Set(['•', '●', '◦', '▪', '▸', '▹', '-', '*', '→', '➢'])
@@ -55,19 +57,22 @@ export async function pdfToMarkdown(
   return { markdown, totalPages }
 }
 
-function processPage(textContent: TextContentLike): string {
+function isTextItem(item: TextItem | TextMarkedContent): item is TextItem {
+  return 'str' in item
+}
+
+function processPage(textContent: { items: Array<TextItem | TextMarkedContent> }): string {
   const rawItems: { text: string; x: number; y: number; fontSize: number }[] = []
 
   for (const item of textContent.items) {
-    if (!('str' in item)) continue
-    const textItem = item as unknown as TextItemLike
-    const str = textItem.str
+    if (!isTextItem(item)) continue
+    const str = item.str
     if (!str || !str.trim()) continue
 
-    const x = textItem.transform[4] ?? 0
-    const y = textItem.transform[5] ?? 0
+    const x = item.transform[4] ?? 0
+    const y = item.transform[5] ?? 0
 
-    const fontSize = Math.abs(textItem.transform[0] ?? 0) + Math.abs(textItem.transform[3] ?? 0) / 2 || 12
+    const fontSize = Math.abs(item.transform[0] ?? 0) + Math.abs(item.transform[3] ?? 0) / 2 || 12
 
     rawItems.push({ text: str, x, y, fontSize })
   }
@@ -155,5 +160,5 @@ export async function hasTextContent(arrayBuffer: ArrayBuffer): Promise<boolean>
   const pdf = await getDocument({ data: arrayBuffer.slice(0) }).promise
   const page = await pdf.getPage(1)
   const textContent = await page.getTextContent()
-  return textContent.items.some(item => 'str' in item && (item as unknown as TextItemLike).str.trim().length > 0)
+  return textContent.items.some(item => isTextItem(item) && item.str.trim().length > 0)
 }

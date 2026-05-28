@@ -15,7 +15,10 @@ export default function App() {
   const showImageToPdf = activeTool === 'image-to-pdf' && files.length === 0
 
   return (
-    <div className="flex flex-col h-full">
+    <div
+      className="flex flex-col h-full"
+      style={{ backgroundColor: 'var(--color-bg-primary)' }}
+    >
       <Header />
 
       {showImageToPdf ? (
@@ -23,16 +26,24 @@ export default function App() {
           <ImageToPdfTool />
         </div>
       ) : files.length === 0 ? (
-        <div className="flex-1 flex items-center justify-center p-8">
+        <div className="flex-1 overflow-hidden">
           <EmptyState />
         </div>
       ) : (
         <div className="flex-1 flex overflow-hidden">
-          <aside className="w-72 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 flex flex-col shrink-0">
+          {/* Sidebar */}
+          <aside
+            className="w-72 flex flex-col shrink-0"
+            style={{
+              borderRight: '1px solid var(--color-border)',
+              backgroundColor: 'var(--color-surface)',
+            }}
+          >
             <FileDropzone compact />
             <FileList />
           </aside>
 
+          {/* Main Content */}
           <main className="flex-1 flex flex-col overflow-hidden">
             <ToolPanel />
             <ThumbnailGrid />

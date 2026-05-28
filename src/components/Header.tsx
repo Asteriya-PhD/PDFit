@@ -9,31 +9,54 @@ export default function Header() {
   const { files, activeTool, setTool } = useApp()
   const { t } = useI18n()
 
-  const tools: { type: ToolType; label: string; icon: typeof Combine }[] = [
-    { type: 'merge', label: t('header.tool.merge'), icon: Combine },
-    { type: 'split', label: t('header.tool.split'), icon: Split },
-    { type: 'delete', label: t('header.tool.delete'), icon: Trash2 },
-    { type: 'rotate', label: t('header.tool.rotate'), icon: RotateCw },
-    { type: 'reorder', label: t('header.tool.reorder'), icon: Move },
-    { type: 'page-numbering', label: t('header.tool.pageNumbering'), icon: Hash },
-    { type: 'watermark', label: t('header.tool.watermark'), icon: Droplets },
-    { type: 'pdf-to-image', label: t('header.tool.pdfToImage'), icon: Image },
-    { type: 'image-to-pdf', label: t('header.tool.imageToPdf'), icon: FileImage },
-    { type: 'pdf-to-md', label: t('header.tool.pdfToMd'), icon: FileText },
-    { type: 'mineru', label: t('header.tool.mineru'), icon: FileSpreadsheet },
+  const tools: { type: ToolType; label: string; icon: typeof Combine; description: string }[] = [
+    { type: 'merge', label: t('header.tool.merge'), icon: Combine, description: 'Combine multiple PDFs' },
+    { type: 'split', label: t('header.tool.split'), icon: Split, description: 'Extract pages' },
+    { type: 'delete', label: t('header.tool.delete'), icon: Trash2, description: 'Remove pages' },
+    { type: 'rotate', label: t('header.tool.rotate'), icon: RotateCw, description: 'Rotate pages' },
+    { type: 'reorder', label: t('header.tool.reorder'), icon: Move, description: 'Rearrange pages' },
+    { type: 'page-numbering', label: t('header.tool.pageNumbering'), icon: Hash, description: 'Add page numbers' },
+    { type: 'watermark', label: t('header.tool.watermark'), icon: Droplets, description: 'Add watermark' },
+    { type: 'pdf-to-image', label: t('header.tool.pdfToImage'), icon: Image, description: 'Export as images' },
+    { type: 'image-to-pdf', label: t('header.tool.imageToPdf'), icon: FileImage, description: 'Create from images' },
+    { type: 'pdf-to-md', label: t('header.tool.pdfToMd'), icon: FileText, description: 'Extract text' },
+    { type: 'mineru', label: t('header.tool.mineru'), icon: FileSpreadsheet, description: 'AI conversion' },
   ]
 
   return (
-    <header className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shrink-0">
-      <div className="flex items-center h-14 px-4 gap-4">
-        <div className="flex items-center gap-2 mr-2">
-          <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
+    <header
+      className="shrink-0 border-b"
+      style={{
+        backgroundColor: 'var(--color-surface)',
+        borderColor: 'var(--color-border)',
+      }}
+    >
+      <div className="flex items-center h-16 px-6 gap-6">
+        {/* Logo */}
+        <div className="flex items-center gap-3 mr-4">
+          <div
+            className="w-9 h-9 rounded-xl flex items-center justify-center"
+            style={{ backgroundColor: 'var(--color-accent)' }}
+          >
             <FileText className="w-5 h-5 text-white" />
           </div>
-          <span className="font-bold text-lg text-gray-800 dark:text-gray-100">{t('header.title')}</span>
+          <span
+            className="text-lg tracking-tight"
+            style={{
+              fontFamily: 'var(--font-heading)',
+              fontWeight: 600,
+              color: 'var(--color-text-primary)',
+            }}
+          >
+            {t('header.title')}
+          </span>
         </div>
 
-        <nav className="flex items-center gap-1">
+        {/* Divider */}
+        <div className="w-px h-6" style={{ backgroundColor: 'var(--color-border)' }} />
+
+        {/* Tool Navigation */}
+        <nav className="flex items-center gap-1 flex-1 overflow-x-auto">
           {tools.map(tool => {
             const Icon = tool.icon
             const isActive = activeTool === tool.type
@@ -43,24 +66,24 @@ export default function Header() {
                 key={tool.type}
                 onClick={() => setTool(isActive ? null : tool.type)}
                 disabled={disabled}
-                className={`
-                  flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors
-                  ${isActive
-                    ? 'bg-red-50 dark:bg-blue-900/30 text-red-700 dark:text-blue-400 border border-red-200 dark:border-blue-800'
-                    : disabled
-                      ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
-                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-800 dark:hover:text-gray-200'
-                  }
-                `}
+                className="tool-item whitespace-nowrap"
+                data-tooltip={tool.description}
+                style={{
+                  color: isActive ? 'var(--color-accent)' : disabled ? 'var(--color-text-muted)' : 'var(--color-text-secondary)',
+                  backgroundColor: isActive ? 'var(--color-surface-active)' : 'transparent',
+                  opacity: disabled ? 0.5 : 1,
+                  cursor: disabled ? 'not-allowed' : 'pointer',
+                }}
               >
                 <Icon className="w-4 h-4" />
-                {tool.label}
+                <span>{tool.label}</span>
               </button>
             )
           })}
         </nav>
 
-        <div className="flex items-center gap-1 ml-auto">
+        {/* Right Actions */}
+        <div className="flex items-center gap-2 ml-auto">
           <LocaleToggle />
           <ThemeToggle />
         </div>

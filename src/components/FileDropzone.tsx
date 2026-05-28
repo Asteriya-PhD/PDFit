@@ -1,7 +1,7 @@
-import { useCallback, useRef } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { useApp } from '@/contexts/AppContext'
 import { useI18n } from '@/i18n'
-import { Upload } from 'lucide-react'
+import { Upload, Plus } from 'lucide-react'
 import { openFileDialog } from '@/lib/tauri'
 import { isDesktop } from '@/lib/desktop'
 
@@ -9,10 +9,26 @@ export default function FileDropzone({ compact = false }: { compact?: boolean })
   const { addFiles } = useApp()
   const { t } = useI18n()
   const inputRef = useRef<HTMLInputElement>(null)
+  const [isDragging, setIsDragging] = useState(false)
+
+  const handleDragEnter = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(true)
+  }, [])
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+  }, [])
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+  }, [])
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault()
+      setIsDragging(false)
       const fileList = Array.from(e.dataTransfer.files).filter(f => f.type === 'application/pdf')
       if (fileList.length > 0) addFiles(fileList)
     },
@@ -47,14 +63,25 @@ export default function FileDropzone({ compact = false }: { compact?: boolean })
       <>
         <input ref={inputRef} type="file" accept=".pdf" multiple onChange={handleChange} className="hidden" />
         <div
-          onDragOver={e => e.preventDefault()}
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
           onDrop={handleDrop}
           onClick={handleClick}
-          className="flex items-center gap-2 p-3 m-3 border-2 border-dashed border-gray-200 dark:border-gray-600 rounded-lg cursor-pointer
-            hover:border-red-300 hover:bg-red-50/30 dark:hover:border-red-500 dark:hover:bg-red-900/20 transition-colors text-sm text-gray-500 dark:text-gray-400"
+          className="flex items-center gap-2 m-3 px-3 py-2.5 rounded-xl cursor-pointer transition-all"
+          style={{
+            backgroundColor: isDragging ? 'var(--color-surface-active)' : 'var(--color-bg-secondary)',
+            border: `1px dashed ${isDragging ? 'var(--color-accent)' : 'var(--color-border)'}`,
+            color: 'var(--color-text-muted)',
+          }}
         >
-          <Upload className="w-4 h-4 text-gray-400" />
-          <span>{t('fileDropzone.compact.text')}</span>
+          <Plus className="w-4 h-4" />
+          <span
+            className="text-xs font-medium"
+            style={{ fontFamily: 'var(--font-heading)' }}
+          >
+            {t('fileDropzone.compact.text')}
+          </span>
         </div>
       </>
     )
@@ -64,18 +91,39 @@ export default function FileDropzone({ compact = false }: { compact?: boolean })
     <>
       <input ref={inputRef} type="file" accept=".pdf" multiple onChange={handleChange} className="hidden" />
       <div
-        onDragOver={e => e.preventDefault()}
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
+        onDragOver={handleDragOver}
         onDrop={handleDrop}
         onClick={handleClick}
-        className="flex flex-col items-center justify-center gap-4 p-8 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl
-          cursor-pointer hover:border-red-400 hover:bg-red-50/30 dark:hover:border-red-500 dark:hover:bg-red-900/20 transition-colors"
+        className="dropzone cursor-pointer"
+        style={{
+          borderColor: isDragging ? 'var(--color-accent)' : undefined,
+          backgroundColor: isDragging ? 'var(--color-surface-active)' : undefined,
+        }}
       >
-        <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
-          <Upload className="w-6 h-6 text-red-500" />
+        <div
+          className="w-14 h-14 rounded-xl flex items-center justify-center"
+          style={{ backgroundColor: 'rgba(217, 119, 87, 0.1)' }}
+        >
+          <Upload className="w-7 h-7" style={{ color: 'var(--color-accent)' }} />
         </div>
         <div className="text-center">
-          <p className="text-base font-medium text-gray-600 dark:text-gray-300">{t('fileDropzone.full.text')}</p>
-          <p className="text-sm text-gray-400 mt-1">{t('fileDropzone.full.hint')}</p>
+          <p
+            className="text-base font-medium"
+            style={{
+              fontFamily: 'var(--font-heading)',
+              color: 'var(--color-text-primary)',
+            }}
+          >
+            {t('fileDropzone.full.text')}
+          </p>
+          <p
+            className="text-sm mt-1"
+            style={{ color: 'var(--color-text-muted)' }}
+          >
+            {t('fileDropzone.full.hint')}
+          </p>
         </div>
       </div>
     </>

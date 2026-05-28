@@ -9,7 +9,7 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggle}
-      className="p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:text-gray-300 dark:hover:bg-gray-800 transition-colors"
+      className="btn-icon"
       title={resolvedTheme === 'dark' ? t('themeToggle.title.dark') : t('themeToggle.title.light')}
     >
       {resolvedTheme === 'dark' ? (

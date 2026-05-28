@@ -32,6 +32,7 @@ https://asteriya-phd.github.io/PDFit/
 - **框架**: React 19 + TypeScript 5.7
 - **构建**: Vite 6
 - **样式**: Tailwind CSS 4
+- **设计系统**: Anthropic 官方配色 + Poppins/Lora 字体
 - **PDF 引擎**: pdf-lib (操作) + pdfjs-dist (预览)
 - **部署**: GitHub Pages + GitHub Actions
 - **PWA**: Service Worker + 离线缓存 (vite-plugin-pwa)

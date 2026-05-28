@@ -3,56 +3,166 @@ import { useEffect, useRef, useState } from 'react'
 import { useApp } from '@/contexts/AppContext'
 import { useI18n } from '@/i18n'
 import { getDocument } from 'pdfjs-dist'
-import { Maximize2, Minimize2 } from 'lucide-react'
+import { Maximize2, Minimize2, ChevronLeft, ChevronRight } from 'lucide-react'
 
-const THUMB_HEIGHT = 200
-const EXPANDED_HEIGHT = 500
+const THUMB_HEIGHT = 180
+const EXPANDED_HEIGHT = 400
 
 export default function ThumbnailGrid() {
   const { files, activeFileId } = useApp()
   const { t } = useI18n()
   const activeFile = files.find(f => f.id === activeFileId)
   const [expanded, setExpanded] = useState(false)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const [canScrollLeft, setCanScrollLeft] = useState(false)
+  const [canScrollRight, setCanScrollRight] = useState(true)
+
+  const checkScroll = () => {
+    const el = scrollContainerRef.current
+    if (!el) return
+    setCanScrollLeft(el.scrollLeft > 10)
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10)
+  }
+
+  useEffect(() => {
+    const el = scrollContainerRef.current
+    if (!el) return
+    el.addEventListener('scroll', checkScroll)
+    checkScroll()
+    return () => el.removeEventListener('scroll', checkScroll)
+  }, [activeFile])
+
+  const scroll = (direction: 'left' | 'right') => {
+    const el = scrollContainerRef.current
+    if (!el) return
+    const scrollAmount = 300
+    el.scrollBy({
+      left: direction === 'left' ? -scrollAmount : scrollAmount,
+      behavior: 'smooth',
+    })
+  }
 
   if (!activeFile) {
     return (
-      <div className="h-32 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 flex items-center justify-center text-sm text-gray-400 dark:text-gray-500 shrink-0">
-        {t('thumbnailGrid.noFile')}
+      <div
+        className="h-32 shrink-0 flex items-center justify-center"
+        style={{
+          borderTop: '1px solid var(--color-border)',
+          backgroundColor: 'var(--color-bg-secondary)',
+        }}
+      >
+        <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
+          {t('thumbnailGrid.noFile')}
+        </p>
       </div>
     )
   }
 
   const h = expanded ? EXPANDED_HEIGHT : THUMB_HEIGHT
-  const stripH = h + 40
+  const stripH = h + 52
 
   return (
     <div
-      className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 shrink-0 flex flex-col transition-all duration-200"
-      style={{ height: stripH, minHeight: stripH, maxHeight: stripH }}
+      className="shrink-0 flex flex-col transition-all duration-300"
+      style={{
+        height: stripH,
+        minHeight: stripH,
+        maxHeight: stripH,
+        borderTop: '1px solid var(--color-border)',
+        backgroundColor: 'var(--color-bg-secondary)',
+      }}
     >
-      <div className="flex items-center justify-between px-4 py-1.5 shrink-0">
-        <span className="text-xs text-gray-500 dark:text-gray-400">
-          {t('thumbnailGrid.info', { name: activeFile.name, count: activeFile.pageCount })}
-        </span>
-        <button
-          onClick={() => setExpanded(v => !v)}
-          className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
-        >
-          {expanded ? (
-            <><Minimize2 className="w-3.5 h-3.5" /> {t('thumbnailGrid.collapse')}</>
-          ) : (
-            <><Maximize2 className="w-3.5 h-3.5" /> {t('thumbnailGrid.expand')}</>
-          )}
-        </button>
+      {/* Header */}
+      <div
+        className="flex items-center justify-between px-4 py-2.5 shrink-0"
+        style={{ borderBottom: '1px solid var(--color-border)' }}
+      >
+        <div className="flex items-center gap-3">
+          <span
+            className="text-xs font-medium"
+            style={{
+              fontFamily: 'var(--font-heading)',
+              color: 'var(--color-text-muted)',
+            }}
+          >
+            {activeFile.name}
+          </span>
+          <span
+            className="badge badge-orange"
+          >
+            {activeFile.pageCount} pages
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          {/* Scroll Buttons */}
+          <button
+            onClick={() => scroll('left')}
+            className="btn-icon"
+            style={{
+              width: 28,
+              height: 28,
+              opacity: canScrollLeft ? 1 : 0.3,
+              cursor: canScrollLeft ? 'pointer' : 'default',
+            }}
+            disabled={!canScrollLeft}
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => scroll('right')}
+            className="btn-icon"
+            style={{
+              width: 28,
+              height: 28,
+              opacity: canScrollRight ? 1 : 0.3,
+              cursor: canScrollRight ? 'pointer' : 'default',
+            }}
+            disabled={!canScrollRight}
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+
+          {/* Divider */}
+          <div
+            className="w-px h-4"
+            style={{ backgroundColor: 'var(--color-border)' }}
+          />
+
+          {/* Expand Button */}
+          <button
+            onClick={() => setExpanded(v => !v)}
+            className="btn-icon"
+            style={{ width: 28, height: 28 }}
+          >
+            {expanded ? (
+              <Minimize2 className="w-4 h-4" />
+            ) : (
+              <Maximize2 className="w-4 h-4" />
+            )}
+          </button>
+        </div>
       </div>
-      <div className="flex-1 overflow-x-auto overflow-y-hidden">
-        <div className="flex gap-3 px-4 pb-3" style={{ height: h }}>
+
+      {/* Thumbnail Strip */}
+      <div
+        ref={scrollContainerRef}
+        className="flex-1 overflow-x-auto overflow-y-hidden"
+        style={{
+          scrollBehavior: 'smooth',
+          scrollbarWidth: 'thin',
+        }}
+      >
+        <div
+          className="flex gap-3 px-4 py-3"
+          style={{ height: h }}
+        >
           {Array.from({ length: activeFile.pageCount }, (_, i) => (
             <PagePreview
               key={i}
               arrayBuffer={activeFile.arrayBuffer}
               pageIndex={i}
-              targetPx={h}
+              targetPx={h - 32}
             />
           ))}
         </div>
@@ -74,6 +184,7 @@ function PagePreview({
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [error, setError] = useState(false)
   const [size, setSize] = useState({ w: 0, h: 0 })
+  const [isHovered, setIsHovered] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -119,24 +230,51 @@ function PagePreview({
   if (error) {
     return (
       <div
-        className="bg-white dark:bg-gray-800 rounded border border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center shrink-0 text-xs text-gray-500 dark:text-gray-400"
-        style={{ width: targetPx * 0.7, height: targetPx }}
+        className="flex flex-col items-center justify-center shrink-0 rounded-xl"
+        style={{
+          width: targetPx * 0.7,
+          height: targetPx + 24,
+          backgroundColor: 'var(--color-surface)',
+          border: '1px dashed var(--color-border)',
+        }}
       >
-         {t('thumbnailGrid.loadError')}
+        <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+          {t('thumbnailGrid.loadError')}
+        </span>
       </div>
     )
   }
 
   return (
-    <div className="flex flex-col items-center gap-1 shrink-0">
-      <div className="bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
+    <div
+      className="flex flex-col items-center gap-2 shrink-0"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div
+        className="rounded-xl overflow-hidden transition-all duration-200"
+        style={{
+          backgroundColor: 'var(--color-surface)',
+          border: `1px solid ${isHovered ? 'var(--color-accent)' : 'var(--color-border)'}`,
+          boxShadow: isHovered ? 'var(--shadow-md)' : 'var(--shadow-sm)',
+          transform: isHovered ? 'scale(1.02)' : 'scale(1)',
+        }}
+      >
         <canvas
           ref={canvasRef}
           className="block"
           style={{ width: size.w || undefined, height: size.h || undefined }}
         />
       </div>
-      <span className="font-medium text-[10px] text-gray-400">{pageIndex + 1}</span>
+      <span
+        className="text-xs font-medium"
+        style={{
+          fontFamily: 'var(--font-heading)',
+          color: isHovered ? 'var(--color-accent)' : 'var(--color-text-muted)',
+        }}
+      >
+        {pageIndex + 1}
+      </span>
     </div>
   )
 }

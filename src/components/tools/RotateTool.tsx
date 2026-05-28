@@ -3,7 +3,7 @@ import { useApp } from '@/contexts/AppContext'
 import { useI18n } from '@/i18n'
 import { rotateSelectedPages } from '@/lib/pdfEngine'
 import type { RotationAngle } from '@/types'
-import { Download } from 'lucide-react'
+import { Download, RotateCw } from 'lucide-react'
 
 export default function RotateTool() {
   const { files, activeFileId, setLoading, loading } = useApp()
@@ -17,8 +17,10 @@ export default function RotateTool() {
 
   if (!activeFile) {
     return (
-      <div className="max-w-lg mx-auto text-center text-gray-500 dark:text-gray-400 text-sm py-12">
-        {t('rotate.noFile')}
+      <div className="text-center py-12">
+        <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
+          {t('rotate.noFile')}
+        </p>
       </div>
     )
   }
@@ -75,70 +77,120 @@ export default function RotateTool() {
     })
   }
 
-  const angles: { value: RotationAngle; label: string }[] = [
-    { value: 90, label: t('rotate.angle.90') },
-    { value: 180, label: t('rotate.angle.180') },
-    { value: 270, label: t('rotate.angle.270') },
+  const angles: { value: RotationAngle; label: string; icon: string }[] = [
+    { value: 90, label: t('rotate.angle.90'), icon: '90°' },
+    { value: 180, label: t('rotate.angle.180'), icon: '180°' },
+    { value: 270, label: t('rotate.angle.270'), icon: '270°' },
   ]
 
   return (
-    <div className="max-w-lg mx-auto">
-      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{t('rotate.title')}</h2>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* Left: Controls */}
+      <div>
+        <h2
+          className="text-xl mb-2"
+          style={{
+            fontFamily: 'var(--font-heading)',
+            fontWeight: 600,
+            color: 'var(--color-text-primary)',
+          }}
+        >
+          {t('rotate.title')}
+        </h2>
+        <p className="text-sm mb-6" style={{ color: 'var(--color-text-muted)' }}>
+          {t('rotate.currentFile')}
+          <span
+            className="font-medium ml-1"
+            style={{ color: 'var(--color-text-primary)' }}
+          >
+            {activeFile.name}
+          </span>
+          <span className="ml-2">({activeFile.pageCount} pages)</span>
+        </p>
 
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-        {t('rotate.currentFile')}<span className="font-medium text-gray-700 dark:text-gray-200">{activeFile.name}</span>
-        <span className="text-gray-500 dark:text-gray-400 ml-2">{t('rotate.pageCount', { count: activeFile.pageCount })}</span>
-      </p>
-
-      <div className="space-y-4 mb-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('rotate.angle.label')}</label>
-          <div className="flex gap-2">
+        {/* Angle Selection */}
+        <div className="mb-6">
+          <label
+            className="block text-sm font-medium mb-3"
+            style={{
+              fontFamily: 'var(--font-heading)',
+              color: 'var(--color-text-secondary)',
+            }}
+          >
+            {t('rotate.angle.label')}
+          </label>
+          <div className="flex gap-3">
             {angles.map(a => (
               <button
                 key={a.value}
                 onClick={() => setAngle(a.value)}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                  angle === a.value
-                    ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
-                    : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
-                }`}
+                className="flex-1 flex flex-col items-center gap-2 p-4 rounded-xl transition-all"
+                style={{
+                  backgroundColor: angle === a.value ? 'var(--color-surface-active)' : 'var(--color-surface)',
+                  border: `2px solid ${angle === a.value ? 'var(--color-accent)' : 'var(--color-border)'}`,
+                  color: angle === a.value ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                }}
               >
-                {a.label}
+                <RotateCw
+                  className="w-6 h-6"
+                  style={{
+                    transform: `rotate(${a.value}deg)`,
+                  }}
+                />
+                <span
+                  className="text-sm font-medium"
+                  style={{ fontFamily: 'var(--font-heading)' }}
+                >
+                  {a.label}
+                </span>
               </button>
             ))}
           </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('rotate.scopeLabel')}</label>
-          <div className="flex gap-2">
+        {/* Scope Selection */}
+        <div className="mb-6">
+          <label
+            className="block text-sm font-medium mb-3"
+            style={{
+              fontFamily: 'var(--font-heading)',
+              color: 'var(--color-text-secondary)',
+            }}
+          >
+            {t('rotate.scopeLabel')}
+          </label>
+          <div className="flex gap-3">
             <button
               onClick={() => setScope('all')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                scope === 'all'
-                  ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
-                  : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
-              }`}
+              className="flex-1 py-3 rounded-xl text-sm font-medium transition-all"
+              style={{
+                fontFamily: 'var(--font-heading)',
+                backgroundColor: scope === 'all' ? 'var(--color-surface-active)' : 'var(--color-surface)',
+                border: `2px solid ${scope === 'all' ? 'var(--color-accent)' : 'var(--color-border)'}`,
+                color: scope === 'all' ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+              }}
             >
               {t('rotate.scope.all')}
             </button>
             <button
               onClick={() => setScope('selected')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                scope === 'selected'
-                  ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
-                  : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
-              }`}
+              className="flex-1 py-3 rounded-xl text-sm font-medium transition-all"
+              style={{
+                fontFamily: 'var(--font-heading)',
+                backgroundColor: scope === 'selected' ? 'var(--color-surface-active)' : 'var(--color-surface)',
+                border: `2px solid ${scope === 'selected' ? 'var(--color-accent)' : 'var(--color-border)'}`,
+                color: scope === 'selected' ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+              }}
             >
               {t('rotate.scope.selected')}
             </button>
           </div>
         </div>
 
+        {/* Page Selection */}
         {scope === 'selected' && (
-          <div className="space-y-3">
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+          <div className="mb-6">
+            <p className="text-xs mb-2" style={{ color: 'var(--color-text-muted)' }}>
               {t('rotate.selectedHint')}
             </p>
             <input
@@ -146,46 +198,120 @@ export default function RotateTool() {
               value={spec}
               onChange={e => setSpec(e.target.value)}
               placeholder={t('rotate.selectedPlaceholder')}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              className="input mb-3"
             />
-            <div className="grid grid-cols-6 sm:grid-cols-8 gap-2 max-h-48 overflow-y-auto p-2 bg-gray-50 dark:bg-gray-900 rounded-lg">
+            <div
+              className="grid grid-cols-6 gap-2 max-h-40 overflow-y-auto p-3 rounded-xl"
+              style={{
+                backgroundColor: 'var(--color-bg-secondary)',
+                border: '1px solid var(--color-border)',
+              }}
+            >
               {Array.from({ length: activeFile.pageCount }, (_, i) => (
                 <button
                   key={i}
                   onClick={() => togglePage(i)}
-                  className={`
-                    aspect-[3/4] flex items-center justify-center rounded border text-sm font-medium transition-all
-                    ${selectedPages.has(i)
-                      ? 'bg-blue-100 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-400'
-                      : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-gray-300'
-                    }
-                  `}
+                  className="aspect-[3/4] flex items-center justify-center rounded-lg text-sm font-medium transition-all"
+                  style={{
+                    fontFamily: 'var(--font-heading)',
+                    backgroundColor: selectedPages.has(i) ? 'rgba(217, 119, 87, 0.12)' : 'var(--color-surface)',
+                    border: `1px solid ${selectedPages.has(i) ? 'var(--color-accent)' : 'var(--color-border)'}`,
+                    color: selectedPages.has(i) ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                  }}
                 >
                   {i + 1}
                 </button>
               ))}
             </div>
-            <p className="text-xs text-gray-500 dark:text-gray-400">{t('rotate.selectedCount', { count: selectedPages.size })}</p>
+            <p className="text-xs mt-2" style={{ color: 'var(--color-text-muted)' }}>
+              {t('rotate.selectedCount', { count: selectedPages.size })}
+            </p>
           </div>
         )}
+
+        {/* Action Button */}
+        <button
+          onClick={handleRotate}
+          disabled={loading}
+          className="btn-primary w-full"
+        >
+          <Download className="w-4 h-4" />
+          {loading
+            ? t('rotate.loading')
+            : scope === 'all'
+              ? t('rotate.buttonAll')
+              : selectedPages.size > 0
+                ? t('rotate.buttonCount', { count: selectedPages.size })
+                : t('rotate.buttonSelected')
+          }
+        </button>
       </div>
 
-      <button
-        onClick={handleRotate}
-        disabled={loading}
-        className="w-full flex items-center justify-center gap-2 bg-red-600 text-white rounded-lg px-4 py-2.5 text-sm font-medium
-          hover:bg-red-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
-      >
-        <Download className="w-4 h-4" />
-        {loading
-          ? t('rotate.loading')
-          : scope === 'all'
-            ? t('rotate.buttonAll')
-            : selectedPages.size > 0
-              ? t('rotate.buttonCount', { count: selectedPages.size })
-              : t('rotate.buttonSelected')
-        }
-      </button>
+      {/* Right: Preview */}
+      <div>
+        <p
+          className="text-sm font-medium mb-3"
+          style={{
+            fontFamily: 'var(--font-heading)',
+            color: 'var(--color-text-secondary)',
+          }}
+        >
+          Preview
+        </p>
+        <div
+          className="preview-box aspect-[3/4] max-w-xs mx-auto"
+          style={{
+            backgroundColor: 'var(--color-bg-tertiary)',
+          }}
+        >
+          <div className="relative">
+            {/* Simulated Page */}
+            <div
+              className="w-48 h-64 rounded-lg shadow-lg flex items-center justify-center transition-transform duration-500"
+              style={{
+                backgroundColor: 'var(--color-surface)',
+                border: '1px solid var(--color-border)',
+                transform: `rotate(${angle}deg)`,
+              }}
+            >
+              <div className="text-center">
+                <RotateCw
+                  className="w-12 h-12 mx-auto mb-2"
+                  style={{ color: 'var(--color-accent)' }}
+                />
+                <p
+                  className="text-sm font-medium"
+                  style={{
+                    fontFamily: 'var(--font-heading)',
+                    color: 'var(--color-text-secondary)',
+                  }}
+                >
+                  {angle}°
+                </p>
+              </div>
+            </div>
+
+            {/* Page Number */}
+            <div
+              className="absolute -bottom-6 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs font-medium"
+              style={{
+                fontFamily: 'var(--font-heading)',
+                backgroundColor: 'var(--color-surface)',
+                border: '1px solid var(--color-border)',
+                color: 'var(--color-text-muted)',
+              }}
+            >
+              Page 1
+            </div>
+          </div>
+        </div>
+        <p
+          className="text-center text-xs mt-8"
+          style={{ color: 'var(--color-text-muted)' }}
+        >
+          {scope === 'all' ? 'All pages will be rotated' : `${selectedPages.size} pages selected`}
+        </p>
+      </div>
     </div>
   )
 }

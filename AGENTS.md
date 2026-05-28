@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-PDFit is a privacy-first, browser-based PDF manipulation tool. All operations run locally in the browser — no files are ever uploaded to a server. Supports split, merge, delete pages, rotate pages, page numbering (with real-time preview), watermark (with Canvas visual preview), PDF↔Image conversion, Markdown extraction, and MinerU document conversion (privacy-gated, pre-configured API key). Post-Phase-4 bug fixes completed (2026-05-27): auto-tool-select on upload, watermark defaults + preview, MinerU env-based key + consent gate, dark mode color improvements.
+PDFit is a privacy-first, browser-based PDF manipulation tool. All operations run locally in the browser — no files are ever uploaded to a server. Supports split, merge, delete pages, rotate pages, page numbering (with real-time preview), watermark (with Canvas visual preview), PDF↔Image conversion, Markdown extraction, and MinerU document conversion (privacy-gated, pre-configured API key). Phase 5 UI redesign completed (2026-05-28): Anthropic design system, warm orange accent, Poppins/Lora typography, operation previews, single-screen layout.
 
 ## Tech Stack
 
@@ -11,6 +11,7 @@ PDFit is a privacy-first, browser-based PDF manipulation tool. All operations ru
 | Framework | React 19 + TypeScript 5.7 |
 | Build | Vite 6 |
 | Styling | Tailwind CSS 4 |
+| Design System | Anthropic colors, Poppins/Lora typography |
 | PDF Engine | pdf-lib 1.17 (operations) |
 | PDF Preview | pdfjs-dist 4.10 (rendering) |
 | Icons | lucide-react |
@@ -122,12 +123,12 @@ The Watermark tool renders a live preview: PDF first page at 320px via pdfjs-dis
 
 ## Current Status
 
-- **Phase**: 4 ✅ Complete — All 6 features (Dark Mode, Keyboard Shortcuts, Page Numbering, Watermark, i18n, Drag-and-Drop Reorder) delivered
+- **Phase**: 5 ✅ Complete — UI/UX redesign with Anthropic design system
 - **Platform**: Web (GitHub Pages) + Desktop (macOS dmg / Windows msi / Linux AppImage)
 - **Deployment**: GitHub Actions auto-deploy (web), `npm run tauri:build` (desktop)
 - **Build**: `tsc --noEmit` + `npm run build` + `cargo check` all clean
-- **Polish done (2026-05-27)**: Firefox scrollbar CSS, Vite chunk splitting (app 1.1MB→297KB), PWA (offline SW + install manifest), MinerU API (optional cloud doc conversion, privacy-gated)
-- **Post-Phase-4 fixes (2026-05-27)**: Auto-tool-select on upload, watermark defaults + visual Canvas preview, MinerU env-based API key + privacy consent gate, dark mode color improvements (blue instead of red)
+- **Design System**: Anthropic colors (#d97757 warm orange), Poppins/Lora typography, CSS custom properties
+- **Polish done (2026-05-28)**: Complete UI redesign, operation previews, single-screen layout, dark/light mode adaptive
 - **Next up**: (none — feature complete)
 
 ## Conventions
