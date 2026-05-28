@@ -14,6 +14,17 @@ const en: Record<string, string> = {
   'header.tool.reorder': 'Reorder',
   'header.tool.pdfToMd': 'Extract MD',
   'header.tool.mineru': 'Doc Convert',
+  'header.tool.description.merge': 'Combine multiple PDFs',
+  'header.tool.description.split': 'Extract pages',
+  'header.tool.description.delete': 'Remove pages',
+  'header.tool.description.rotate': 'Rotate pages',
+  'header.tool.description.reorder': 'Rearrange pages',
+  'header.tool.description.pageNumbering': 'Add page numbers',
+  'header.tool.description.watermark': 'Add watermark',
+  'header.tool.description.pdfToImage': 'Export as images',
+  'header.tool.description.imageToPdf': 'Create from images',
+  'header.tool.description.pdfToMd': 'Extract text',
+  'header.tool.description.mineru': 'AI conversion',
 
   // ThemeToggle
   'themeToggle.title.dark': 'Switch to light mode',
@@ -28,6 +39,10 @@ const en: Record<string, string> = {
   // EmptyState
   'emptyState.dropzone.text': 'Drop PDF files here',
   'emptyState.dropzone.hint': 'or click to select files',
+  'emptyState.hero.subtitle': 'PDF tools that run entirely in your browser. No uploads, no servers, complete privacy.',
+  'emptyState.browseButton': 'Browse Files',
+  'emptyState.sectionTitle': 'Everything you need',
+  'emptyState.privacy': '100% private — files never leave your browser',
   'emptyState.feature.merge': 'Merge PDFs',
   'emptyState.feature.split': 'Split Pages',
   'emptyState.feature.delete': 'Delete Pages',
@@ -49,6 +64,7 @@ const en: Record<string, string> = {
   'fileList.empty': 'No files',
   'fileList.header': 'File List ({{count}})',
   'fileList.pageCount': '{{count}} pages · {{size}}',
+  'fileList.addMore': 'Add more files',
 
   // ThumbnailGrid
   'thumbnailGrid.noFile': 'Select a file to preview',
@@ -62,6 +78,7 @@ const en: Record<string, string> = {
   'toolPanel.fileCount': '{{count}} file(s) loaded',
   'toolPanel.noFile': 'Import a PDF file first',
   'toolPanel.loading': 'Loading tool...',
+  'toolPanel.hint': 'Select a tool from the toolbar above to get started',
 
   // MergeTool
   'merge.title': 'Merge PDFs',
@@ -131,6 +148,10 @@ const en: Record<string, string> = {
   'rotate.loading': 'Processing...',
   'rotate.error.empty': 'Enter valid page numbers',
   'rotate.error': 'Rotation failed: {{message}}',
+  'rotate.preview': 'Preview',
+  'rotate.previewPage': 'Page {{n}}',
+  'rotate.previewStatus.all': 'All pages will be rotated',
+  'rotate.previewStatus.selected': '{{count}} pages selected',
 
   // PageNumberingTool
   'pageNumbering.noFile': 'Please select a PDF file first',
@@ -189,6 +210,13 @@ const en: Record<string, string> = {
   'watermark.button': 'Add Watermark & Download',
   'watermark.error.empty': 'Enter watermark text',
   'watermark.error': 'Failed to add watermark: {{message}}',
+  'watermark.layout.label': 'Watermark Layout',
+  'watermark.layout.center': 'Center',
+  'watermark.layout.centerDesc': 'Single watermark in center',
+  'watermark.layout.tile': 'Tile',
+  'watermark.layout.tileDesc': 'Repeat across page',
+  'watermark.layout.diagonal': 'Diagonal',
+  'watermark.layout.diagonalDesc': 'Diagonal repeat pattern',
 
   // PdfToImageTool
   'pdfToImage.noFile': 'Please select a PDF file first',

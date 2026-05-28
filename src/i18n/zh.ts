@@ -14,6 +14,17 @@ const zh: Record<string, string> = {
   'header.tool.reorder': '排序',
   'header.tool.pdfToMd': '提取Markdown',
   'header.tool.mineru': '文档转换',
+  'header.tool.description.merge': '合并多个PDF',
+  'header.tool.description.split': '提取页面',
+  'header.tool.description.delete': '删除页面',
+  'header.tool.description.rotate': '旋转页面',
+  'header.tool.description.reorder': '重新排序页面',
+  'header.tool.description.pageNumbering': '添加页码',
+  'header.tool.description.watermark': '添加水印',
+  'header.tool.description.pdfToImage': '导出为图片',
+  'header.tool.description.imageToPdf': '从图片创建',
+  'header.tool.description.pdfToMd': '提取文本',
+  'header.tool.description.mineru': 'AI转换',
 
   // ThemeToggle
   'themeToggle.title.dark': '切换到浅色模式',
@@ -28,6 +39,10 @@ const zh: Record<string, string> = {
   // EmptyState
   'emptyState.dropzone.text': '拖拽 PDF 文件到此处',
   'emptyState.dropzone.hint': '或点击选择文件',
+  'emptyState.hero.subtitle': '完全在浏览器中运行的 PDF 工具。无需上传，无需服务器，保护隐私。',
+  'emptyState.browseButton': '浏览文件',
+  'emptyState.sectionTitle': '你所需的一切',
+  'emptyState.privacy': '100% 隐私保护 — 文件永远不会离开你的浏览器',
   'emptyState.feature.merge': '合并 PDF',
   'emptyState.feature.split': '分割页面',
   'emptyState.feature.delete': '删除页面',
@@ -49,6 +64,7 @@ const zh: Record<string, string> = {
   'fileList.empty': '暂无文件',
   'fileList.header': '文件列表 ({{count}})',
   'fileList.pageCount': '{{count}} 页 · {{size}}',
+  'fileList.addMore': '添加更多文件',
 
   // ThumbnailGrid
   'thumbnailGrid.noFile': '选择文件以查看预览',
@@ -62,6 +78,7 @@ const zh: Record<string, string> = {
   'toolPanel.fileCount': '当前已加载 {{count}} 个文件',
   'toolPanel.noFile': '请先导入 PDF 文件',
   'toolPanel.loading': '工具加载中...',
+  'toolPanel.hint': '从上方工具栏选择一个操作开始',
 
   // MergeTool
   'merge.title': '合并 PDF',
@@ -131,6 +148,10 @@ const zh: Record<string, string> = {
   'rotate.loading': '处理中...',
   'rotate.error.empty': '请输入有效的页码',
   'rotate.error': '旋转失败: {{message}}',
+  'rotate.preview': '预览',
+  'rotate.previewPage': '第 {{n}} 页',
+  'rotate.previewStatus.all': '所有页面将被旋转',
+  'rotate.previewStatus.selected': '已选 {{count}} 页',
 
   // PageNumberingTool
   'pageNumbering.noFile': '请先选择一个 PDF 文件',
@@ -189,6 +210,13 @@ const zh: Record<string, string> = {
   'watermark.button': '添加水印并下载',
   'watermark.error.empty': '请输入水印文字',
   'watermark.error': '添加水印失败: {{message}}',
+  'watermark.layout.label': '水印布局',
+  'watermark.layout.center': '居中',
+  'watermark.layout.centerDesc': '单个水印居中排列',
+  'watermark.layout.tile': '平铺',
+  'watermark.layout.tileDesc': '在页面中重复排列',
+  'watermark.layout.diagonal': '对角线',
+  'watermark.layout.diagonalDesc': '对角线重复排列',
 
   // PdfToImageTool
   'pdfToImage.noFile': '请先选择一个 PDF 文件',
