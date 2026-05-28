@@ -54,7 +54,7 @@ export default function FileList() {
           onClick={handleAddMore}
           className="btn-icon"
           style={{ width: 28, height: 28 }}
-          title="Add more files"
+          title={t('fileList.addMore')}
         >
           <Plus className="w-4 h-4" />
         </button>

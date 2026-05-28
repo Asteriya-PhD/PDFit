@@ -82,7 +82,7 @@ export default function ToolPanel() {
               className="text-xs mt-4"
               style={{ color: 'var(--color-text-muted)' }}
             >
-              Select a tool from the toolbar above to get started
+              {t('toolPanel.hint')}
             </p>
           )}
         </div>

@@ -77,7 +77,7 @@ export default function EmptyState() {
             lineHeight: 1.6,
           }}
         >
-          PDF tools that run entirely in your browser. No uploads, no servers, complete privacy.
+          {t('emptyState.hero.subtitle')}
         </p>
       </div>
 
@@ -136,7 +136,7 @@ export default function EmptyState() {
             color: 'white',
           }}
         >
-          Browse Files
+          {t('emptyState.browseButton')}
         </div>
       </div>
 
@@ -152,7 +152,7 @@ export default function EmptyState() {
             letterSpacing: '0.1em',
           }}
         >
-          Everything you need
+          {t('emptyState.sectionTitle')}
         </p>
         <div className="grid grid-cols-5 sm:grid-cols-6 gap-3">
           {features.map(({ icon: Icon, label, color }, index) => (
@@ -207,7 +207,7 @@ export default function EmptyState() {
             d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
           />
         </svg>
-        <span>100% private — files never leave your browser</span>
+        <span>{t('emptyState.privacy')}</span>
       </div>
     </div>
   )
