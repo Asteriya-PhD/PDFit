@@ -101,7 +101,7 @@ export default function SplitTool() {
           onClick={() => setMode('extract')}
           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
             mode === 'extract'
-              ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
+              ? 'bg-[rgba(217,119,87,0.12)] text-[var(--color-accent)] border-[var(--color-accent)]'
               : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
           }`}
         >
@@ -111,7 +111,7 @@ export default function SplitTool() {
           onClick={() => setMode('split')}
           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
             mode === 'split'
-              ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
+              ? 'bg-[rgba(217,119,87,0.12)] text-[var(--color-accent)] border-[var(--color-accent)]'
               : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
           }`}
         >
@@ -138,14 +138,14 @@ export default function SplitTool() {
               value={spec}
               onChange={e => setSpec(e.target.value)}
               placeholder={t('split.extract.placeholder')}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--shadow-focus)] focus:border-[var(--color-accent)]"
             />
           </div>
           <button
             onClick={handleExtract}
             disabled={!spec.trim() || loading}
-            className="w-full flex items-center justify-center gap-2 bg-red-600 text-white rounded-lg px-4 py-2.5 text-sm font-medium
-              hover:bg-red-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
+            className="w-full flex items-center justify-center gap-2 btn-primary
+              disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
           >
             <Download className="w-4 h-4" />
             {loading ? t('split.loading') : t('split.extract.button')}
@@ -163,7 +163,7 @@ export default function SplitTool() {
                 value={range.start}
                 onChange={e => updateRange(range.id, 'start', e.target.value)}
                 placeholder={t('split.split.placeholderStart')}
-                className="w-24 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                className="w-24 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--shadow-focus)] focus:border-[var(--color-accent)]"
               />
               <span className="text-gray-500 dark:text-gray-400">—</span>
               <input
@@ -173,12 +173,12 @@ export default function SplitTool() {
                 value={range.end}
                 onChange={e => updateRange(range.id, 'end', e.target.value)}
                 placeholder={t('split.split.placeholderEnd')}
-                className="w-24 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                className="w-24 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--shadow-focus)] focus:border-[var(--color-accent)]"
               />
               {ranges.length > 1 && (
                 <button
                   onClick={() => removeRange(range.id)}
-                  className="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-red-500"
+                  className="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-[var(--color-accent)]"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -188,7 +188,7 @@ export default function SplitTool() {
 
           <button
             onClick={addRange}
-            className="flex items-center gap-1 text-sm text-red-600 hover:text-red-700"
+            className="flex items-center gap-1 text-sm text-[var(--color-accent)] hover:text-[var(--color-accent)]"
           >
             <Plus className="w-4 h-4" /> {t('split.split.addRange')}
           </button>
@@ -196,8 +196,8 @@ export default function SplitTool() {
           <button
             onClick={handleSplit}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 bg-red-600 text-white rounded-lg px-4 py-2.5 text-sm font-medium
-              hover:bg-red-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
+            className="w-full flex items-center justify-center gap-2 btn-primary
+              disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
           >
             <Download className="w-4 h-4" />
             {loading ? t('split.loading') : t('split.split.button')}

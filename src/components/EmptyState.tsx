@@ -141,7 +141,7 @@ export default function EmptyState() {
       </div>
 
       {/* Features Grid */}
-      <div className="mt-12 w-full max-w-2xl animate-slideUp" style={{ animationDelay: '100ms' }}>
+      <div className="mt-12 w-full max-w-3xl animate-slideUp" style={{ animationDelay: '100ms' }}>
         <p
           className="text-center text-sm mb-4"
           style={{
@@ -154,7 +154,7 @@ export default function EmptyState() {
         >
           Everything you need
         </p>
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-5 sm:grid-cols-6 gap-3">
           {features.map(({ icon: Icon, label, color }, index) => (
             <div
               key={label}

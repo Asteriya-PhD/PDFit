@@ -145,7 +145,7 @@ export default function MineruTool() {
               value={endpoint}
               onChange={e => setEndpoint(e.target.value)}
               placeholder="https://mineru.net"
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--shadow-focus)]"
             />
           </div>
 
@@ -158,14 +158,14 @@ export default function MineruTool() {
               value={apiKey}
               onChange={e => setApiKey(e.target.value)}
               placeholder={t('mineru.config.apiKeyPlaceholder')}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--shadow-focus)]"
             />
           </div>
 
           <button
             onClick={handleSaveConfig}
             disabled={!endpoint.trim() || !apiKey.trim()}
-            className="w-full px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-300 dark:disabled:bg-gray-600 text-white rounded-md text-sm font-medium transition-colors"
+            className="w-full px-4 py-2 btn-primary disabled:bg-gray-300 dark:disabled:bg-gray-600 text-white rounded-md text-sm font-medium transition-colors"
           >
             {t('mineru.config.save')}
           </button>
@@ -204,7 +204,7 @@ export default function MineruTool() {
           onDragOver={e => e.preventDefault()}
           onDrop={handleDrop}
           onClick={() => inputRef.current?.click()}
-          className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center cursor-pointer hover:border-red-400 hover:bg-red-50/30 dark:hover:border-red-500 dark:hover:bg-red-900/20 transition-colors"
+          className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center cursor-pointer hover:border-[var(--color-accent)] hover:bg-[rgba(217,119,87,0.12)] transition-colors"
         >
           <input
             ref={inputRef}
@@ -225,7 +225,7 @@ export default function MineruTool() {
         <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-              <FileText className="w-4 h-4 text-red-500" />
+              <FileText className="w-4 h-4 text-[var(--color-accent)]" />
               <span className="font-medium">{file.name}</span>
               <span className="text-gray-400">({(file.size / 1024 / 1024).toFixed(1)} MB)</span>
             </div>
@@ -242,7 +242,7 @@ export default function MineruTool() {
           {status === 'idle' && (
             <button
               onClick={handleProcess}
-              className="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm font-medium transition-colors"
+              className="w-full px-4 py-2 btn-primary text-white rounded-md text-sm font-medium transition-colors"
             >
               {t('mineru.button')}
             </button>
@@ -251,7 +251,7 @@ export default function MineruTool() {
           {status === 'uploading' && (
             <div className="space-y-2">
               <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                <div className="h-full bg-red-500 rounded-full animate-pulse" style={{ width: '60%' }} />
+                <div className="h-full bg-[var(--color-accent)] rounded-full animate-pulse" style={{ width: '60%' }} />
               </div>
               <p className="text-sm text-gray-500 dark:text-gray-400 text-center">{progress}</p>
             </div>
@@ -266,7 +266,7 @@ export default function MineruTool() {
               <div className="flex gap-2">
                 <button
                   onClick={handleDownload}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm font-medium transition-colors"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 btn-primary text-white rounded-md text-sm font-medium transition-colors"
                 >
                   <Download className="w-4 h-4" />
                   {t('mineru.download')}
@@ -276,7 +276,7 @@ export default function MineruTool() {
           )}
 
           {status === 'error' && (
-            <div className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-md p-3">
+            <div className="text-sm text-[var(--color-accent)] bg-[rgba(217,119,87,0.12)] rounded-md p-3">
               {error}
             </div>
           )}

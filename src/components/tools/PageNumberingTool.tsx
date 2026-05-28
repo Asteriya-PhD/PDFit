@@ -80,7 +80,7 @@ export default function PageNumberingTool() {
                 onClick={() => setPosition(p.value)}
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   position === p.value
-                    ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
+                    ? 'bg-[rgba(217,119,87,0.12)] text-[var(--color-accent)] border-[var(--color-accent)]'
                     : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
@@ -98,7 +98,7 @@ export default function PageNumberingTool() {
             min={1}
             value={startNumber}
             onChange={e => setStartNumber(Math.max(1, parseInt(e.target.value, 10) || 1))}
-            className="w-24 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              className="w-24 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--shadow-focus)] focus:border-[var(--color-accent)]"
           />
         </div>
 
@@ -112,7 +112,7 @@ export default function PageNumberingTool() {
                 onClick={() => setFontSize(s)}
                 className={`w-10 h-9 rounded-md text-sm font-medium transition-colors ${
                   fontSize === s
-                    ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
+                    ? 'bg-[rgba(217,119,87,0.12)] text-[var(--color-accent)] border-[var(--color-accent)]'
                     : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
@@ -132,7 +132,7 @@ export default function PageNumberingTool() {
                 onClick={() => setColor(c)}
                 className={`w-8 h-8 rounded-full border-2 transition-all ${
                   color === c
-                    ? 'border-red-500 scale-110'
+                    ? 'border-[var(--color-accent)] scale-110'
                     : 'border-transparent hover:scale-110'
                 }`}
                 style={{ backgroundColor: c }}
@@ -162,7 +162,7 @@ export default function PageNumberingTool() {
               value={prefix}
               onChange={e => setPrefix(e.target.value)}
               placeholder={t('pageNumbering.prefixPlaceholder')}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--shadow-focus)] focus:border-[var(--color-accent)]"
             />
           </div>
           <div>
@@ -172,7 +172,7 @@ export default function PageNumberingTool() {
               value={suffix}
               onChange={e => setSuffix(e.target.value)}
               placeholder={t('pageNumbering.suffixPlaceholder')}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--shadow-focus)] focus:border-[var(--color-accent)]"
             />
           </div>
         </div>
@@ -183,7 +183,7 @@ export default function PageNumberingTool() {
             type="checkbox"
             checked={showTotalPages}
             onChange={e => setShowTotalPages(e.target.checked)}
-            className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-red-600 focus:ring-red-500"
+            className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-[var(--color-accent)] focus:ring-[var(--shadow-focus)]"
           />
           <span className="text-sm text-gray-700 dark:text-gray-200">{t('pageNumbering.showTotalPages')}</span>
         </label>
@@ -210,8 +210,8 @@ export default function PageNumberingTool() {
       <button
         onClick={handleAddNumbers}
         disabled={loading}
-        className="w-full flex items-center justify-center gap-2 bg-red-600 text-white rounded-lg px-4 py-2.5 text-sm font-medium
-          hover:bg-red-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
+        className="w-full flex items-center justify-center gap-2 btn-primary
+          disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
       >
         <Download className="w-4 h-4" />
         {loading ? t('pageNumbering.loading') : t('pageNumbering.button')}

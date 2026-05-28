@@ -88,7 +88,7 @@ export default function DeleteTool() {
           onClick={() => setSelectMode('manual')}
           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
             selectMode === 'manual'
-              ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
+              ? 'bg-[rgba(217,119,87,0.12)] text-[var(--color-accent)] border-[var(--color-accent)]'
               : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
           }`}
         >
@@ -98,7 +98,7 @@ export default function DeleteTool() {
           onClick={() => setSelectMode('select')}
           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
             selectMode === 'select'
-              ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
+              ? 'bg-[rgba(217,119,87,0.12)] text-[var(--color-accent)] border-[var(--color-accent)]'
               : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
           }`}
         >
@@ -125,7 +125,7 @@ export default function DeleteTool() {
               value={spec}
               onChange={e => setSpec(e.target.value)}
               placeholder={t('delete.manual.placeholder')}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--shadow-focus)] focus:border-[var(--color-accent)]"
             />
           </div>
         </div>
@@ -140,7 +140,7 @@ export default function DeleteTool() {
                 className={`
                   aspect-[3/4] flex items-center justify-center rounded border text-sm font-medium transition-all
                   ${selectedPages.has(i)
-                    ? 'bg-red-100 dark:bg-red-900/30 border-red-300 dark:border-red-700 text-red-700 dark:text-red-400'
+                    ? 'bg-[rgba(217,119,87,0.12)] border-[var(--color-accent)] text-[var(--color-accent)]'
                     : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-gray-300'
                   }
                 `}
@@ -158,8 +158,8 @@ export default function DeleteTool() {
       <button
         onClick={handleDelete}
         disabled={loading}
-        className="w-full flex items-center justify-center gap-2 bg-red-600 text-white rounded-lg px-4 py-2.5 text-sm font-medium
-          hover:bg-red-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
+        className="w-full flex items-center justify-center gap-2 btn-primary
+          disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
       >
         <Download className="w-4 h-4" />
         {loading ? t('delete.loading') : t('delete.button')}

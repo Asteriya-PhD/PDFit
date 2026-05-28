@@ -8,8 +8,10 @@ import '@/lib/pdfWorker'
 import { getDocument } from 'pdfjs-dist'
 
 const FONT_SIZES = [24, 36, 48, 60, 72, 96, 120]
-const COLOR_PRESETS = ['#cccccc', '#999999', '#666666', '#333333', '#e53e3e', '#3182ce']
-const PREVIEW_HEIGHT = 320
+const COLOR_PRESETS = ['#cccccc', '#999999', '#666666', '#333333', '#d97757', '#6a9bcc']
+const PREVIEW_HEIGHT = 400
+
+type WatermarkLayout = 'center' | 'tile' | 'diagonal'
 
 export default function WatermarkTool() {
   const { files, activeFileId, setLoading, loading } = useApp()
@@ -21,6 +23,7 @@ export default function WatermarkTool() {
   const [opacity, setOpacity] = useState(0.4)
   const [rotation, setRotation] = useState(-45)
   const [color, setColor] = useState('#999999')
+  const [layout, setLayout] = useState<WatermarkLayout>('center')
   const [pageScope, setPageScope] = useState<'all' | 'custom'>('all')
   const [customPages, setCustomPages] = useState('')
 
@@ -33,8 +36,10 @@ export default function WatermarkTool() {
 
   if (!activeFile) {
     return (
-      <div className="max-w-lg mx-auto text-center text-gray-500 dark:text-gray-400 text-sm py-12">
-        {t('watermark.noFile')}
+      <div className="text-center py-12">
+        <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
+          {t('watermark.noFile')}
+        </p>
       </div>
     )
   }
@@ -44,6 +49,12 @@ export default function WatermarkTool() {
     { value: 0, label: t('watermark.rotation.zero') },
     { value: 45, label: t('watermark.rotation.plus45') },
     { value: 90, label: t('watermark.rotation.ninety') },
+  ]
+
+  const layouts: { value: WatermarkLayout; label: string; description: string }[] = [
+    { value: 'center', label: 'Center', description: 'Single watermark in center' },
+    { value: 'tile', label: 'Tile', description: 'Repeat across page' },
+    { value: 'diagonal', label: 'Diagonal', description: 'Diagonal repeat pattern' },
   ]
 
   const handleApply = async () => {
@@ -141,81 +152,157 @@ export default function WatermarkTool() {
       ctx.textBaseline = 'alphabetic'
 
       const textWidth = ctx.measureText(text).width
-      const x = (pageWidth - textWidth) / 2
-      const y = pageHeight / 2 + scaledFontSize / 3
 
-      ctx.translate(x, y)
-      ctx.rotate((rotation * Math.PI) / 180)
-      ctx.fillText(text, 0, 0)
+      if (layout === 'center') {
+        // Single centered watermark
+        const x = (pageWidth - textWidth) / 2
+        const y = pageHeight / 2 + scaledFontSize / 3
+
+        ctx.translate(x, y)
+        ctx.rotate((rotation * Math.PI) / 180)
+        ctx.fillText(text, 0, 0)
+      } else if (layout === 'tile') {
+        // Tile watermark across page
+        const spacingX = textWidth + scaledFontSize * 2
+        const spacingY = scaledFontSize * 3
+
+        for (let y = -pageHeight; y < pageHeight * 2; y += spacingY) {
+          for (let x = -pageWidth; x < pageWidth * 2; x += spacingX) {
+            ctx.save()
+            ctx.translate(x, y)
+            ctx.rotate((rotation * Math.PI) / 180)
+            ctx.fillText(text, 0, 0)
+            ctx.restore()
+          }
+        }
+      } else if (layout === 'diagonal') {
+        // Diagonal repeating pattern
+        const diagonal = Math.sqrt(pageWidth * pageWidth + pageHeight * pageHeight)
+        const spacing = textWidth + scaledFontSize * 2
+
+        for (let d = -diagonal; d < diagonal * 2; d += spacing) {
+          ctx.save()
+          ctx.translate(d, pageHeight / 2)
+          ctx.rotate((rotation * Math.PI) / 180)
+          ctx.fillText(text, 0, 0)
+          ctx.restore()
+        }
+      }
+
       ctx.restore()
     }, 200)
 
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current)
     }
-  }, [text, fontSize, opacity, rotation, color, previewReady, previewSize])
+  }, [text, fontSize, opacity, rotation, color, layout, previewReady, previewSize])
 
   return (
-    <div className="max-w-lg mx-auto">
-      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{t('watermark.title')}</h2>
-
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-        {t('watermark.currentFile')}<span className="font-medium text-gray-700 dark:text-gray-200">{activeFile.name}</span>
-        <span className="text-gray-500 dark:text-gray-400 ml-2">{t('watermark.pageCount', { count: activeFile.pageCount })}</span>
-      </p>
-
-      {/* Visual Preview - always show container when file is loaded */}
-      <div className="mb-5 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <p className="text-xs text-gray-500 dark:text-gray-400 px-3 pt-2 pb-1">{t('watermark.preview')}</p>
-        <div
-          className="relative mx-auto"
-          style={{ width: previewSize.w, height: previewSize.h, maxWidth: '100%' }}
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* Left: Controls */}
+      <div>
+        <h2
+          className="text-xl mb-2"
+          style={{
+            fontFamily: 'var(--font-heading)',
+            fontWeight: 600,
+            color: 'var(--color-text-primary)',
+          }}
         >
-          <canvas
-            ref={pdfCanvasRef}
-            className="absolute inset-0"
-            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-          />
-          <canvas
-            ref={overlayCanvasRef}
-            className="absolute inset-0"
-            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-          />
-          {!previewReady && (
-            <div className="absolute inset-0 flex items-center justify-center text-gray-400 dark:text-gray-500 text-sm">
-              {t('watermark.noFile')}
-            </div>
-          )}
-        </div>
-      </div>
+          {t('watermark.title')}
+        </h2>
+        <p className="text-sm mb-6" style={{ color: 'var(--color-text-muted)' }}>
+          {t('watermark.currentFile')}
+          <span
+            className="font-medium ml-1"
+            style={{ color: 'var(--color-text-primary)' }}
+          >
+            {activeFile.name}
+          </span>
+          <span className="ml-2">({activeFile.pageCount} pages)</span>
+        </p>
 
-      <div className="space-y-5 mb-6">
         {/* Watermark Text */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('watermark.text.label')}</label>
+        <div className="mb-5">
+          <label
+            className="block text-sm font-medium mb-2"
+            style={{
+              fontFamily: 'var(--font-heading)',
+              color: 'var(--color-text-secondary)',
+            }}
+          >
+            {t('watermark.text.label')}
+          </label>
           <input
             type="text"
             value={text}
             onChange={e => setText(e.target.value)}
             placeholder={t('watermark.text.placeholder')}
             maxLength={100}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+            className="input"
           />
         </div>
 
+        {/* Layout Selection */}
+        <div className="mb-5">
+          <label
+            className="block text-sm font-medium mb-3"
+            style={{
+              fontFamily: 'var(--font-heading)',
+              color: 'var(--color-text-secondary)',
+            }}
+          >
+            Watermark Layout
+          </label>
+          <div className="grid grid-cols-3 gap-3">
+            {layouts.map(l => (
+              <button
+                key={l.value}
+                onClick={() => setLayout(l.value)}
+                className="flex flex-col items-center gap-2 p-3 rounded-xl transition-all"
+                style={{
+                  backgroundColor: layout === l.value ? 'var(--color-surface-active)' : 'var(--color-surface)',
+                  border: `2px solid ${layout === l.value ? 'var(--color-accent)' : 'var(--color-border)'}`,
+                  color: layout === l.value ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                }}
+              >
+                <span
+                  className="text-sm font-medium"
+                  style={{ fontFamily: 'var(--font-heading)' }}
+                >
+                  {l.label}
+                </span>
+                <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+                  {l.description}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Font Size */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('watermark.fontSize')}</label>
+        <div className="mb-5">
+          <label
+            className="block text-sm font-medium mb-2"
+            style={{
+              fontFamily: 'var(--font-heading)',
+              color: 'var(--color-text-secondary)',
+            }}
+          >
+            {t('watermark.fontSize')}
+          </label>
           <div className="flex gap-2 flex-wrap">
             {FONT_SIZES.map(s => (
               <button
                 key={s}
                 onClick={() => setFontSize(s)}
-                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                  fontSize === s
-                    ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
-                    : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
-                }`}
+                className="px-3 py-1.5 rounded-lg text-sm font-medium transition-all"
+                style={{
+                  fontFamily: 'var(--font-heading)',
+                  backgroundColor: fontSize === s ? 'rgba(217, 119, 87, 0.12)' : 'var(--color-surface)',
+                  border: `1px solid ${fontSize === s ? 'var(--color-accent)' : 'var(--color-border)'}`,
+                  color: fontSize === s ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                }}
               >
                 {s}
               </button>
@@ -224,8 +311,14 @@ export default function WatermarkTool() {
         </div>
 
         {/* Opacity */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+        <div className="mb-5">
+          <label
+            className="block text-sm font-medium mb-2"
+            style={{
+              fontFamily: 'var(--font-heading)',
+              color: 'var(--color-text-secondary)',
+            }}
+          >
             {t('watermark.opacity', { value: Math.round(opacity * 100) })}
           </label>
           <input
@@ -234,27 +327,38 @@ export default function WatermarkTool() {
             max={100}
             value={Math.round(opacity * 100)}
             onChange={e => setOpacity(parseInt(e.target.value, 10) / 100)}
-            className="w-full accent-red-600"
+            className="w-full"
+            style={{ accentColor: 'var(--color-accent)' }}
           />
-          <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
+          <div className="flex justify-between text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
             <span>{t('watermark.opacityLow')}</span>
             <span>{t('watermark.opacityHigh')}</span>
           </div>
         </div>
 
         {/* Rotation */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('watermark.rotation')}</label>
+        <div className="mb-5">
+          <label
+            className="block text-sm font-medium mb-2"
+            style={{
+              fontFamily: 'var(--font-heading)',
+              color: 'var(--color-text-secondary)',
+            }}
+          >
+            {t('watermark.rotation')}
+          </label>
           <div className="grid grid-cols-4 gap-2">
             {rotations.map(r => (
               <button
                 key={r.value}
                 onClick={() => setRotation(r.value)}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  rotation === r.value
-                    ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
-                    : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
-                }`}
+                className="px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                style={{
+                  fontFamily: 'var(--font-heading)',
+                  backgroundColor: rotation === r.value ? 'rgba(217, 119, 87, 0.12)' : 'var(--color-surface)',
+                  border: `1px solid ${rotation === r.value ? 'var(--color-accent)' : 'var(--color-border)'}`,
+                  color: rotation === r.value ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                }}
               >
                 {r.label}
               </button>
@@ -263,19 +367,27 @@ export default function WatermarkTool() {
         </div>
 
         {/* Color */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('watermark.color')}</label>
+        <div className="mb-5">
+          <label
+            className="block text-sm font-medium mb-2"
+            style={{
+              fontFamily: 'var(--font-heading)',
+              color: 'var(--color-text-secondary)',
+            }}
+          >
+            {t('watermark.color')}
+          </label>
           <div className="flex gap-2 items-center">
             {COLOR_PRESETS.map(c => (
               <button
                 key={c}
                 onClick={() => setColor(c)}
-                className={`w-8 h-8 rounded-full border-2 transition-all ${
-                  color === c
-                    ? 'border-red-500 scale-110'
-                    : 'border-transparent hover:scale-110'
-                }`}
-                style={{ backgroundColor: c }}
+                className="w-8 h-8 rounded-full border-2 transition-all"
+                style={{
+                  backgroundColor: c,
+                  borderColor: color === c ? 'var(--color-accent)' : 'transparent',
+                  transform: color === c ? 'scale(1.1)' : 'scale(1)',
+                }}
                 aria-label={t('watermark.colorLabel', { value: c })}
               />
             ))}
@@ -286,7 +398,13 @@ export default function WatermarkTool() {
                 onChange={e => setColor(e.target.value)}
                 className="absolute inset-0 opacity-0 w-8 h-8 cursor-pointer"
               />
-              <div className="w-8 h-8 rounded-full border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center text-xs text-gray-500 dark:text-gray-400 hover:border-gray-400">
+              <div
+                className="w-8 h-8 rounded-full border-2 border-dashed flex items-center justify-center text-xs"
+                style={{
+                  borderColor: 'var(--color-border)',
+                  color: 'var(--color-text-muted)',
+                }}
+              >
                 +
               </div>
             </label>
@@ -294,26 +412,38 @@ export default function WatermarkTool() {
         </div>
 
         {/* Page Scope */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('watermark.scopeLabel')}</label>
-          <div className="flex gap-2 mb-2">
+        <div className="mb-6">
+          <label
+            className="block text-sm font-medium mb-2"
+            style={{
+              fontFamily: 'var(--font-heading)',
+              color: 'var(--color-text-secondary)',
+            }}
+          >
+            {t('watermark.scopeLabel')}
+          </label>
+          <div className="flex gap-3 mb-3">
             <button
               onClick={() => setPageScope('all')}
-              className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                pageScope === 'all'
-                  ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
-                  : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
-              }`}
+              className="flex-1 py-2.5 rounded-xl text-sm font-medium transition-all"
+              style={{
+                fontFamily: 'var(--font-heading)',
+                backgroundColor: pageScope === 'all' ? 'rgba(217, 119, 87, 0.12)' : 'var(--color-surface)',
+                border: `2px solid ${pageScope === 'all' ? 'var(--color-accent)' : 'var(--color-border)'}`,
+                color: pageScope === 'all' ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+              }}
             >
               {t('watermark.scope.all')}
             </button>
             <button
               onClick={() => setPageScope('custom')}
-              className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                pageScope === 'custom'
-                  ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
-                  : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
-              }`}
+              className="flex-1 py-2.5 rounded-xl text-sm font-medium transition-all"
+              style={{
+                fontFamily: 'var(--font-heading)',
+                backgroundColor: pageScope === 'custom' ? 'rgba(217, 119, 87, 0.12)' : 'var(--color-surface)',
+                border: `2px solid ${pageScope === 'custom' ? 'var(--color-accent)' : 'var(--color-border)'}`,
+                color: pageScope === 'custom' ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+              }}
             >
               {t('watermark.scope.custom')}
             </button>
@@ -324,21 +454,71 @@ export default function WatermarkTool() {
               value={customPages}
               onChange={e => setCustomPages(e.target.value)}
               placeholder={t('watermark.scopePlaceholder', { count: activeFile.pageCount })}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              className="input"
             />
           )}
         </div>
+
+        {/* Action Button */}
+        <button
+          onClick={handleApply}
+          disabled={loading || !text.trim()}
+          className="btn-primary w-full"
+        >
+          <Download className="w-4 h-4" />
+          {loading ? t('watermark.loading') : t('watermark.button')}
+        </button>
       </div>
 
-      <button
-        onClick={handleApply}
-        disabled={loading || !text.trim()}
-        className="w-full flex items-center justify-center gap-2 bg-red-600 text-white rounded-lg px-4 py-2.5 text-sm font-medium
-          hover:bg-red-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
-      >
-        <Download className="w-4 h-4" />
-        {loading ? t('watermark.loading') : t('watermark.button')}
-      </button>
+      {/* Right: Preview */}
+      <div>
+        <p
+          className="text-sm font-medium mb-3"
+          style={{
+            fontFamily: 'var(--font-heading)',
+            color: 'var(--color-text-secondary)',
+          }}
+        >
+          {t('watermark.preview')}
+        </p>
+        <div
+          className="preview-box"
+          style={{
+            backgroundColor: 'var(--color-bg-tertiary)',
+            minHeight: PREVIEW_HEIGHT + 40,
+          }}
+        >
+          <div
+            className="relative"
+            style={{ width: previewSize.w, height: previewSize.h }}
+          >
+            <canvas
+              ref={pdfCanvasRef}
+              className="absolute inset-0"
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            />
+            <canvas
+              ref={overlayCanvasRef}
+              className="absolute inset-0"
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            />
+            {!previewReady && (
+              <div
+                className="absolute inset-0 flex items-center justify-center"
+                style={{ color: 'var(--color-text-muted)' }}
+              >
+                <span className="text-sm">{t('watermark.noFile')}</span>
+              </div>
+            )}
+          </div>
+        </div>
+        <p
+          className="text-center text-xs mt-3"
+          style={{ color: 'var(--color-text-muted)' }}
+        >
+          {layout === 'center' ? 'Single watermark in center' : layout === 'tile' ? 'Tiled across page' : 'Diagonal repeat pattern'}
+        </p>
+      </div>
     </div>
   )
 }

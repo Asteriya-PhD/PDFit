@@ -60,19 +60,15 @@ export default function Header() {
           {tools.map(tool => {
             const Icon = tool.icon
             const isActive = activeTool === tool.type
-            const disabled = tool.type !== 'image-to-pdf' && files.length === 0
             return (
               <button
                 key={tool.type}
                 onClick={() => setTool(isActive ? null : tool.type)}
-                disabled={disabled}
                 className="tool-item whitespace-nowrap"
                 data-tooltip={tool.description}
                 style={{
-                  color: isActive ? 'var(--color-accent)' : disabled ? 'var(--color-text-muted)' : 'var(--color-text-secondary)',
+                  color: isActive ? 'var(--color-accent)' : 'var(--color-text-secondary)',
                   backgroundColor: isActive ? 'var(--color-surface-active)' : 'transparent',
-                  opacity: disabled ? 0.5 : 1,
-                  cursor: disabled ? 'not-allowed' : 'pointer',
                 }}
               >
                 <Icon className="w-4 h-4" />

@@ -96,7 +96,7 @@ export default function PdfToImageTool() {
               onClick={() => setPageScope('all')}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 pageScope === 'all'
-                  ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
+                  ? 'bg-[rgba(217,119,87,0.12)] text-[var(--color-accent)] border-[var(--color-accent)]'
                   : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
@@ -106,7 +106,7 @@ export default function PdfToImageTool() {
               onClick={() => setPageScope('custom')}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 pageScope === 'custom'
-                  ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
+                  ? 'bg-[rgba(217,119,87,0.12)] text-[var(--color-accent)] border-[var(--color-accent)]'
                   : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
@@ -119,7 +119,7 @@ export default function PdfToImageTool() {
               value={customSpec}
               onChange={e => setCustomSpec(e.target.value)}
               placeholder={t('pdfToImage.scopePlaceholder')}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--shadow-focus)] focus:border-[var(--color-accent)]"
             />
           )}
         </div>
@@ -132,7 +132,7 @@ export default function PdfToImageTool() {
               onClick={() => setFormat('png')}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 format === 'png'
-                  ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
+                  ? 'bg-[rgba(217,119,87,0.12)] text-[var(--color-accent)] border-[var(--color-accent)]'
                   : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
@@ -142,7 +142,7 @@ export default function PdfToImageTool() {
               onClick={() => setFormat('jpeg')}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 format === 'jpeg'
-                  ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
+                  ? 'bg-[rgba(217,119,87,0.12)] text-[var(--color-accent)] border-[var(--color-accent)]'
                   : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
@@ -163,7 +163,7 @@ export default function PdfToImageTool() {
               max={100}
               value={quality}
               onChange={e => setQuality(Number(e.target.value))}
-              className="w-full accent-red-600"
+              className="w-full accent-[var(--color-accent)]"
             />
           </div>
         )}
@@ -178,7 +178,7 @@ export default function PdfToImageTool() {
                 onClick={() => setDpi(v)}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   dpi === v
-                    ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
+                    ? 'bg-[rgba(217,119,87,0.12)] text-[var(--color-accent)] border-[var(--color-accent)]'
                     : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
@@ -204,7 +204,7 @@ export default function PdfToImageTool() {
           </div>
           <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
             <div
-              className="h-full bg-red-600 rounded-full transition-all duration-200"
+              className="h-full bg-[var(--color-accent)] rounded-full transition-all duration-200"
               style={{ width: `${(progress.done / progress.total) * 100}%` }}
             />
           </div>
@@ -214,8 +214,8 @@ export default function PdfToImageTool() {
       <button
         onClick={handleExport}
         disabled={loading || (showPageInput && !customSpec.trim())}
-        className="w-full flex items-center justify-center gap-2 bg-red-600 text-white rounded-lg px-4 py-2.5 text-sm font-medium
-          hover:bg-red-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
+        className="w-full flex items-center justify-center gap-2 btn-primary
+          disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
       >
         <Download className="w-4 h-4" />
         {loading ? t('pdfToImage.loading') : t('pdfToImage.button')}

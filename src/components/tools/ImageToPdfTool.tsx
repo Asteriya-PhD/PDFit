@@ -103,10 +103,10 @@ export default function ImageToPdfTool() {
           onDrop={handleDrop}
           onClick={handleClick}
           className="flex flex-col items-center justify-center gap-4 p-12 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl
-            cursor-pointer hover:border-red-400 hover:bg-red-50/30 dark:hover:border-red-500 dark:hover:bg-red-900/20 transition-colors"
+            cursor-pointer hover:border-[var(--color-accent)] hover:bg-[rgba(217,119,87,0.12)] transition-colors"
         >
-          <div className="w-14 h-14 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
-            <Upload className="w-7 h-7 text-red-500" />
+          <div className="w-14 h-14 bg-[rgba(217,119,87,0.12)] rounded-full flex items-center justify-center">
+            <Upload className="w-7 h-7 text-[var(--color-accent)]" />
           </div>
           <div className="text-center">
             <p className="text-base font-medium text-gray-600 dark:text-gray-300">{t('imageToPdf.empty.text')}</p>
@@ -155,7 +155,7 @@ export default function ImageToPdfTool() {
             </div>
             <button
               onClick={() => removeImage(img.id)}
-              className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-red-500 shrink-0"
+              className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-[var(--color-accent)] shrink-0"
             >
               <X className="w-4 h-4" />
             </button>
@@ -166,7 +166,7 @@ export default function ImageToPdfTool() {
       {/* Add more button */}
       <button
         onClick={handleClick}
-        className="flex items-center gap-1 text-sm text-red-600 hover:text-red-700 mb-6"
+        className="flex items-center gap-1 text-sm text-[var(--color-accent)] hover:text-[var(--color-accent)] mb-6"
       >
         <Upload className="w-4 h-4" /> {t('imageToPdf.addMore')}
       </button>
@@ -194,7 +194,7 @@ export default function ImageToPdfTool() {
                 onClick={() => setPageSize(opt.value)}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   pageSize === opt.value
-                    ? 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
+                    ? 'bg-[rgba(217,119,87,0.12)] text-[var(--color-accent)] border-[var(--color-accent)]'
                     : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >
@@ -214,7 +214,7 @@ export default function ImageToPdfTool() {
             max={60}
             value={margin}
             onChange={e => setMargin(Number(e.target.value))}
-            className="w-full accent-red-600"
+            className="w-full accent-[var(--color-accent)]"
           />
         </div>
       </div>
@@ -222,8 +222,8 @@ export default function ImageToPdfTool() {
       <button
         onClick={handleConvert}
         disabled={loading || images.length === 0}
-        className="w-full flex items-center justify-center gap-2 bg-red-600 text-white rounded-lg px-4 py-2.5 text-sm font-medium
-          hover:bg-red-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
+        className="w-full flex items-center justify-center gap-2 btn-primary
+          disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
       >
         <Download className="w-4 h-4" />
         {loading ? t('imageToPdf.loading') : t('imageToPdf.button', { count: images.length })}

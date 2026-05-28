@@ -103,7 +103,7 @@ export default function PdfToMdTool() {
               </div>
               <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-red-600 rounded-full transition-all duration-200"
+                  className="h-full bg-[var(--color-accent)] rounded-full transition-all duration-200"
                   style={{ width: `${(progress.done / progress.total) * 100}%` }}
                 />
               </div>
@@ -113,8 +113,8 @@ export default function PdfToMdTool() {
           <button
             onClick={handleExtract}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 bg-red-600 text-white rounded-lg px-4 py-2.5 text-sm font-medium
-              hover:bg-red-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
+            className="w-full flex items-center justify-center gap-2 btn-primary
+              disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
           >
             <FileText className="w-4 h-4" />
             {loading ? t('pdfToMd.loading') : t('pdfToMd.button')}
@@ -144,8 +144,8 @@ export default function PdfToMdTool() {
             </button>
             <button
               onClick={handleDownload}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium bg-red-600
-                text-white hover:bg-red-700 transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium btn-primary
+                text-white transition-colors"
             >
               <Download className="w-4 h-4" /> {t('pdfToMd.download')}
             </button>
@@ -162,7 +162,7 @@ export default function PdfToMdTool() {
             readOnly
             value={markdown}
             className="w-full h-80 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-mono text-gray-700 dark:text-gray-200
-              bg-gray-50 dark:bg-gray-800 resize-y focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              bg-gray-50 dark:bg-gray-800 resize-y focus:outline-none focus:ring-2 focus:ring-[var(--shadow-focus)] focus:border-[var(--color-accent)]"
           />
           <p className="text-xs text-gray-500 dark:text-gray-400 text-right">
             {t('pdfToMd.stats', { count: markdown.length, lines: markdown.split('\n').length })}

@@ -154,7 +154,7 @@ export default function ReorderTool() {
         {order.map((pageIdx, displayIdx) => (
           <div key={`${pageIdx}-${displayIdx}`} className="relative shrink-0">
             {dropTarget === displayIdx && (
-              <div className="absolute left-0 top-0 bottom-6 w-0.5 bg-red-500 rounded z-10" />
+              <div className="absolute left-0 top-0 bottom-6 w-0.5 bg-[var(--color-accent)] rounded z-10" />
             )}
             <div
               data-page-index={displayIdx}
@@ -176,7 +176,7 @@ export default function ReorderTool() {
         ))}
         {dropTarget === order.length && (
           <div className="relative shrink-0">
-            <div className="h-full w-0.5 bg-red-500 rounded" style={{ minHeight: THUMB_HEIGHT }} />
+            <div className="h-full w-0.5 bg-[var(--color-accent)] rounded" style={{ minHeight: THUMB_HEIGHT }} />
           </div>
         )}
       </div>
@@ -191,8 +191,8 @@ export default function ReorderTool() {
         <button
           onClick={handleApply}
           disabled={loading}
-          className="flex-1 flex items-center justify-center gap-2 bg-red-600 text-white rounded-lg px-4 py-2.5 text-sm font-medium
-            hover:bg-red-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
+          className="flex-1 flex items-center justify-center gap-2 btn-primary
+            disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
         >
           <Download className="w-4 h-4" />
           {loading ? t('reorder.loading') : t('reorder.button')}
