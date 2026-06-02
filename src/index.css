@@ -30,6 +30,7 @@
   --color-accent-300: rgba(217, 119, 87, 0.3);
   --color-accent-500: #d97757;
   --color-accent-600: #c4664a;
+  --color-accent-700: #8b3a1c;  /* dark text on light bg, passes WCAG AA 4.5:1 */
 
   /* Semantic Colors */
   --color-bg-primary: var(--color-light);
@@ -83,6 +84,7 @@
   --color-accent-300: rgba(224, 138, 109, 0.3);
   --color-accent-500: #e08a6d;
   --color-accent-600: #d97757;
+  --color-accent-700: var(--color-accent-500);  /* lift to 500 on dark bg */
 
   /* Background layers: cooler dark with subtle depth */
   --color-bg-primary: #121212;

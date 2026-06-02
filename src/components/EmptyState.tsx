@@ -152,7 +152,7 @@ export default function EmptyState() {
                     className="w-8 h-8 rounded flex items-center justify-center text-xs font-bold"
                     style={{
                       backgroundColor: 'var(--color-accent-100)',
-                      color: 'var(--color-accent)',
+                      color: 'var(--color-accent-700)',
                     }}
                   >
                     PDF
@@ -290,7 +290,7 @@ export default function EmptyState() {
                 <div className="absolute inset-0 flex items-center justify-center">
                   <span
                     className="text-lg font-medium"
-                    style={{ color: 'var(--color-accent)' }}
+                    style={{ color: 'var(--color-accent-700)' }}
                   >
                     PDF
                   </span>
@@ -317,7 +317,7 @@ export default function EmptyState() {
               <span
                 className="inline-flex items-center gap-2 px-8 py-3 rounded-full text-base font-semibold transition-all duration-300 hover:-translate-y-[1px] active:translate-y-0"
                 style={{
-                  backgroundColor: 'var(--color-accent)',
+                  backgroundColor: 'var(--color-accent-700)',
                   color: 'white',
                   fontFamily: 'var(--font-heading)',
                   transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
@@ -369,7 +369,7 @@ export default function EmptyState() {
                   </p>
                   <p
                     className="text-sm leading-snug truncate"
-                    style={{ color: 'var(--color-text-muted)' }}
+                    style={{ color: 'var(--color-text-secondary)' }}
                   >
                     {group.desc}
                   </p>
