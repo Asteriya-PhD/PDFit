@@ -80,7 +80,7 @@ PDFit/
 │   ├── plan.md                   # Development roadmap
 │   └── progress.md               # Implementation log
 ├── public/
-│   └── pdfx.svg
+    │   └── pdfit.svg
 ├── .github/workflows/deploy.yml  # GitHub Actions → Pages
 ├── AGENTS.md                     # This file
 └── package.json

@@ -15,7 +15,7 @@ export default function DeleteTool() {
 
   if (!activeFile) {
     return (
-      <div className="max-w-lg mx-auto text-center text-gray-500 dark:text-gray-400 text-sm py-12">
+      <div className="max-w-lg mx-auto text-center text-sm py-12" style={{ color: 'var(--color-text-muted)' }}>
         {t('delete.noFile')}
       </div>
     )

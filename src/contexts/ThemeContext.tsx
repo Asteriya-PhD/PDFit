@@ -19,7 +19,7 @@ function getSystemTheme(): ResolvedTheme {
 
 function getStoredTheme(): Theme {
   try {
-    const stored = localStorage.getItem('pdfx-theme')
+    const stored = localStorage.getItem('pdfit-theme')
     if (stored === 'light' || stored === 'dark' || stored === 'system') return stored
   } catch { /* localStorage unavailable */ }
   return 'system'
@@ -53,7 +53,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme)
-    try { localStorage.setItem('pdfx-theme', newTheme) } catch { /* noop */ }
+    try { localStorage.setItem('pdfit-theme', newTheme) } catch { /* noop */ }
   }
 
   const toggle = () => {

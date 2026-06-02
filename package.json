@@ -14,7 +14,9 @@
     "tauri:build": "tauri build",
     "tauri:build:windows": "tauri build --target x86_64-pc-windows-msvc",
     "tauri:build:macos": "tauri build",
-    "tauri:build:linux": "tauri build --target x86_64-unknown-linux-gnu"
+    "tauri:build:linux": "tauri build --target x86_64-unknown-linux-gnu",
+    "graph:build": "tsx scripts/codegraph/build.ts",
+    "graph:query": "tsx scripts/codegraph/cli.ts"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.11.0",
@@ -39,6 +41,8 @@
     "gh-pages": "^6.3.0",
     "playwright": "^1.60.0",
     "tailwindcss": "^4.0.0",
+    "ts-morph": "^25.0.1",
+    "tsx": "^4.19.2",
     "typescript": "~5.7.0",
     "vite": "^6.0.0",
     "vite-plugin-pwa": "^1.3.0"

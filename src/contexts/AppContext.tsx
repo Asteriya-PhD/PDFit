@@ -26,14 +26,16 @@ function reducer(state: AppState, action: Action): AppState {
         activeTool: state.activeTool ?? 'merge',
       }
     case 'REMOVE_FILE': {
+      const idx = state.files.findIndex(f => f.id === action.id)
       const updated = state.files.filter(f => f.id !== action.id)
+      const newActiveId =
+        state.activeFileId === action.id
+          ? updated[idx]?.id ?? updated[idx - 1]?.id ?? null
+          : state.activeFileId
       return {
         ...state,
         files: updated,
-        activeFileId:
-          state.activeFileId === action.id
-            ? updated[0]?.id ?? null
-            : state.activeFileId,
+        activeFileId: newActiveId,
       }
     }
     case 'SET_ACTIVE_FILE':

@@ -7,8 +7,13 @@ import { Maximize2, Minimize2, ChevronLeft, ChevronRight } from 'lucide-react'
 
 const THUMB_HEIGHT = 180
 const EXPANDED_HEIGHT = 400
+const SIDEBAR_THUMB_HEIGHT = 120
 
-export default function ThumbnailGrid() {
+interface ThumbnailGridProps {
+  vertical?: boolean
+}
+
+export default function ThumbnailGrid({ vertical = false }: ThumbnailGridProps) {
   const { files, activeFileId } = useApp()
   const { t } = useI18n()
   const activeFile = files.find(f => f.id === activeFileId)
@@ -16,12 +21,18 @@ export default function ThumbnailGrid() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(true)
+  const [containerWidth, setContainerWidth] = useState(0)
 
   const checkScroll = () => {
     const el = scrollContainerRef.current
     if (!el) return
-    setCanScrollLeft(el.scrollLeft > 10)
-    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10)
+    if (vertical) {
+      setCanScrollLeft(el.scrollTop > 10)
+      setCanScrollRight(el.scrollTop < el.scrollHeight - el.clientHeight - 10)
+    } else {
+      setCanScrollLeft(el.scrollLeft > 10)
+      setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10)
+    }
   }
 
   useEffect(() => {
@@ -30,19 +41,37 @@ export default function ThumbnailGrid() {
     el.addEventListener('scroll', checkScroll)
     checkScroll()
     return () => el.removeEventListener('scroll', checkScroll)
-  }, [activeFile])
+  }, [activeFile, vertical])
+
+  useEffect(() => {
+    const el = scrollContainerRef.current?.parentElement
+    if (!el || !vertical) return
+    const measure = () => setContainerWidth(el.clientWidth)
+    measure()
+    const obs = new ResizeObserver(measure)
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [activeFile, vertical])
 
   const scroll = (direction: 'left' | 'right') => {
     const el = scrollContainerRef.current
     if (!el) return
     const scrollAmount = 300
-    el.scrollBy({
-      left: direction === 'left' ? -scrollAmount : scrollAmount,
-      behavior: 'smooth',
-    })
+    if (vertical) {
+      el.scrollBy({
+        top: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth',
+      })
+    } else {
+      el.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth',
+      })
+    }
   }
 
   if (!activeFile) {
+    if (vertical) return null
     return (
       <div
         className="h-32 shrink-0 flex items-center justify-center"
@@ -58,7 +87,59 @@ export default function ThumbnailGrid() {
     )
   }
 
-  const h = expanded ? EXPANDED_HEIGHT : THUMB_HEIGHT
+  const h = vertical
+    ? (containerWidth > 0 ? Math.round((containerWidth - 16) * 1.4) : SIDEBAR_THUMB_HEIGHT)
+    : (expanded ? EXPANDED_HEIGHT : THUMB_HEIGHT)
+
+  if (vertical) {
+    return (
+      <div
+        className="flex flex-col flex-1 min-h-0 overflow-hidden"
+        style={{
+          borderTop: '1px solid var(--color-border)',
+          backgroundColor: 'var(--color-bg-secondary)',
+        }}
+      >
+        {/* Header */}
+        <div
+          className="flex items-center justify-between px-3 py-1.5 shrink-0"
+          style={{ borderBottom: '1px solid var(--color-border)' }}
+        >
+          <span
+            className="text-xs font-medium truncate"
+            style={{
+              fontFamily: 'var(--font-heading)',
+              color: 'var(--color-text-muted)',
+            }}
+          >
+            {activeFile.name}
+          </span>
+          <span className="badge badge-orange text-[10px] py-0 px-1.5">
+            {activeFile.pageCount}
+          </span>
+        </div>
+
+        {/* Vertical Thumbnail Strip */}
+        <div
+          ref={scrollContainerRef}
+          className="flex-1 overflow-y-auto overflow-x-hidden"
+          style={{ scrollbarWidth: 'thin' }}
+        >
+          <div className="flex flex-col gap-1.5 p-1.5">
+            {Array.from({ length: activeFile.pageCount }, (_, i) => (
+              <PagePreview
+                key={`${activeFile.id}-${i}`}
+                arrayBuffer={activeFile.arrayBuffer}
+                pageIndex={i}
+                targetPx={h}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   const stripH = h + 52
 
   return (

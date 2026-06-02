@@ -10,7 +10,7 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['pdfx.svg', 'icons/pwa-192x192.png', 'icons/pwa-512x512.png'],
+      includeAssets: ['pdfit.svg', 'icons/pwa-192x192.png', 'icons/pwa-512x512.png'],
       manifest: {
         name: 'PDFit',
         short_name: 'PDFit',

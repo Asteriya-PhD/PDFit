@@ -1,13 +1,16 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useApp } from '@/contexts/AppContext'
 import { useI18n } from '@/i18n'
 import { addPageNumbers } from '@/lib/pageNumbering'
 import { triggerDownload } from '@/lib/download'
 import type { PageNumberPosition } from '@/types'
 import { Download } from 'lucide-react'
+import '@/lib/pdfWorker'
+import { getDocument } from 'pdfjs-dist'
 
 const FONT_SIZES = [8, 10, 12, 14, 16, 20, 24]
 const COLOR_PRESETS = ['#000000', '#333333', '#666666', '#999999', '#cccccc', '#e53e3e']
+const PREVIEW_HEIGHT = 400
 
 export default function PageNumberingTool() {
   const { files, activeFileId, setLoading, loading } = useApp()
@@ -22,9 +25,16 @@ export default function PageNumberingTool() {
   const [suffix, setSuffix] = useState('')
   const [showTotalPages, setShowTotalPages] = useState(false)
 
+  // Preview state
+  const pdfCanvasRef = useRef<HTMLCanvasElement>(null)
+  const overlayCanvasRef = useRef<HTMLCanvasElement>(null)
+  const [previewSize, setPreviewSize] = useState({ w: 0, h: 0, scale: 1 })
+  const [previewReady, setPreviewReady] = useState(false)
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(null)
+
   if (!activeFile) {
     return (
-      <div className="max-w-lg mx-auto text-center text-gray-500 dark:text-gray-400 text-sm py-12">
+      <div className="max-w-lg mx-auto text-center text-sm py-12" style={{ color: 'var(--color-text-muted)' }}>
         {t('pageNumbering.noFile')}
       </div>
     )
@@ -60,29 +70,151 @@ export default function PageNumberingTool() {
     }
   }
 
+  // Render PDF first page for preview
+  useEffect(() => {
+    let cancelled = false
+    const canvas = pdfCanvasRef.current
+    if (!canvas || !activeFile) return
+
+    setPreviewReady(false)
+
+    ;(async () => {
+      try {
+        const pdf = await getDocument({ data: activeFile.arrayBuffer.slice(0) }).promise
+        if (cancelled) return
+
+        const page = await pdf.getPage(1)
+        if (cancelled) return
+
+        const rotationAngle = page.rotate
+        const unscaled = page.getViewport({ scale: 1, rotation: rotationAngle })
+        const renderScale = PREVIEW_HEIGHT / unscaled.height
+        const viewport = page.getViewport({ scale: renderScale, rotation: rotationAngle })
+
+        canvas.width = viewport.width
+        canvas.height = viewport.height
+
+        const ctx = canvas.getContext('2d')
+        if (!ctx) return
+        ctx.fillStyle = '#fff'
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+        await page.render({ canvasContext: ctx, viewport }).promise
+
+        if (!cancelled) {
+          setPreviewSize({ w: canvas.width, h: canvas.height, scale: renderScale })
+          setPreviewReady(true)
+        }
+      } catch (err) {
+        console.error('PageNumbering preview render error:', err)
+      }
+    })()
+
+    return () => { cancelled = true }
+  }, [activeFile])
+
+  // Render page number overlay on parameter change (debounced)
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+
+    if (!previewReady || previewSize.w === 0) return
+
+    debounceRef.current = setTimeout(() => {
+      const canvas = overlayCanvasRef.current
+      if (!canvas) return
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return
+
+      canvas.width = previewSize.w
+      canvas.height = previewSize.h
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+      const pw = previewSize.w
+      const ph = previewSize.h
+      const scaledFontSize = fontSize * previewSize.scale
+      const margin = 24 * previewSize.scale
+      const pageNumText = `${prefix}${showTotalPages ? `${startNumber} / ${activeFile.pageCount}` : startNumber}${suffix}`
+
+      ctx.save()
+      ctx.fillStyle = color
+      ctx.font = `${scaledFontSize}px Helvetica, Arial, sans-serif`
+      ctx.textBaseline = 'middle'
+
+      const textWidth = ctx.measureText(pageNumText).width
+      let x: number
+      let y: number
+
+      const positionMap: Record<string, { x: number; y: number; align: CanvasTextAlign }> = {
+        'bottom-center': { x: pw / 2, y: ph - margin, align: 'center' },
+        'bottom-left': { x: margin, y: ph - margin, align: 'left' },
+        'bottom-right': { x: pw - margin, y: ph - margin, align: 'right' },
+        'top-center': { x: pw / 2, y: margin, align: 'center' },
+        'top-left': { x: margin, y: margin, align: 'left' },
+        'top-right': { x: pw - margin, y: margin, align: 'right' },
+      }
+
+      const pos = positionMap[position]
+      if (pos) {
+        ctx.textAlign = pos.align
+        ctx.fillText(pageNumText, pos.x, pos.y)
+      }
+
+      ctx.restore()
+    }, 200)
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+    }
+  }, [position, startNumber, fontSize, color, prefix, suffix, showTotalPages, previewReady, previewSize, activeFile])
+
   return (
-    <div className="max-w-lg mx-auto">
-      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{t('pageNumbering.title')}</h2>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* Left: Controls */}
+      <div>
+        <h2
+          className="text-xl mb-2"
+          style={{
+            fontFamily: 'var(--font-heading)',
+            fontWeight: 600,
+            color: 'var(--color-text-primary)',
+          }}
+        >
+          {t('pageNumbering.title')}
+        </h2>
+        <p className="text-sm mb-6" style={{ color: 'var(--color-text-muted)' }}>
+          {t('pageNumbering.currentFile')}
+          <span
+            className="font-medium ml-1"
+            style={{ color: 'var(--color-text-primary)' }}
+          >
+            {activeFile.name}
+          </span>
+          <span className="ml-2">{t('pageNumbering.pageCount', { count: activeFile.pageCount })}</span>
+        </p>
 
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-        {t('pageNumbering.currentFile')}<span className="font-medium text-gray-700 dark:text-gray-200">{activeFile.name}</span>
-        <span className="text-gray-500 dark:text-gray-400 ml-2">{t('pageNumbering.pageCount', { count: activeFile.pageCount })}</span>
-      </p>
-
-      <div className="space-y-5 mb-6">
         {/* Position */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('pageNumbering.position')}</label>
+        <div className="mb-5">
+          <label
+            className="block text-sm font-medium mb-2"
+            style={{
+              fontFamily: 'var(--font-heading)',
+              color: 'var(--color-text-secondary)',
+            }}
+          >
+            {t('pageNumbering.position')}
+          </label>
           <div className="grid grid-cols-3 gap-2">
             {positions.map(p => (
               <button
                 key={p.value}
                 onClick={() => setPosition(p.value)}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  position === p.value
-                    ? 'bg-[rgba(217,119,87,0.12)] text-[var(--color-accent)] border-[var(--color-accent)]'
-                    : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
-                }`}
+                className="px-3 py-2 rounded-lg text-sm font-medium transition-all"
+                style={{
+                  fontFamily: 'var(--font-heading)',
+                  backgroundColor: position === p.value ? 'rgba(217, 119, 87, 0.12)' : 'var(--color-surface)',
+                  border: `1px solid ${position === p.value ? 'var(--color-accent)' : 'var(--color-border)'}`,
+                  color: position === p.value ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                }}
               >
                 {p.label}
               </button>
@@ -91,30 +223,48 @@ export default function PageNumberingTool() {
         </div>
 
         {/* Start Number */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('pageNumbering.startNumber')}</label>
+        <div className="mb-5">
+          <label
+            className="block text-sm font-medium mb-1"
+            style={{
+              fontFamily: 'var(--font-heading)',
+              color: 'var(--color-text-secondary)',
+            }}
+          >
+            {t('pageNumbering.startNumber')}
+          </label>
           <input
             type="number"
             min={1}
             value={startNumber}
             onChange={e => setStartNumber(Math.max(1, parseInt(e.target.value, 10) || 1))}
-              className="w-24 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--shadow-focus)] focus:border-[var(--color-accent)]"
+            className="input !w-24"
           />
         </div>
 
         {/* Font Size */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('pageNumbering.fontSize')}</label>
-          <div className="flex gap-2">
+        <div className="mb-5">
+          <label
+            className="block text-sm font-medium mb-2"
+            style={{
+              fontFamily: 'var(--font-heading)',
+              color: 'var(--color-text-secondary)',
+            }}
+          >
+            {t('pageNumbering.fontSize')}
+          </label>
+          <div className="flex gap-2 flex-wrap">
             {FONT_SIZES.map(s => (
               <button
                 key={s}
                 onClick={() => setFontSize(s)}
-                className={`w-10 h-9 rounded-md text-sm font-medium transition-colors ${
-                  fontSize === s
-                    ? 'bg-[rgba(217,119,87,0.12)] text-[var(--color-accent)] border-[var(--color-accent)]'
-                    : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
-                }`}
+                className="px-3 py-1.5 rounded-lg text-sm font-medium transition-all"
+                style={{
+                  fontFamily: 'var(--font-heading)',
+                  backgroundColor: fontSize === s ? 'rgba(217, 119, 87, 0.12)' : 'var(--color-surface)',
+                  border: `1px solid ${fontSize === s ? 'var(--color-accent)' : 'var(--color-border)'}`,
+                  color: fontSize === s ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                }}
               >
                 {s}
               </button>
@@ -123,19 +273,27 @@ export default function PageNumberingTool() {
         </div>
 
         {/* Color */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('pageNumbering.color')}</label>
+        <div className="mb-5">
+          <label
+            className="block text-sm font-medium mb-2"
+            style={{
+              fontFamily: 'var(--font-heading)',
+              color: 'var(--color-text-secondary)',
+            }}
+          >
+            {t('pageNumbering.color')}
+          </label>
           <div className="flex gap-2 items-center">
             {COLOR_PRESETS.map(c => (
               <button
                 key={c}
                 onClick={() => setColor(c)}
-                className={`w-8 h-8 rounded-full border-2 transition-all ${
-                  color === c
-                    ? 'border-[var(--color-accent)] scale-110'
-                    : 'border-transparent hover:scale-110'
-                }`}
-                style={{ backgroundColor: c }}
+                className="w-8 h-8 rounded-full border-2 transition-all"
+                style={{
+                  backgroundColor: c,
+                  borderColor: color === c ? 'var(--color-accent)' : 'transparent',
+                  transform: color === c ? 'scale(1.1)' : 'scale(1)',
+                }}
                 aria-label={t('pageNumbering.colorLabel', { value: c })}
               />
             ))}
@@ -146,7 +304,13 @@ export default function PageNumberingTool() {
                 onChange={e => setColor(e.target.value)}
                 className="absolute inset-0 opacity-0 w-8 h-8 cursor-pointer"
               />
-              <div className="w-8 h-8 rounded-full border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center text-xs text-gray-500 dark:text-gray-400 hover:border-gray-400">
+              <div
+                className="w-8 h-8 rounded-full border-2 border-dashed flex items-center justify-center text-xs"
+                style={{
+                  borderColor: 'var(--color-border)',
+                  color: 'var(--color-text-muted)',
+                }}
+              >
                 +
               </div>
             </label>
@@ -154,68 +318,116 @@ export default function PageNumberingTool() {
         </div>
 
         {/* Prefix & Suffix */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4 mb-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('pageNumbering.prefix')}</label>
+            <label
+              className="block text-sm font-medium mb-1"
+              style={{
+                fontFamily: 'var(--font-heading)',
+                color: 'var(--color-text-secondary)',
+              }}
+            >
+              {t('pageNumbering.prefix')}
+            </label>
             <input
               type="text"
               value={prefix}
               onChange={e => setPrefix(e.target.value)}
               placeholder={t('pageNumbering.prefixPlaceholder')}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--shadow-focus)] focus:border-[var(--color-accent)]"
+              className="input"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">{t('pageNumbering.suffix')}</label>
+            <label
+              className="block text-sm font-medium mb-1"
+              style={{
+                fontFamily: 'var(--font-heading)',
+                color: 'var(--color-text-secondary)',
+              }}
+            >
+              {t('pageNumbering.suffix')}
+            </label>
             <input
               type="text"
               value={suffix}
               onChange={e => setSuffix(e.target.value)}
               placeholder={t('pageNumbering.suffixPlaceholder')}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--shadow-focus)] focus:border-[var(--color-accent)]"
+              className="input"
             />
           </div>
         </div>
 
         {/* Show Total Pages */}
-        <label className="flex items-center gap-2 cursor-pointer">
+        <label className="flex items-center gap-2 cursor-pointer mb-6">
           <input
             type="checkbox"
             checked={showTotalPages}
             onChange={e => setShowTotalPages(e.target.checked)}
-            className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-[var(--color-accent)] focus:ring-[var(--shadow-focus)]"
+            className="w-4 h-4 rounded"
+            style={{ accentColor: 'var(--color-accent)' }}
           />
-          <span className="text-sm text-gray-700 dark:text-gray-200">{t('pageNumbering.showTotalPages')}</span>
+          <span
+            className="text-sm"
+            style={{ color: 'var(--color-text-secondary)' }}
+          >
+            {t('pageNumbering.showTotalPages')}
+          </span>
         </label>
 
-        {/* Preview */}
-        <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-          <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{t('pageNumbering.preview')}</p>
-          <p className="text-sm text-gray-600 dark:text-gray-300 font-mono">
-            {prefix}{showTotalPages ? `${startNumber} / ${activeFile.pageCount}` : startNumber}{suffix}
-            <span className="text-gray-500 dark:text-gray-400 ml-1">{t('pageNumbering.previewPage', { n: 1 })}</span>
-          </p>
-          {activeFile.pageCount > 1 && (
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              {prefix}{showTotalPages ? `${startNumber + 1} / ${activeFile.pageCount}` : startNumber + 1}{suffix}
-              <span className="ml-1">{t('pageNumbering.previewPage', { n: 2 })}</span>
-              {activeFile.pageCount > 2 && (
-                <span className="ml-1">…{prefix}{showTotalPages ? `${startNumber + activeFile.pageCount - 1} / ${activeFile.pageCount}` : startNumber + activeFile.pageCount - 1}{suffix}{t('pageNumbering.previewPage', { n: activeFile.pageCount })}</span>
-              )}
-            </p>
-          )}
-        </div>
+        {/* Action Button */}
+        <button
+          onClick={handleAddNumbers}
+          disabled={loading}
+          className="btn-primary w-full"
+        >
+          <Download className="w-4 h-4" />
+          {loading ? t('pageNumbering.loading') : t('pageNumbering.button')}
+        </button>
       </div>
 
-      <button
-        onClick={handleAddNumbers}
-        disabled={loading}
-        className="w-full flex items-center justify-center gap-2 btn-primary
-          disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
-      >
-        <Download className="w-4 h-4" />
-        {loading ? t('pageNumbering.loading') : t('pageNumbering.button')}
-      </button>
+      {/* Right: Preview */}
+      <div>
+        <p
+          className="text-sm font-medium mb-3"
+          style={{
+            fontFamily: 'var(--font-heading)',
+            color: 'var(--color-text-secondary)',
+          }}
+        >
+          {t('pageNumbering.preview')}
+        </p>
+        <div
+          className="preview-box"
+          style={{
+            backgroundColor: 'var(--color-bg-tertiary)',
+            minHeight: PREVIEW_HEIGHT + 40,
+          }}
+        >
+          <div
+            className="relative"
+            style={{ width: previewSize.w, height: previewSize.h }}
+          >
+            <canvas
+              ref={pdfCanvasRef}
+              className="absolute inset-0"
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            />
+            <canvas
+              ref={overlayCanvasRef}
+              className="absolute inset-0"
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            />
+            {!previewReady && (
+              <div
+                className="absolute inset-0 flex items-center justify-center"
+                style={{ color: 'var(--color-text-muted)' }}
+              >
+                <span className="text-sm">{t('pageNumbering.noFile')}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

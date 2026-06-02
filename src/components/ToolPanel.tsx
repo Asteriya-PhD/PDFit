@@ -33,15 +33,15 @@ export default function ToolPanel() {
 
   if (!activeTool) {
     return (
-      <div className="flex-1 flex items-center justify-center p-8">
+      <div className="flex-1 flex items-center justify-center p-6">
         <div className="text-center animate-fadeIn">
           {/* Icon */}
           <div
-            className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
+            className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3"
             style={{ backgroundColor: 'var(--color-bg-tertiary)' }}
           >
             <svg
-              className="w-8 h-8"
+              className="w-7 h-7"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -58,7 +58,7 @@ export default function ToolPanel() {
 
           {/* Text */}
           <p
-            className="text-lg mb-2"
+            className="text-base mb-2"
             style={{
               fontFamily: 'var(--font-heading)',
               fontWeight: 600,
@@ -79,7 +79,7 @@ export default function ToolPanel() {
           {/* Hint */}
           {files.length > 0 && (
             <p
-              className="text-xs mt-4"
+              className="text-xs mt-3"
               style={{ color: 'var(--color-text-muted)' }}
             >
               {t('toolPanel.hint')}
@@ -92,9 +92,9 @@ export default function ToolPanel() {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      <div className="p-6 max-w-4xl mx-auto animate-fadeIn">
+      <div className="p-5 max-w-4xl mx-auto animate-fadeIn">
         {panels[activeTool] ?? (
-          <div className="text-center py-12">
+          <div className="text-center py-10">
             <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
               {t('toolPanel.loading')}
             </p>

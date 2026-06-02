@@ -23,7 +23,7 @@ export default function SplitTool() {
 
   if (!activeFile) {
     return (
-      <div className="max-w-lg mx-auto text-center text-gray-500 dark:text-gray-400 text-sm py-12">
+      <div className="max-w-lg mx-auto text-center text-sm py-12" style={{ color: 'var(--color-text-muted)' }}>
         {t('split.noFile')}
       </div>
     )
@@ -92,45 +92,99 @@ export default function SplitTool() {
     setRanges(prev => prev.map(r => r.id === id ? { ...r, [field]: value } : r))
   }
 
+  const tabBase = 'px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 border'
+  const tabActive = `${tabBase}`
+  const tabInactive = `${tabBase} transition-colors`
+
   return (
     <div className="max-w-lg mx-auto">
-      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{t('split.title')}</h2>
+      <h2
+        className="text-lg font-semibold mb-4"
+        style={{
+          fontFamily: 'var(--font-heading)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        {t('split.title')}
+      </h2>
 
       <div className="flex gap-2 mb-6">
         <button
           onClick={() => setMode('extract')}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+          className={mode === 'extract' ? tabActive : tabInactive}
+          style={
             mode === 'extract'
-              ? 'bg-[rgba(217,119,87,0.12)] text-[var(--color-accent)] border-[var(--color-accent)]'
-              : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
-          }`}
+              ? {
+                  backgroundColor: 'rgba(217, 119, 87, 0.12)',
+                  color: 'var(--color-accent)',
+                  borderColor: 'var(--color-accent)',
+                }
+              : {
+                  backgroundColor: 'var(--color-bg-secondary)',
+                  color: 'var(--color-text-secondary)',
+                  borderColor: 'var(--color-border)',
+                }
+          }
+          onMouseEnter={e => {
+            if (mode !== 'extract') {
+              e.currentTarget.style.backgroundColor = 'var(--color-bg-tertiary)'
+            }
+          }}
+          onMouseLeave={e => {
+            if (mode !== 'extract') {
+              e.currentTarget.style.backgroundColor = 'var(--color-bg-secondary)'
+            }
+          }}
         >
           {t('split.tab.extract')}
         </button>
         <button
           onClick={() => setMode('split')}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+          className={mode === 'split' ? tabActive : tabInactive}
+          style={
             mode === 'split'
-              ? 'bg-[rgba(217,119,87,0.12)] text-[var(--color-accent)] border-[var(--color-accent)]'
-              : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
-          }`}
+              ? {
+                  backgroundColor: 'rgba(217, 119, 87, 0.12)',
+                  color: 'var(--color-accent)',
+                  borderColor: 'var(--color-accent)',
+                }
+              : {
+                  backgroundColor: 'var(--color-bg-secondary)',
+                  color: 'var(--color-text-secondary)',
+                  borderColor: 'var(--color-border)',
+                }
+          }
+          onMouseEnter={e => {
+            if (mode !== 'split') {
+              e.currentTarget.style.backgroundColor = 'var(--color-bg-tertiary)'
+            }
+          }}
+          onMouseLeave={e => {
+            if (mode !== 'split') {
+              e.currentTarget.style.backgroundColor = 'var(--color-bg-secondary)'
+            }
+          }}
         >
           {t('split.tab.split')}
         </button>
       </div>
 
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-        {t('split.currentFile')}<span className="font-medium text-gray-700 dark:text-gray-200">{activeFile.name}</span>
-        <span className="text-gray-500 dark:text-gray-400 ml-2">{t('split.pageCount', { count: activeFile.pageCount })}</span>
+      <p className="text-sm mb-2" style={{ color: 'var(--color-text-secondary)' }}>
+        {t('split.currentFile')}
+        <span className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{activeFile.name}</span>
+        <span className="ml-2" style={{ color: 'var(--color-text-muted)' }}>{t('split.pageCount', { count: activeFile.pageCount })}</span>
       </p>
 
       {mode === 'extract' ? (
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+            <label
+              className="block text-sm font-medium mb-1"
+              style={{ color: 'var(--color-text-primary)' }}
+            >
               {t('split.extract.label')}
             </label>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+            <p className="text-xs mb-2" style={{ color: 'var(--color-text-muted)' }}>
               {t('split.extract.hint')}
             </p>
             <input
@@ -138,14 +192,13 @@ export default function SplitTool() {
               value={spec}
               onChange={e => setSpec(e.target.value)}
               placeholder={t('split.extract.placeholder')}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--shadow-focus)] focus:border-[var(--color-accent)]"
+              className="input"
             />
           </div>
           <button
             onClick={handleExtract}
             disabled={!spec.trim() || loading}
-            className="w-full flex items-center justify-center gap-2 btn-primary
-              disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
+            className="w-full flex items-center justify-center gap-2 btn-primary"
           >
             <Download className="w-4 h-4" />
             {loading ? t('split.loading') : t('split.extract.button')}
@@ -155,7 +208,7 @@ export default function SplitTool() {
         <div className="space-y-3">
           {ranges.map((range, index) => (
             <div key={range.id} className="flex items-center gap-2">
-              <span className="text-sm text-gray-500 dark:text-gray-400 w-6">#{index + 1}</span>
+              <span className="text-sm w-6" style={{ color: 'var(--color-text-muted)' }}>#{index + 1}</span>
               <input
                 type="number"
                 min={1}
@@ -163,9 +216,9 @@ export default function SplitTool() {
                 value={range.start}
                 onChange={e => updateRange(range.id, 'start', e.target.value)}
                 placeholder={t('split.split.placeholderStart')}
-                className="w-24 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--shadow-focus)] focus:border-[var(--color-accent)]"
+                className="input w-24"
               />
-              <span className="text-gray-500 dark:text-gray-400">—</span>
+              <span style={{ color: 'var(--color-text-muted)' }}>—</span>
               <input
                 type="number"
                 min={1}
@@ -173,12 +226,21 @@ export default function SplitTool() {
                 value={range.end}
                 onChange={e => updateRange(range.id, 'end', e.target.value)}
                 placeholder={t('split.split.placeholderEnd')}
-                className="w-24 px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--shadow-focus)] focus:border-[var(--color-accent)]"
+                className="input w-24"
               />
               {ranges.length > 1 && (
                 <button
                   onClick={() => removeRange(range.id)}
-                  className="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-[var(--color-accent)]"
+                  className="p-1.5 rounded-lg transition-colors"
+                  style={{ color: 'var(--color-text-muted)' }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.backgroundColor = 'var(--color-bg-secondary)'
+                    e.currentTarget.style.color = 'var(--color-accent)'
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.backgroundColor = 'transparent'
+                    e.currentTarget.style.color = 'var(--color-text-muted)'
+                  }}
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -188,7 +250,8 @@ export default function SplitTool() {
 
           <button
             onClick={addRange}
-            className="flex items-center gap-1 text-sm text-[var(--color-accent)] hover:text-[var(--color-accent)]"
+            className="flex items-center gap-1 text-sm font-medium transition-colors"
+            style={{ color: 'var(--color-accent)' }}
           >
             <Plus className="w-4 h-4" /> {t('split.split.addRange')}
           </button>
@@ -196,8 +259,7 @@ export default function SplitTool() {
           <button
             onClick={handleSplit}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 btn-primary
-              disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
+            className="w-full flex items-center justify-center gap-2 btn-primary"
           >
             <Download className="w-4 h-4" />
             {loading ? t('split.loading') : t('split.split.button')}

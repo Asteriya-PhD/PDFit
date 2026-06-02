@@ -16,7 +16,7 @@ export default function App() {
 
   return (
     <div
-      className="flex flex-col h-full"
+      className="h-[100dvh] flex flex-col"
       style={{ backgroundColor: 'var(--color-bg-primary)' }}
     >
       <Header />
@@ -26,27 +26,28 @@ export default function App() {
           <ImageToPdfTool />
         </div>
       ) : files.length === 0 ? (
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden">
           <EmptyState />
         </div>
       ) : (
-        <div className="flex-1 flex overflow-hidden">
-          {/* Sidebar */}
+        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+          {/* Left Sidebar - File Management */}
           <aside
-            className="w-72 flex flex-col shrink-0"
+            className="flex flex-col overflow-hidden shrink-0 w-full lg:w-[280px] xl:w-[320px] max-h-[40vh] lg:max-h-full border-b lg:border-b-0"
             style={{
-              borderRight: '1px solid var(--color-border)',
+              borderColor: 'var(--color-border)',
+              borderRightWidth: '1px',
               backgroundColor: 'var(--color-surface)',
             }}
           >
             <FileDropzone compact />
             <FileList />
+            <ThumbnailGrid vertical />
           </aside>
 
-          {/* Main Content */}
-          <main className="flex-1 flex flex-col overflow-hidden">
+          {/* Right Panel - Tools */}
+          <main className="flex-1 flex flex-col overflow-hidden min-w-0">
             <ToolPanel />
-            <ThumbnailGrid />
           </main>
         </div>
       )}

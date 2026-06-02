@@ -9,7 +9,7 @@ const translations: Record<Locale, Record<string, string>> = { zh, en }
 
 function getStoredLocale(): Locale {
   try {
-    const stored = localStorage.getItem('pdfx-locale')
+    const stored = localStorage.getItem('pdfit-locale')
     if (stored === 'zh' || stored === 'en') return stored
   } catch { /* localStorage unavailable */ }
   if (typeof navigator !== 'undefined' && navigator.language.startsWith('zh')) return 'zh'
@@ -29,7 +29,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   const setLocale = (newLocale: Locale) => {
     setLocaleState(newLocale)
-    try { localStorage.setItem('pdfx-locale', newLocale) } catch { /* noop */ }
+    try { localStorage.setItem('pdfit-locale', newLocale) } catch { /* noop */ }
   }
 
   const t = (key: string, params?: I18nParams): string => {

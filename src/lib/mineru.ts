@@ -1,5 +1,5 @@
-const STORAGE_KEY = 'pdfx-mineru-config'
-const CONSENT_KEY = 'pdfx-mineru-consent'
+const STORAGE_KEY = 'pdfit-mineru-config'
+const CONSENT_KEY = 'pdfit-mineru-consent'
 
 export function hasConsent(): boolean {
   return localStorage.getItem(CONSENT_KEY) === 'true'

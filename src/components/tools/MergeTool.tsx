@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useApp } from '@/contexts/AppContext'
 import { useI18n } from '@/i18n'
 import { mergePDFs } from '@/lib/pdfEngine'
-import { ArrowUpDown, Download } from 'lucide-react'
+import { ArrowUpDown, Download, FileText } from 'lucide-react'
 
 export default function MergeTool() {
   const { files, setLoading, loading } = useApp()
@@ -37,8 +37,16 @@ export default function MergeTool() {
 
   return (
     <div className="max-w-lg mx-auto">
-      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{t('merge.title')}</h2>
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+      <h2
+        className="text-lg font-semibold mb-4"
+        style={{
+          fontFamily: 'var(--font-heading)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        {t('merge.title')}
+      </h2>
+      <p className="text-sm mb-6" style={{ color: 'var(--color-text-secondary)' }}>
         {t('merge.description')}
       </p>
 
@@ -47,24 +55,73 @@ export default function MergeTool() {
           const file = files.find(f => f.id === fileId)
           if (!file) return null
           return (
-            <div key={fileId} className="flex items-center gap-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3">
-              <span className="text-sm font-medium text-gray-500 dark:text-gray-400 w-6">{index + 1}</span>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-700 dark:text-gray-200 truncate">{file.name}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">{t('merge.pageCount', { count: file.pageCount })}</p>
+            <div
+              key={fileId}
+              className="flex items-center gap-3 rounded-xl px-4 py-3 transition-colors"
+              style={{
+                backgroundColor: 'var(--color-surface)',
+                border: '1px solid var(--color-border)',
+              }}
+            >
+              <span
+                className="text-sm font-medium w-6"
+                style={{ color: 'var(--color-text-muted)' }}
+              >
+                {index + 1}
+              </span>
+              <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+                style={{ backgroundColor: 'var(--color-bg-secondary)' }}
+              >
+                <FileText className="w-4 h-4" style={{ color: 'var(--color-text-muted)' }} />
               </div>
-              <div className="flex gap-1">
+              <div className="flex-1 min-w-0">
+                <p
+                  className="text-sm font-medium truncate"
+                  style={{
+                    fontFamily: 'var(--font-heading)',
+                    color: 'var(--color-text-primary)',
+                  }}
+                >
+                  {file.name}
+                </p>
+                <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+                  {t('merge.pageCount', { count: file.pageCount })}
+                </p>
+              </div>
+              <div className="flex gap-0.5">
                 <button
                   onClick={() => moveFile(index, -1)}
                   disabled={index === 0}
-                  className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400 hover:text-gray-600 disabled:opacity-20 disabled:cursor-not-allowed"
+                  className="p-1.5 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                  style={{ color: 'var(--color-text-muted)' }}
+                  onMouseEnter={e => {
+                    if (index !== 0) {
+                      e.currentTarget.style.backgroundColor = 'var(--color-bg-secondary)'
+                      e.currentTarget.style.color = 'var(--color-text-primary)'
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.backgroundColor = 'transparent'
+                    e.currentTarget.style.color = 'var(--color-text-muted)'
+                  }}
                 >
                   <ArrowUpDown className="w-4 h-4 rotate-180" />
                 </button>
                 <button
                   onClick={() => moveFile(index, 1)}
                   disabled={index === order.length - 1}
-                  className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400 hover:text-gray-600 disabled:opacity-20 disabled:cursor-not-allowed"
+                  className="p-1.5 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                  style={{ color: 'var(--color-text-muted)' }}
+                  onMouseEnter={e => {
+                    if (index !== order.length - 1) {
+                      e.currentTarget.style.backgroundColor = 'var(--color-bg-secondary)'
+                      e.currentTarget.style.color = 'var(--color-text-primary)'
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.backgroundColor = 'transparent'
+                    e.currentTarget.style.color = 'var(--color-text-muted)'
+                  }}
                 >
                   <ArrowUpDown className="w-4 h-4" />
                 </button>
@@ -77,8 +134,7 @@ export default function MergeTool() {
       <button
         onClick={handleMerge}
         disabled={order.length < 2 || loading}
-        className="w-full flex items-center justify-center gap-2 btn-primary
-          disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
+        className="w-full flex items-center justify-center gap-2 btn-primary"
       >
         <Download className="w-4 h-4" />
         {loading ? t('merge.loading') : t('merge.button', { count: order.length })}

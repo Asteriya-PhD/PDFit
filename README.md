@@ -1,59 +1,92 @@
+<div align="center">
+
 # PDFit
 
-> 隐私优先的浏览器端 PDF 小工具 — 分割、合并、删除、旋转，全部在本地完成，不上传任何文件。
+> 隐私优先的浏览器端 PDF 工具 — 所有操作在本地完成，文件永不离开你的电脑
 
-## ✨ 功能
+[![GitHub stars](https://img.shields.io/github/stars/asteriya-phd/PDFit?style=flat-square&color=blue)](https://github.com/asteriya-phd/PDFit)
+[![GitHub license](https://img.shields.io/github/license/asteriya-phd/PDFit?style=flat-square&color=green)](LICENSE)
+[![GitHub version](https://img.shields.io/github/package-api/v/asteriya-phd/PDFit?style=flat-square&color=orange)](https://github.com/asteriya-phd/PDFit/releases)
+[![GitHub issues](https://img.shields.io/github/issues/asteriya-phd/PDFit?style=flat-square&color=red)](https://github.com/asteriya-phd/PDFit/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/asteriya-phd/PDFit?style=flat-square&color=purple)](https://github.com/asteriya-phd/PDFit/pulls)
+
+[🌐 **在线使用**](https://asteriya-phd.github.io/PDFit/) · 
+[📖 **文档**](docs/architecture.md) · 
+[💬 **反馈**](https://github.com/asteriya-phd/PDFit/issues)
+
+</div>
+
+---
+
+## 🎯 为什么选择 PDFit？
+
+| 特性 | PDFit | 传统在线工具 | Adobe Acrobat |
+|------|-------|-------------|---------------|
+| **隐私保护** | ✅ 100% 本地处理，文件不上传 | ❌ 文件上传到第三方服务器 | ❌ 文件可能被分析 |
+| **离线可用** | ✅ PWA 支持，安装后离线使用 | ❌ 需要网络 | ❌ 需要激活/订阅 |
+| **免费** | ✅ MIT 协议，完全免费 | ❌ 通常有限制 | ❌ 订阅制昂贵 |
+| **透明度** | ✅ 开源，代码可审计 | ❌ 黑盒 | ❌ 闭源 |
+| **轻量** | ✅ 无后端，纯前端，加载快 | ❌ 依赖云端 | ❌ 资源占用大 |
+
+---
+
+## 🛠️ 功能清单
+
+所有操作在浏览器本地完成，基于 `pdf-lib` 和 `pdfjs-dist` 引擎：
 
 | 工具 | 说明 |
 |------|------|
-| 深色模式 | 🌙/☀️ 一键切换，跟随系统偏好，自动持久化 |
-| 中英文切换 | 🌐 简体中文 / English 即时切换，自动检测浏览器语言 |
-| 合并 | 将多个 PDF 文件合并为一个，支持拖拽调整顺序 |
-| 分割 | 提取指定页面，或按页码范围分割成多个文件 |
-| 删除页面 | 输入页码或点选页面，快速删除不需要的内容 |
-| 旋转页面 | 90°/180°/270°，可旋转全部页面或指定页码 |
-| 页面排序 | 拖拽缩略图调整 PDF 页面顺序 |
-| 添加页码 | 自定义位置、字号、颜色、前缀后缀，支持"X / Y"格式 |
-| 添加水印 | 自定义文字、字号、透明度、旋转角度、颜色，支持指定页面范围 |
-| PDF 转图片 | 将 PDF 页面导出为 PNG/JPEG，支持自定义 DPI |
-| 图片转 PDF | 将 PNG/JPEG/WebP 图片合成为 PDF |
-| 提取 Markdown | 从 PDF 提取文本内容并格式化为 Markdown |
-| 文档转换 ⚡ | 通过 MinerU API 将 PDF/Office 文档解析为 Markdown（需同意隐私条款，Key 已内置） |
-| 离线可用 | PWA 支持，安装后可在无网络时使用 |
-| 快捷键 | `Ctrl+O` 打开文件，`Ctrl+M/S/D/E/⇧R/N/W/I` 切换工具，`1`-`0` 快速切换，`Esc` 取消选择 |
+| **合并** | 多个 PDF 合并为一个，拖拽调整顺序 |
+| **分割** | 提取指定页面，或按页码范围分割 |
+| **删除页面** | 输入页码或点选删除 |
+| **旋转页面** | 90°/180°/270°，支持全部或指定 |
+| **页面排序** | 拖拽缩略图调整顺序 |
+| **添加页码** | 自定义位置、字号、颜色、前缀后缀 |
+| **添加水印** | 文字水印，自定义透明度、角度、范围，实时预览 |
+| **PDF 转图片** | 导出为 PNG/JPEG，支持 DPI 调整 |
+| **图片转 PDF** | 将 PNG/JPEG/WebP 合成 PDF |
+| **提取 Markdown** | 从 PDF 提取文本并格式化为 Markdown |
+| **文档转换** | 通过 MinerU API 解析 PDF/Office → Markdown（需同意隐私条款） |
 
-## 🚀 在线使用
+---
 
-https://asteriya-phd.github.io/PDFit/
+## 🚀 快速开始
 
-所有操作在浏览器本地完成，文件不会离开你的电脑。
+### 在线使用
+直接访问 https://asteriya-phd.github.io/PDFit/ — 无需安装，无需注册。
 
-## 🛠️ 技术栈
-
-- **框架**: React 19 + TypeScript 5.7
-- **构建**: Vite 6
-- **样式**: Tailwind CSS 4
-- **设计系统**: Anthropic 官方配色 + Poppins/Lora 字体
-- **PDF 引擎**: pdf-lib (操作) + pdfjs-dist (预览)
-- **部署**: GitHub Pages + GitHub Actions
-- **PWA**: Service Worker + 离线缓存 (vite-plugin-pwa)
-
-## 📦 本地开发
-
+### 本地开发
 ```bash
+git clone https://github.com/asteriya-phd/PDFit.git
+cd PDFit
 npm install
-npm run dev      # 本地开发
-npm run build    # 构建
-npm run preview  # 预览构建结果
+npm run dev
 ```
 
-## 📚 文档
+### 构建部署
+```bash
+npm run build           # 构建 Web 版
+npm run preview         # 预览
+npm run deploy          # 部署到 GitHub Pages
+npm run tauri:build     # 构建桌面版（macOS/Windows/Linux）
+```
 
-- [架构文档](docs/architecture.md) — 技术栈、代码规范、Git 规范
-- [开发计划](docs/plan.md) — 路线图和各阶段规划
-- [进度记录](docs/progress.md) — 实现了什么、修了什么 Bug
-- [AI 代理知识库](AGENTS.md) — 给 AI 协作的上下文
+---
+
+## 📦 技术栈
+
+| 层级 | 技术 |
+|------|------|
+| **框架** | React 19 + TypeScript 5.7 |
+| **构建** | Vite 6 |
+| **样式** | Tailwind CSS 4 + Anthropic 设计系统 |
+| **PDF 引擎** | pdf-lib 1.17（操作） + pdfjs-dist 4.10（预览） |
+| **桌面端** | Tauri v2（Rust） + 原生插件 |
+| **部署** | GitHub Pages（Web） + 多平台安装包 |
+| **PWA** | Service Worker + 离线缓存 |
+
+---
 
 ## 📄 许可
 
-MIT
+MIT — 自由使用、修改、分发。
