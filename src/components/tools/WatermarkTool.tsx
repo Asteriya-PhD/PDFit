@@ -299,7 +299,7 @@ export default function WatermarkTool() {
                 className="px-2 py-1 rounded-lg text-xs font-medium transition-all"
                 style={{
                   fontFamily: 'var(--font-heading)',
-                  backgroundColor: fontSize === s ? 'rgba(217, 119, 87, 0.12)' : 'var(--color-surface)',
+                  backgroundColor: fontSize === s ? 'var(--color-accent-100)' : 'var(--color-surface)',
                   border: `1px solid ${fontSize === s ? 'var(--color-accent)' : 'var(--color-border)'}`,
                   color: fontSize === s ? 'var(--color-accent)' : 'var(--color-text-secondary)',
                 }}
@@ -327,7 +327,7 @@ export default function WatermarkTool() {
               className="flex-1 py-2 rounded-xl text-xs font-medium transition-all"
               style={{
                 fontFamily: 'var(--font-heading)',
-                backgroundColor: pageScope === 'all' ? 'rgba(217, 119, 87, 0.12)' : 'var(--color-surface)',
+                backgroundColor: pageScope === 'all' ? 'var(--color-accent-100)' : 'var(--color-surface)',
                 border: `2px solid ${pageScope === 'all' ? 'var(--color-accent)' : 'var(--color-border)'}`,
                 color: pageScope === 'all' ? 'var(--color-accent)' : 'var(--color-text-secondary)',
               }}
@@ -339,7 +339,7 @@ export default function WatermarkTool() {
               className="flex-1 py-2 rounded-xl text-xs font-medium transition-all"
               style={{
                 fontFamily: 'var(--font-heading)',
-                backgroundColor: pageScope === 'custom' ? 'rgba(217, 119, 87, 0.12)' : 'var(--color-surface)',
+                backgroundColor: pageScope === 'custom' ? 'var(--color-accent-100)' : 'var(--color-surface)',
                 border: `2px solid ${pageScope === 'custom' ? 'var(--color-accent)' : 'var(--color-border)'}`,
                 color: pageScope === 'custom' ? 'var(--color-accent)' : 'var(--color-text-secondary)',
               }}
@@ -476,7 +476,7 @@ export default function WatermarkTool() {
                   className="px-2 py-1.5 rounded-lg text-[10px] font-medium transition-all"
                   style={{
                     fontFamily: 'var(--font-heading)',
-                    backgroundColor: rotation === r.value ? 'rgba(217, 119, 87, 0.12)' : 'var(--color-surface)',
+                    backgroundColor: rotation === r.value ? 'var(--color-accent-100)' : 'var(--color-surface)',
                     border: `1px solid ${rotation === r.value ? 'var(--color-accent)' : 'var(--color-border)'}`,
                     color: rotation === r.value ? 'var(--color-accent)' : 'var(--color-text-secondary)',
                   }}

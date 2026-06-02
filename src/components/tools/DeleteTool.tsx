@@ -88,7 +88,7 @@ export default function DeleteTool() {
           onClick={() => setSelectMode('manual')}
           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
             selectMode === 'manual'
-              ? 'bg-[rgba(217,119,87,0.12)] text-[var(--color-accent)] border-[var(--color-accent)]'
+              ? 'bg-[var(--color-accent-100)] text-[var(--color-accent)] border-[var(--color-accent)]'
               : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
           }`}
         >
@@ -98,7 +98,7 @@ export default function DeleteTool() {
           onClick={() => setSelectMode('select')}
           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
             selectMode === 'select'
-              ? 'bg-[rgba(217,119,87,0.12)] text-[var(--color-accent)] border-[var(--color-accent)]'
+              ? 'bg-[var(--color-accent-100)] text-[var(--color-accent)] border-[var(--color-accent)]'
               : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
           }`}
         >
@@ -140,7 +140,7 @@ export default function DeleteTool() {
                 className={`
                   aspect-[3/4] flex items-center justify-center rounded border text-sm font-medium transition-all
                   ${selectedPages.has(i)
-                    ? 'bg-[rgba(217,119,87,0.12)] border-[var(--color-accent)] text-[var(--color-accent)]'
+                    ? 'bg-[var(--color-accent-100)] border-[var(--color-accent)] text-[var(--color-accent)]'
                     : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-gray-300'
                   }
                 `}

@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
 
 export type Theme = 'light' | 'dark' | 'system'
 type ResolvedTheme = 'light' | 'dark'
@@ -31,6 +31,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     () => theme === 'system' ? getSystemTheme() : theme
   )
 
+  // rAF throttle for toggle: coalesce rapid clicks into one frame so the
+  // 250-350ms color transition doesn't restart mid-flight and cause flicker.
+  const toggleRafRef = useRef<number | null>(null)
+  const lastResolvedRef = useRef<ResolvedTheme>(resolvedTheme)
+  useEffect(() => { lastResolvedRef.current = resolvedTheme }, [resolvedTheme])
+
   // Sync resolved theme whenever theme changes
   useEffect(() => {
     const resolved = theme === 'system' ? getSystemTheme() : theme
@@ -56,10 +62,15 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     try { localStorage.setItem('pdfit-theme', newTheme) } catch { /* noop */ }
   }
 
-  const toggle = () => {
-    const next = resolvedTheme === 'dark' ? 'light' : 'dark'
-    setTheme(next)
-  }
+  const toggle = useCallback(() => {
+    if (toggleRafRef.current !== null) return
+    toggleRafRef.current = requestAnimationFrame(() => {
+      toggleRafRef.current = null
+      const next = lastResolvedRef.current === 'dark' ? 'light' : 'dark'
+      setThemeState(next)
+      try { localStorage.setItem('pdfit-theme', next) } catch { /* noop */ }
+    })
+  }, [])
 
   return (
     <ThemeContext.Provider value={{ theme, resolvedTheme, setTheme, toggle }}>

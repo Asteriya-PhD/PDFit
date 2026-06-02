@@ -104,7 +104,7 @@ export default function FileDropzone({ compact = false }: { compact?: boolean })
       >
         <div
           className="w-14 h-14 rounded-xl flex items-center justify-center"
-          style={{ backgroundColor: 'rgba(217, 119, 87, 0.1)' }}
+          style={{ backgroundColor: 'var(--color-accent-100)' }}
         >
           <Upload className="w-7 h-7" style={{ color: 'var(--color-accent)' }} />
         </div>

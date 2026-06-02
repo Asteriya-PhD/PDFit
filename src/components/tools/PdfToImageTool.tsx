@@ -96,7 +96,7 @@ export default function PdfToImageTool() {
               onClick={() => setPageScope('all')}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 pageScope === 'all'
-                  ? 'bg-[rgba(217,119,87,0.12)] text-[var(--color-accent)] border-[var(--color-accent)]'
+                  ? 'bg-[var(--color-accent-100)] text-[var(--color-accent)] border-[var(--color-accent)]'
                   : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
@@ -106,7 +106,7 @@ export default function PdfToImageTool() {
               onClick={() => setPageScope('custom')}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 pageScope === 'custom'
-                  ? 'bg-[rgba(217,119,87,0.12)] text-[var(--color-accent)] border-[var(--color-accent)]'
+                  ? 'bg-[var(--color-accent-100)] text-[var(--color-accent)] border-[var(--color-accent)]'
                   : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
@@ -132,7 +132,7 @@ export default function PdfToImageTool() {
               onClick={() => setFormat('png')}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 format === 'png'
-                  ? 'bg-[rgba(217,119,87,0.12)] text-[var(--color-accent)] border-[var(--color-accent)]'
+                  ? 'bg-[var(--color-accent-100)] text-[var(--color-accent)] border-[var(--color-accent)]'
                   : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
@@ -142,7 +142,7 @@ export default function PdfToImageTool() {
               onClick={() => setFormat('jpeg')}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 format === 'jpeg'
-                  ? 'bg-[rgba(217,119,87,0.12)] text-[var(--color-accent)] border-[var(--color-accent)]'
+                  ? 'bg-[var(--color-accent-100)] text-[var(--color-accent)] border-[var(--color-accent)]'
                   : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
@@ -178,7 +178,7 @@ export default function PdfToImageTool() {
                 onClick={() => setDpi(v)}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   dpi === v
-                    ? 'bg-[rgba(217,119,87,0.12)] text-[var(--color-accent)] border-[var(--color-accent)]'
+                    ? 'bg-[var(--color-accent-100)] text-[var(--color-accent)] border-[var(--color-accent)]'
                     : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >

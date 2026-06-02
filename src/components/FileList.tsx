@@ -89,7 +89,7 @@ export default function FileList() {
                 <div
                   className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
                   style={{
-                    backgroundColor: isActive ? 'rgba(217, 119, 87, 0.12)' : 'var(--color-bg-tertiary)',
+                    backgroundColor: isActive ? 'var(--color-accent-100)' : 'var(--color-bg-tertiary)',
                   }}
                 >
                   <FileIcon

@@ -115,7 +115,7 @@ export default function SplitTool() {
           style={
             mode === 'extract'
               ? {
-                  backgroundColor: 'rgba(217, 119, 87, 0.12)',
+                  backgroundColor: 'var(--color-accent-100)',
                   color: 'var(--color-accent)',
                   borderColor: 'var(--color-accent)',
                 }
@@ -144,7 +144,7 @@ export default function SplitTool() {
           style={
             mode === 'split'
               ? {
-                  backgroundColor: 'rgba(217, 119, 87, 0.12)',
+                  backgroundColor: 'var(--color-accent-100)',
                   color: 'var(--color-accent)',
                   borderColor: 'var(--color-accent)',
                 }

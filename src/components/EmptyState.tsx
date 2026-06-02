@@ -151,7 +151,7 @@ export default function EmptyState() {
                   <div
                     className="w-8 h-8 rounded flex items-center justify-center text-xs font-bold"
                     style={{
-                      backgroundColor: 'rgba(217, 119, 87, 0.1)',
+                      backgroundColor: 'var(--color-accent-100)',
                       color: 'var(--color-accent)',
                     }}
                   >
@@ -171,7 +171,7 @@ export default function EmptyState() {
                 <svg width="32" height="16" viewBox="0 0 32 16" fill="none">
                   <path
                     d="M1 8h28M24 2l6 6-6 6"
-                    stroke="#d97757"
+                    stroke="var(--color-accent)"
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -235,7 +235,7 @@ export default function EmptyState() {
               backgroundColor: 'var(--color-surface)',
               border: `1px solid ${isDragging ? 'var(--color-accent)' : 'var(--color-border)'}`,
               boxShadow: isDragging
-                ? '0 0 0 4px rgba(217, 119, 87, 0.1), 0 16px 48px rgba(20, 20, 19, 0.08)'
+                ? '0 0 0 4px var(--color-accent-100), 0 16px 48px rgba(20, 20, 19, 0.08)'
                 : '0 4px 24px rgba(20, 20, 19, 0.06)',
               padding: '52px 40px',
               transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
@@ -244,7 +244,7 @@ export default function EmptyState() {
               if (!isDragging) {
                 e.currentTarget.style.borderColor = 'var(--color-accent)'
                 e.currentTarget.style.boxShadow =
-                  '0 0 0 4px rgba(217, 119, 87, 0.08), 0 16px 48px rgba(20, 20, 19, 0.08)'
+                  '0 0 0 4px var(--color-accent-50), 0 16px 48px rgba(20, 20, 19, 0.08)'
               }
             }}
             onMouseLeave={e => {
@@ -271,7 +271,7 @@ export default function EmptyState() {
                   borderRadius: '14px',
                   border: `2px dashed ${isDragging ? 'var(--color-accent)' : 'var(--color-border)'}`,
                   backgroundColor: isDragging
-                    ? 'rgba(217, 119, 87, 0.06)'
+                    ? 'var(--color-accent-50)'
                     : 'transparent',
                 }}
               >
@@ -283,7 +283,7 @@ export default function EmptyState() {
                     height: '0',
                     borderStyle: 'solid',
                     borderWidth: '0 22px 22px 0',
-                    borderColor: `transparent ${isDragging ? 'rgba(217, 119, 87, 0.2)' : 'var(--color-border)'} transparent transparent`,
+                    borderColor: `transparent ${isDragging ? 'var(--color-accent-200)' : 'var(--color-border)'} transparent transparent`,
                   }}
                 />
                 {/* PDF 文字 */}
@@ -350,7 +350,7 @@ export default function EmptyState() {
               >
                 <div
                   className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
-                  style={{ backgroundColor: 'rgba(217, 119, 87, 0.1)' }}
+                  style={{ backgroundColor: 'var(--color-accent-100)' }}
                 >
                   <Icon
                     className="w-5 h-5"

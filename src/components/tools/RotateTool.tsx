@@ -214,7 +214,7 @@ export default function RotateTool() {
                   className="aspect-[3/4] flex items-center justify-center rounded-lg text-sm font-medium transition-all"
                   style={{
                     fontFamily: 'var(--font-heading)',
-                    backgroundColor: selectedPages.has(i) ? 'rgba(217, 119, 87, 0.12)' : 'var(--color-surface)',
+                    backgroundColor: selectedPages.has(i) ? 'var(--color-accent-100)' : 'var(--color-surface)',
                     border: `1px solid ${selectedPages.has(i) ? 'var(--color-accent)' : 'var(--color-border)'}`,
                     color: selectedPages.has(i) ? 'var(--color-accent)' : 'var(--color-text-secondary)',
                   }}

@@ -103,9 +103,9 @@ export default function ImageToPdfTool() {
           onDrop={handleDrop}
           onClick={handleClick}
           className="flex flex-col items-center justify-center gap-4 p-12 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl
-            cursor-pointer hover:border-[var(--color-accent)] hover:bg-[rgba(217,119,87,0.12)] transition-colors"
+            cursor-pointer hover:border-[var(--color-accent)] hover:bg-[var(--color-accent-100)] transition-colors"
         >
-          <div className="w-14 h-14 bg-[rgba(217,119,87,0.12)] rounded-full flex items-center justify-center">
+          <div className="w-14 h-14 bg-[var(--color-accent-100)] rounded-full flex items-center justify-center">
             <Upload className="w-7 h-7 text-[var(--color-accent)]" />
           </div>
           <div className="text-center">
@@ -194,7 +194,7 @@ export default function ImageToPdfTool() {
                 onClick={() => setPageSize(opt.value)}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   pageSize === opt.value
-                    ? 'bg-[rgba(217,119,87,0.12)] text-[var(--color-accent)] border-[var(--color-accent)]'
+                    ? 'bg-[var(--color-accent-100)] text-[var(--color-accent)] border-[var(--color-accent)]'
                     : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >

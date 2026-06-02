@@ -204,7 +204,7 @@ export default function MineruTool() {
           onDragOver={e => e.preventDefault()}
           onDrop={handleDrop}
           onClick={() => inputRef.current?.click()}
-          className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center cursor-pointer hover:border-[var(--color-accent)] hover:bg-[rgba(217,119,87,0.12)] transition-colors"
+          className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center cursor-pointer hover:border-[var(--color-accent)] hover:bg-[var(--color-accent-100)] transition-colors"
         >
           <input
             ref={inputRef}
@@ -276,7 +276,7 @@ export default function MineruTool() {
           )}
 
           {status === 'error' && (
-            <div className="text-sm text-[var(--color-accent)] bg-[rgba(217,119,87,0.12)] rounded-md p-3">
+            <div className="text-sm text-[var(--color-accent)] bg-[var(--color-accent-100)] rounded-md p-3">
               {error}
             </div>
           )}
