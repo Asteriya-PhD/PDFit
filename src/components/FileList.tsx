@@ -62,7 +62,12 @@ export default function FileList() {
       </div>
 
       {/* File List */}
-      <div className="flex-1 overflow-y-auto px-2 py-2 min-h-0">
+      <div
+        className="flex-1 overflow-y-auto px-2 py-2 min-h-0"
+        tabIndex={0}
+        role="region"
+        aria-label={t('fileList.header', { count: files.length })}
+      >
         <div className="space-y-1">
           {files.map(file => {
             const isActive = activeFileId === file.id
@@ -107,7 +112,7 @@ export default function FileList() {
                     className="truncate text-sm font-medium"
                     style={{
                       fontFamily: 'var(--font-heading)',
-                      color: isActive ? 'var(--color-accent)' : 'var(--color-text-primary)',
+                      color: isActive ? 'var(--color-accent-700)' : 'var(--color-text-primary)',
                     }}
                   >
                     {file.name}

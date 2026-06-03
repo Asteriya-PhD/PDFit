@@ -91,7 +91,12 @@ export default function ToolPanel() {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto">
+    <div
+      className="flex-1 overflow-y-auto"
+      tabIndex={0}
+      role="region"
+      aria-label={t('toolPanel.noTool')}
+    >
       <div className="p-5 max-w-4xl mx-auto animate-fadeIn">
         {panels[activeTool] ?? (
           <div className="text-center py-10">

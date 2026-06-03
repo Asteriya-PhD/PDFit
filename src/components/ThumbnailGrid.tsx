@@ -124,6 +124,9 @@ export default function ThumbnailGrid({ vertical = false }: ThumbnailGridProps) 
           ref={scrollContainerRef}
           className="flex-1 overflow-y-auto overflow-x-hidden"
           style={{ scrollbarWidth: 'thin' }}
+          tabIndex={0}
+          role="region"
+          aria-label={t('thumbnailGrid.noFile')}
         >
           <div className="flex flex-col gap-1.5 p-1.5">
             {Array.from({ length: activeFile.pageCount }, (_, i) => (
@@ -239,6 +242,9 @@ export default function ThumbnailGrid({ vertical = false }: ThumbnailGridProps) 
           scrollBehavior: 'smooth',
           scrollbarWidth: 'thin',
         }}
+        tabIndex={0}
+        role="region"
+        aria-label={t('thumbnailGrid.noFile')}
       >
         <div
           className="flex gap-3 px-4 py-3"
@@ -357,7 +363,7 @@ function PagePreview({
         className="text-xs font-medium"
         style={{
           fontFamily: 'var(--font-heading)',
-          color: isHovered ? 'var(--color-accent)' : 'var(--color-text-muted)',
+          color: isHovered ? 'var(--color-accent-700)' : 'var(--color-text-muted)',
         }}
       >
         {pageIndex + 1}

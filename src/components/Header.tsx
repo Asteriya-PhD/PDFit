@@ -76,6 +76,8 @@ export default function Header() {
         <nav
           className="flex items-center gap-0.5 md:gap-1 flex-1 overflow-x-auto scrollbar-thin"
           style={{ WebkitOverflowScrolling: 'touch' }}
+          tabIndex={0}
+          aria-label={t('header.title')}
         >
           {toolGroups.map((group, groupIndex) => (
             <div key={group.label} className="flex items-center">
@@ -100,7 +102,7 @@ export default function Header() {
                     className="whitespace-nowrap flex items-center gap-1.5 px-2.5 md:px-3 py-2 rounded-lg text-xs md:text-sm font-medium transition-all duration-300 shrink-0"
                     data-tooltip={tool.description}
                     style={{
-                      color: isActive ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                      color: isActive ? 'var(--color-accent-700)' : 'var(--color-text-secondary)',
                       backgroundColor: isActive ? 'var(--color-surface-active)' : 'transparent',
                       fontFamily: 'var(--font-heading)',
                       transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',

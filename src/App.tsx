@@ -33,7 +33,7 @@ export default function App() {
         <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
           {/* Left Sidebar - File Management */}
           <aside
-            className="flex flex-col overflow-hidden shrink-0 w-full lg:w-[280px] xl:w-[320px] max-h-[40vh] lg:max-h-full border-b lg:border-b-0"
+            className="flex flex-col overflow-hidden shrink-0 w-full lg:w-[280px] xl:w-[320px] lg:max-h-full border-b lg:border-b-0"
             style={{
               borderColor: 'var(--color-border)',
               borderRightWidth: '1px',

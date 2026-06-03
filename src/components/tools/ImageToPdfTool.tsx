@@ -112,7 +112,7 @@ export default function ImageToPdfTool() {
           <div className="text-center">
             <p className="text-base font-medium text-gray-600 dark:text-gray-300">{t('imageToPdf.empty.text')}</p>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t('imageToPdf.empty.hint')}</p>
-            <p className="text-xs text-gray-300 mt-1">{t('imageToPdf.empty.formats')}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t('imageToPdf.empty.formats')}</p>
           </div>
         </div>
       </div>
@@ -202,7 +202,7 @@ export default function ImageToPdfTool() {
                 onClick={() => setPageSize(opt.value)}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   pageSize === opt.value
-                    ? 'bg-[var(--color-accent-100)] text-[var(--color-accent)] border-[var(--color-accent)]'
+                    ? 'bg-[var(--color-accent-100)] text-[var(--color-accent-700)] border-[var(--color-accent)]'
                     : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`}
               >

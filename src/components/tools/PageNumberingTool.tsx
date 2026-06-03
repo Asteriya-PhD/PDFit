@@ -213,7 +213,7 @@ export default function PageNumberingTool() {
                   fontFamily: 'var(--font-heading)',
                   backgroundColor: position === p.value ? 'var(--color-accent-100)' : 'var(--color-surface)',
                   border: `1px solid ${position === p.value ? 'var(--color-accent)' : 'var(--color-border)'}`,
-                  color: position === p.value ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                  color: position === p.value ? 'var(--color-accent-700)' : 'var(--color-text-secondary)',
                 }}
               >
                 {p.label}
@@ -265,7 +265,7 @@ export default function PageNumberingTool() {
                   fontFamily: 'var(--font-heading)',
                   backgroundColor: fontSize === s ? 'var(--color-accent-100)' : 'var(--color-surface)',
                   border: `1px solid ${fontSize === s ? 'var(--color-accent)' : 'var(--color-border)'}`,
-                  color: fontSize === s ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                  color: fontSize === s ? 'var(--color-accent-700)' : 'var(--color-text-secondary)',
                 }}
               >
                 {s}

@@ -117,7 +117,7 @@ export default function MineruTool() {
             <span>{t('mineru.privacy.consent')}</span>
           </label>
 
-          <p className="text-xs text-amber-600 dark:text-amber-400">
+          <p className="text-xs text-amber-700 dark:text-amber-300">
             {t('mineru.privacy.notice')}
           </p>
         </div>
@@ -259,7 +259,12 @@ export default function MineruTool() {
 
           {status === 'done' && (
             <div className="space-y-3">
-              <div className="max-h-80 overflow-y-auto bg-gray-50 dark:bg-gray-900 rounded-md p-3 text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap font-mono">
+              <div
+                className="max-h-80 overflow-y-auto bg-gray-50 dark:bg-gray-900 rounded-md p-3 text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap font-mono"
+                tabIndex={0}
+                role="region"
+                aria-label={t('mineru.title')}
+              >
                 {result.slice(0, 5000)}
                 {result.length > 5000 && <span className="text-gray-400">...</span>}
               </div>
@@ -276,7 +281,7 @@ export default function MineruTool() {
           )}
 
           {status === 'error' && (
-            <div className="text-sm text-[var(--color-accent)] bg-[var(--color-accent-100)] rounded-md p-3">
+            <div className="text-sm text-[var(--color-accent-700)] bg-[var(--color-accent-100)] rounded-md p-3">
               {error}
             </div>
           )}

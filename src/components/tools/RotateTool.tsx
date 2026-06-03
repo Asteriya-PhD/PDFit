@@ -128,7 +128,7 @@ export default function RotateTool() {
                 style={{
                   backgroundColor: angle === a.value ? 'var(--color-surface-active)' : 'var(--color-surface)',
                   border: `2px solid ${angle === a.value ? 'var(--color-accent)' : 'var(--color-border)'}`,
-                  color: angle === a.value ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                  color: angle === a.value ? 'var(--color-accent-700)' : 'var(--color-text-secondary)',
                 }}
               >
                 <RotateCw
@@ -167,7 +167,7 @@ export default function RotateTool() {
                 fontFamily: 'var(--font-heading)',
                 backgroundColor: scope === 'all' ? 'var(--color-surface-active)' : 'var(--color-surface)',
                 border: `2px solid ${scope === 'all' ? 'var(--color-accent)' : 'var(--color-border)'}`,
-                color: scope === 'all' ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                color: scope === 'all' ? 'var(--color-accent-700)' : 'var(--color-text-secondary)',
               }}
             >
               {t('rotate.scope.all')}
@@ -179,7 +179,7 @@ export default function RotateTool() {
                 fontFamily: 'var(--font-heading)',
                 backgroundColor: scope === 'selected' ? 'var(--color-surface-active)' : 'var(--color-surface)',
                 border: `2px solid ${scope === 'selected' ? 'var(--color-accent)' : 'var(--color-border)'}`,
-                color: scope === 'selected' ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                color: scope === 'selected' ? 'var(--color-accent-700)' : 'var(--color-text-secondary)',
               }}
             >
               {t('rotate.scope.selected')}
@@ -206,6 +206,9 @@ export default function RotateTool() {
                 backgroundColor: 'var(--color-bg-secondary)',
                 border: '1px solid var(--color-border)',
               }}
+              tabIndex={0}
+              role="group"
+              aria-label={t('rotate.selectedHint')}
             >
               {Array.from({ length: activeFile.pageCount }, (_, i) => (
                 <button
@@ -216,7 +219,7 @@ export default function RotateTool() {
                     fontFamily: 'var(--font-heading)',
                     backgroundColor: selectedPages.has(i) ? 'var(--color-accent-100)' : 'var(--color-surface)',
                     border: `1px solid ${selectedPages.has(i) ? 'var(--color-accent)' : 'var(--color-border)'}`,
-                    color: selectedPages.has(i) ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                    color: selectedPages.has(i) ? 'var(--color-accent-700)' : 'var(--color-text-secondary)',
                   }}
                 >
                   {i + 1}

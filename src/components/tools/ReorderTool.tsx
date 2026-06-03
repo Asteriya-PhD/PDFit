@@ -150,6 +150,9 @@ export default function ReorderTool() {
         onDragOver={handleDragOver}
         onDrop={handleDrop}
         onDragEnd={handleDragEnd}
+        tabIndex={0}
+        role="region"
+        aria-label={t('reorder.title')}
       >
         {order.map((pageIdx, displayIdx) => (
           <div key={`${pageIdx}-${displayIdx}`} className="relative shrink-0">

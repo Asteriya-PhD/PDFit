@@ -200,7 +200,12 @@ export default function WatermarkTool() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 min-h-0">
       {/* Left: Main Controls */}
-      <div className="flex flex-col min-h-0 overflow-y-auto">
+      <div
+        className="flex flex-col min-h-0 overflow-y-auto"
+        tabIndex={0}
+        role="region"
+        aria-label={t('watermark.title')}
+      >
         <h2
           className="text-lg mb-1.5"
           style={{
@@ -263,7 +268,7 @@ export default function WatermarkTool() {
                 style={{
                   backgroundColor: layout === l.value ? 'var(--color-surface-active)' : 'var(--color-surface)',
                   border: `2px solid ${layout === l.value ? 'var(--color-accent)' : 'var(--color-border)'}`,
-                  color: layout === l.value ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                  color: layout === l.value ? 'var(--color-accent-700)' : 'var(--color-text-secondary)',
                 }}
               >
                 <span
@@ -301,7 +306,7 @@ export default function WatermarkTool() {
                   fontFamily: 'var(--font-heading)',
                   backgroundColor: fontSize === s ? 'var(--color-accent-100)' : 'var(--color-surface)',
                   border: `1px solid ${fontSize === s ? 'var(--color-accent)' : 'var(--color-border)'}`,
-                  color: fontSize === s ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                  color: fontSize === s ? 'var(--color-accent-700)' : 'var(--color-text-secondary)',
                 }}
               >
                 {s}
@@ -329,7 +334,7 @@ export default function WatermarkTool() {
                 fontFamily: 'var(--font-heading)',
                 backgroundColor: pageScope === 'all' ? 'var(--color-accent-100)' : 'var(--color-surface)',
                 border: `2px solid ${pageScope === 'all' ? 'var(--color-accent)' : 'var(--color-border)'}`,
-                color: pageScope === 'all' ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                color: pageScope === 'all' ? 'var(--color-accent-700)' : 'var(--color-text-secondary)',
               }}
             >
               {t('watermark.scope.all')}
@@ -341,7 +346,7 @@ export default function WatermarkTool() {
                 fontFamily: 'var(--font-heading)',
                 backgroundColor: pageScope === 'custom' ? 'var(--color-accent-100)' : 'var(--color-surface)',
                 border: `2px solid ${pageScope === 'custom' ? 'var(--color-accent)' : 'var(--color-border)'}`,
-                color: pageScope === 'custom' ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                color: pageScope === 'custom' ? 'var(--color-accent-700)' : 'var(--color-text-secondary)',
               }}
             >
               {t('watermark.scope.custom')}
@@ -480,7 +485,7 @@ export default function WatermarkTool() {
                     fontFamily: 'var(--font-heading)',
                     backgroundColor: rotation === r.value ? 'var(--color-accent-100)' : 'var(--color-surface)',
                     border: `1px solid ${rotation === r.value ? 'var(--color-accent)' : 'var(--color-border)'}`,
-                    color: rotation === r.value ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                    color: rotation === r.value ? 'var(--color-accent-700)' : 'var(--color-text-secondary)',
                   }}
                 >
                   {r.label}

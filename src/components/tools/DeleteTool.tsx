@@ -88,7 +88,7 @@ export default function DeleteTool() {
           onClick={() => setSelectMode('manual')}
           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
             selectMode === 'manual'
-              ? 'bg-[var(--color-accent-100)] text-[var(--color-accent)] border-[var(--color-accent)]'
+              ? 'bg-[var(--color-accent-100)] text-[var(--color-accent-700)] border-[var(--color-accent)]'
               : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
           }`}
         >
@@ -98,7 +98,7 @@ export default function DeleteTool() {
           onClick={() => setSelectMode('select')}
           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
             selectMode === 'select'
-              ? 'bg-[var(--color-accent-100)] text-[var(--color-accent)] border-[var(--color-accent)]'
+              ? 'bg-[var(--color-accent-100)] text-[var(--color-accent-700)] border-[var(--color-accent)]'
               : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
           }`}
         >
@@ -132,7 +132,12 @@ export default function DeleteTool() {
       ) : (
         <div className="mb-4">
           <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">{t('delete.select.hint')}</p>
-          <div className="grid grid-cols-6 sm:grid-cols-8 gap-2 max-h-64 overflow-y-auto p-2 bg-gray-50 dark:bg-gray-900 rounded-lg">
+          <div
+            className="grid grid-cols-6 sm:grid-cols-8 gap-2 max-h-64 overflow-y-auto p-2 bg-gray-50 dark:bg-gray-900 rounded-lg"
+            tabIndex={0}
+            role="group"
+            aria-label={t('delete.select.hint')}
+          >
             {Array.from({ length: activeFile.pageCount }, (_, i) => (
               <button
                 key={i}
@@ -140,7 +145,7 @@ export default function DeleteTool() {
                 className={`
                   aspect-[3/4] flex items-center justify-center rounded border text-sm font-medium transition-all
                   ${selectedPages.has(i)
-                    ? 'bg-[var(--color-accent-100)] border-[var(--color-accent)] text-[var(--color-accent)]'
+                    ? 'bg-[var(--color-accent-100)] border-[var(--color-accent)] text-[var(--color-accent-700)]'
                     : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-gray-300'
                   }
                 `}

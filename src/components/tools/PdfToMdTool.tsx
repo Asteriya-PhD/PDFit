@@ -143,7 +143,7 @@ export default function PdfToMdTool() {
                   outputMode === 'markdown'
                     ? {
                         backgroundColor: 'var(--color-accent-100)',
-                        color: 'var(--color-accent)',
+                        color: 'var(--color-accent-700)',
                         borderColor: 'var(--color-accent)',
                       }
                     : {
@@ -162,7 +162,7 @@ export default function PdfToMdTool() {
                   outputMode === 'plaintext'
                     ? {
                         backgroundColor: 'var(--color-accent-100)',
-                        color: 'var(--color-accent)',
+                        color: 'var(--color-accent-700)',
                         borderColor: 'var(--color-accent)',
                       }
                     : {
@@ -237,7 +237,7 @@ export default function PdfToMdTool() {
                   outputMode === 'markdown'
                     ? {
                         backgroundColor: 'var(--color-accent-100)',
-                        color: 'var(--color-accent)',
+                        color: 'var(--color-accent-700)',
                         borderColor: 'var(--color-accent)',
                       }
                     : {
@@ -256,7 +256,7 @@ export default function PdfToMdTool() {
                   outputMode === 'plaintext'
                     ? {
                         backgroundColor: 'var(--color-accent-100)',
-                        color: 'var(--color-accent)',
+                        color: 'var(--color-accent-700)',
                         borderColor: 'var(--color-accent)',
                       }
                     : {

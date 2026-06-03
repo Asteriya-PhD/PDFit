@@ -116,7 +116,7 @@ export default function SplitTool() {
             mode === 'extract'
               ? {
                   backgroundColor: 'var(--color-accent-100)',
-                  color: 'var(--color-accent)',
+                  color: 'var(--color-accent-700)',
                   borderColor: 'var(--color-accent)',
                 }
               : {
@@ -145,7 +145,7 @@ export default function SplitTool() {
             mode === 'split'
               ? {
                   backgroundColor: 'var(--color-accent-100)',
-                  color: 'var(--color-accent)',
+                  color: 'var(--color-accent-700)',
                   borderColor: 'var(--color-accent)',
                 }
               : {
