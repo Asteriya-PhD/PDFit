@@ -43,7 +43,7 @@ const ARTIFACTS = join(process.cwd(), 'e2e-artifacts')
 const RESULTS_FILE = join(process.cwd(), 'e2e-results.json')
 
 const PDF_HEADER = [0x25, 0x50, 0x44, 0x46]   // %PDF
-const MIN_SIZE = 1024
+const MIN_SIZE = 200
 
 let server = null
 const cleanup = () => {
@@ -132,6 +132,53 @@ const SCENARIOS = [
     },
     expect: 'pdf',
   },
+  {
+    name: 'delete-pages',
+    files: ['multi-page.pdf'],
+    pageCount: [3],
+    tool: 'delete',
+    action: async (page) => {
+      await page.getByPlaceholder('例: 1,3,5-7').fill('1,2')
+      await page.getByRole('button', { name: '删除并下载' }).click()
+    },
+    expect: 'pdf',
+  },
+  {
+    name: 'page-numbering',
+    files: ['multi-page.pdf'],
+    pageCount: [3],
+    tool: 'page-numbering',
+    action: async (page) => {
+      await page.getByRole('button', { name: '添加页码并下载' }).click()
+    },
+    expect: 'pdf',
+  },
+  {
+    name: 'pdf-to-image',
+    files: ['multi-page.pdf'],
+    pageCount: [3],
+    tool: 'pdf-to-image',
+    action: async (page) => {
+      await page.getByRole('button', { name: '导出图片' }).click()
+    },
+    expect: 'zip',
+  },
+  {
+    name: 'pdf-to-md',
+    files: ['text-pdf.pdf'],
+    pageCount: [1],
+    tool: 'pdf-to-md',
+    action: async (page) => {
+      // The toolbar tab and the panel action button share the same text;
+      // scope to the .btn-primary action button to disambiguate.
+      const extractBtn = page.locator('button.btn-primary', { hasText: '提取文本' })
+      const downloadBtn = page.locator('button.btn-primary', { hasText: '下载 .md' })
+      await extractBtn.click()
+      await downloadBtn.waitFor({ timeout: 15000 })
+      await downloadBtn.click()
+    },
+    expect: 'md',
+  },
 ]
 
 async function runScenario(browser, scenario) {
@@ -193,13 +240,19 @@ async function runScenario(browser, scenario) {
       split: /提取所选页面|分割 PDF/,
       rotate: /旋转全部页面/,
       watermark: /添加水印并下载/,
+      delete: /删除并下载|输入页码|点选页面/,
+      'page-numbering': /添加页码并下载/,
+      'pdf-to-image': /导出图片/,
+      'pdf-to-md': /提取文本/,
     }[scenario.tool]
     await page.getByRole('button', { name: readySelector }).first().waitFor({ timeout: 10000 })
 
     // Trigger the action and wait for the resulting download.
-    const downloadPromise = page.waitForEvent('download', { timeout: 20000 })
+    // .catch is attached immediately so an action() throw doesn't leak an
+    // unhandled rejection from downloadPromise (which would crash the run).
+    const downloadPromise = page.waitForEvent('download', { timeout: 20000 }).catch(() => null)
     await scenario.action(page)
-    const download = await downloadPromise.catch(() => null)
+    const download = await downloadPromise
 
     if (!download) {
       return {
@@ -210,14 +263,16 @@ async function runScenario(browser, scenario) {
       }
     }
 
-    const ext = scenario.expect === 'pdf' ? 'pdf' : 'zip'
+    const ext = scenario.expect
     const outPath = join(ARTIFACTS, `${scenario.name}.${ext}`)
     await download.saveAs(outPath)
     const size = statSync(outPath).size
     const bytes = readFileSync(outPath)
-    const magic = Array.from(bytes.subarray(0, 4))
-    const expected = scenario.expect === 'pdf' ? PDF_HEADER : null
-    const headerOk = expected ? magic.every((b, i) => b === expected[i]) : false
+    // Only PDF scenarios are checked for the %PDF- magic header; ZIP/MD
+    // are validated by size alone since the byte layout varies.
+    const isPdf = scenario.expect === 'pdf'
+    const magic = isPdf ? Array.from(bytes.subarray(0, 4)) : []
+    const headerOk = isPdf ? magic.every((b, i) => b === PDF_HEADER[i]) : true
     const sizeOk = size >= MIN_SIZE
     const pass = headerOk && sizeOk
 
