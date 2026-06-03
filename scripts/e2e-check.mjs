@@ -1,0 +1,306 @@
+#!/usr/bin/env node
+/**
+ * e2e-check.mjs — End-to-end smoke test for core PDFit workflows.
+ *
+ * Mirrors a11y-check.mjs (vite preview + Playwright), but instead of
+ * checking axe violations it drives real user flows and validates the
+ * files the browser actually produces. Designed to be CI-friendly:
+ *   - exits non-zero on any failure
+ *   - writes e2e-results.json for the workflow to upload as artifact
+ *   - uploads downloaded files to e2e-artifacts/ for debugging
+ *
+ * Why test-state injection instead of the dropzone?
+ *   The EmptyState's dropzone creates an <input type=file> via JS and
+ *   calls .click() — Playwright's filechooser event is fragile in this
+ *   path (input.click() can bypass the filechooser dialog in headless
+ *   Chromium). Instead, we read the real test PDFs in Node, ship their
+ *   bytes through addInitScript (as plain number arrays → Uint8Array →
+ *   ArrayBuffer on the page side), and let AppContext boot with files
+ *   already populated. The tool panels then render against real PDF
+ *   bytes, and the export buttons fire real download events.
+ *
+ * Scenarios (zh locale forced via localStorage):
+ *   1. merge      — inject 2 PDFs, click 合并, expect a merged PDF
+ *   2. split      — inject multi-page PDF, extract pages 1,3, expect a PDF
+ *   3. rotate     — inject PDF, click 旋转全部页面, expect a PDF
+ *   4. watermark  — inject PDF, type text, click 添加水印并下载, expect a PDF
+ *
+ * Validation: download saved to disk, file size > 1KB, first 4 bytes
+ * match the expected magic (%PDF- for PDF).
+ */
+import { chromium } from 'playwright'
+import { spawn } from 'node:child_process'
+import { setTimeout as wait } from 'node:timers/promises'
+import {
+  existsSync, mkdirSync, readFileSync, writeFileSync, statSync, rmSync,
+} from 'node:fs'
+import { join } from 'node:path'
+
+const PORT = 4173
+const BASE = `http://127.0.0.1:${PORT}/PDFit/`
+const TEST_DIR = join(process.cwd(), 'test-files')
+const ARTIFACTS = join(process.cwd(), 'e2e-artifacts')
+const RESULTS_FILE = join(process.cwd(), 'e2e-results.json')
+
+const PDF_HEADER = [0x25, 0x50, 0x44, 0x46]   // %PDF
+const MIN_SIZE = 1024
+
+let server = null
+const cleanup = () => {
+  if (server && !server.killed) {
+    server.kill('SIGTERM')
+    setTimeout(() => server?.kill('SIGKILL'), 3000)
+  }
+}
+process.on('exit', cleanup)
+process.on('SIGINT', () => { cleanup(); process.exit(130) })
+process.on('SIGTERM', () => { cleanup(); process.exit(143) })
+
+async function waitForServer(url, timeoutMs = 30000) {
+  const start = Date.now()
+  let lastErr
+  while (Date.now() - start < timeoutMs) {
+    try {
+      const res = await fetch(url, { redirect: 'manual' })
+      if (res.status < 500) return
+      lastErr = new Error(`HTTP ${res.status}`)
+    } catch (e) {
+      lastErr = e
+    }
+    await wait(500)
+  }
+  throw new Error(`Preview server not ready: ${lastErr?.message}`)
+}
+
+function getBrowserLaunchOpts() {
+  const opts = {}
+  if (process.env.CHROME_PATH) {
+    opts.executablePath = process.env.CHROME_PATH
+  } else if (process.platform === 'darwin' && existsSync('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome')) {
+    opts.executablePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+  }
+  return opts
+}
+
+const TOOL_BUTTON = {
+  merge: '合并',
+  split: '分割',
+  rotate: '旋转',
+  watermark: '水印',
+}
+
+const SCENARIOS = [
+  {
+    name: 'merge',
+    files: ['text-pdf.pdf', 'multi-page.pdf'],
+    pageCount: [1, 3],
+    tool: 'merge',
+    action: async (page) => {
+      await page.getByRole('button', { name: /合并 \d+ 个文件/ }).click()
+    },
+    expect: 'pdf',
+  },
+  {
+    name: 'split-extract',
+    files: ['multi-page.pdf'],
+    pageCount: [3],
+    tool: 'split',
+    action: async (page) => {
+      await page.getByPlaceholder('例: 1,3,5-7').fill('1,3')
+      await page.getByRole('button', { name: '提取所选页面' }).click()
+    },
+    expect: 'pdf',
+  },
+  {
+    name: 'rotate',
+    files: ['text-pdf.pdf'],
+    pageCount: [1],
+    tool: 'rotate',
+    action: async (page) => {
+      await page.getByRole('button', { name: '旋转全部页面' }).click()
+    },
+    expect: 'pdf',
+  },
+  {
+    name: 'watermark',
+    files: ['text-pdf.pdf'],
+    pageCount: [1],
+    tool: 'watermark',
+    action: async (page) => {
+      await page.getByPlaceholder('请输入水印文字，如: CONFIDENTIAL').fill('E2E_TEST')
+      await page.getByRole('button', { name: '添加水印并下载' }).click()
+    },
+    expect: 'pdf',
+  },
+]
+
+async function runScenario(browser, scenario) {
+  const ctx = await browser.newContext({ acceptDownloads: true })
+
+  // Pre-read PDF bytes in Node and serialize as plain number arrays.
+  // addInitScript ships them across the boundary; the page reconstructs
+  // them as Uint8Array → ArrayBuffer → File objects that AppContext
+  // accepts via __PDFIT_TEST_STATE__.
+  const filePayload = scenario.files.map((f, i) => {
+    const bytes = readFileSync(join(TEST_DIR, f))
+    return {
+      name: f,
+      size: bytes.byteLength,
+      pageCount: scenario.pageCount[i] ?? 1,
+      bytes: Array.from(bytes),
+    }
+  })
+
+  await ctx.addInitScript((payload) => {
+    try { localStorage.setItem('pdfit-locale', 'zh') } catch {}
+    const files = payload.files.map((f, i) => {
+      const bytes = new Uint8Array(f.bytes)
+      const buffer = bytes.buffer
+      const file = new File([bytes], f.name, { type: 'application/pdf' })
+      return {
+        id: `test-file-${i + 1}`,
+        name: f.name,
+        size: f.size,
+        file,
+        arrayBuffer: buffer,
+        pageCount: f.pageCount,
+      }
+    })
+    window.__PDFIT_TEST_STATE__ = {
+      files,
+      activeFileId: files[0].id,
+      activeTool: payload.tool,
+    }
+  }, { files: filePayload, tool: scenario.tool })
+
+  const page = await ctx.newPage()
+  const errors = []
+  page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`))
+  page.on('console', (m) => {
+    if (m.type() === 'error') errors.push(`console: ${m.text()}`)
+  })
+
+  try {
+    await page.goto(BASE, { waitUntil: 'networkidle', timeout: 15000 })
+    await wait(500)
+
+    // Wait for the tool panel to render by looking for the action button
+    // the scenario is about to click. If it's the active tool (default
+    // is merge), the button shows "合并 N 个文件". For others, the
+    // activeTool is set so the right panel renders on mount.
+    const readySelector = {
+      merge: /合并 \d+ 个文件/,
+      split: /提取所选页面|分割 PDF/,
+      rotate: /旋转全部页面/,
+      watermark: /添加水印并下载/,
+    }[scenario.tool]
+    await page.getByRole('button', { name: readySelector }).first().waitFor({ timeout: 10000 })
+
+    // Trigger the action and wait for the resulting download.
+    const downloadPromise = page.waitForEvent('download', { timeout: 20000 })
+    await scenario.action(page)
+    const download = await downloadPromise.catch(() => null)
+
+    if (!download) {
+      return {
+        name: scenario.name,
+        status: 'FAIL',
+        error: 'No download event fired within 20s',
+        errors,
+      }
+    }
+
+    const ext = scenario.expect === 'pdf' ? 'pdf' : 'zip'
+    const outPath = join(ARTIFACTS, `${scenario.name}.${ext}`)
+    await download.saveAs(outPath)
+    const size = statSync(outPath).size
+    const bytes = readFileSync(outPath)
+    const magic = Array.from(bytes.subarray(0, 4))
+    const expected = scenario.expect === 'pdf' ? PDF_HEADER : null
+    const headerOk = expected ? magic.every((b, i) => b === expected[i]) : false
+    const sizeOk = size >= MIN_SIZE
+    const pass = headerOk && sizeOk
+
+    return {
+      name: scenario.name,
+      status: pass ? 'PASS' : 'FAIL',
+      filename: download.suggestedFilename(),
+      size,
+      headerOk,
+      sizeOk,
+      errors: pass ? [] : [
+        `headerOk=${headerOk} sizeOk=${sizeOk} size=${size} magic=${magic.map((b) => b.toString(16)).join(' ')}`,
+        ...errors,
+      ],
+    }
+  } catch (e) {
+    return {
+      name: scenario.name,
+      status: 'FAIL',
+      error: e instanceof Error ? e.message : String(e),
+      errors,
+    }
+  } finally {
+    await ctx.close()
+  }
+}
+
+async function main() {
+  if (existsSync(ARTIFACTS)) rmSync(ARTIFACTS, { recursive: true })
+  mkdirSync(ARTIFACTS, { recursive: true })
+
+  console.log('Starting vite preview…')
+  server = spawn('npx', ['vite', 'preview', '--port', String(PORT), '--strictPort', '--host', '127.0.0.1'], {
+    stdio: ['ignore', 'pipe', 'pipe'],
+    env: { ...process.env, VITE_BASE: '/PDFit/' },
+  })
+  server.stdout.on('data', (d) => process.stdout.write(`[preview] ${d}`))
+  server.stderr.on('data', (d) => process.stderr.write(`[preview] ${d}`))
+
+  await waitForServer(BASE)
+  console.log(`Preview ready at ${BASE}`)
+
+  const browser = await chromium.launch(getBrowserLaunchOpts())
+  const startTime = Date.now()
+  const results = []
+
+  for (const sc of SCENARIOS) {
+    console.log(`\n→ ${sc.name}`)
+    const r = await runScenario(browser, sc)
+    results.push(r)
+    const mark = r.status === 'PASS' ? '✓' : '✗'
+    const detail = r.size != null ? ` (${r.size} bytes)` : ''
+    console.log(`  ${mark} ${r.status}${detail}`)
+    if (r.status === 'FAIL') {
+      console.log(`    error: ${r.error ?? '(see errors[])'}`)
+      if (r.errors?.length) console.log(`    ${r.errors.join('\n    ')}`)
+    }
+  }
+
+  await browser.close()
+  const elapsed = ((Date.now() - startTime) / 1000).toFixed(1)
+  const summary = {
+    started_at: new Date().toISOString(),
+    elapsed_seconds: Number(elapsed),
+    total: results.length,
+    passed: results.filter((r) => r.status === 'PASS').length,
+    failed: results.filter((r) => r.status === 'FAIL').length,
+    results,
+  }
+  writeFileSync(RESULTS_FILE, JSON.stringify(summary, null, 2))
+  console.log(`\n========== e2e summary (${elapsed}s) ==========`)
+  console.log(`total: ${summary.total}  passed: ${summary.passed}  failed: ${summary.failed}`)
+  console.log(`results: ${RESULTS_FILE}`)
+  console.log(`artifacts: ${ARTIFACTS}`)
+
+  if (summary.failed > 0) {
+    console.error(`\n❌ e2e check failed (${summary.failed}/${summary.total})`)
+    process.exit(1)
+  }
+  console.log(`\n✅ e2e check passed`)
+}
+
+main().catch((err) => {
+  console.error('\n❌ e2e crashed:', err)
+  process.exit(1)
+})

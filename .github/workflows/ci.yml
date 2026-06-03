@@ -13,9 +13,9 @@ concurrency:
 
 jobs:
   ci:
-    name: Build & a11y
+    name: Build & a11y & e2e
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     env:
       VITE_BASE: /PDFit/
     steps:
@@ -37,8 +37,25 @@ jobs:
       - name: Typecheck
         run: npx tsc -b --noEmit
 
+      - name: Unit tests (vitest)
+        run: npm run test:unit
+
       - name: Build
         run: npm run build
 
       - name: a11y check (axe-core, WCAG 2 AA)
         run: npm run test:a11y
+
+      - name: e2e check (merge / split / rotate / watermark)
+        run: npm run test:e2e
+
+      - name: Upload e2e artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pdfit-e2e
+          path: |
+            e2e-results.json
+            e2e-artifacts/
+          if-no-files-found: ignore
+          retention-days: 7
