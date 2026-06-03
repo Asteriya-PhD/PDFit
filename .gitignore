@@ -43,6 +43,7 @@ coverage/
 test-files/*
 !test-files/text-pdf.pdf
 !test-files/multi-page.pdf
+!test-files/image-only.pdf
 !test-files/test1.png
 !test-files/test3.jpg
 

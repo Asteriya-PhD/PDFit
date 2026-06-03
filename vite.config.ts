@@ -39,6 +39,11 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      // pdfjs-dist's default entry uses web workers, which don't exist in
+      // Node. Redirect to the legacy build (main-thread, no worker) for
+      // vitest. The browser build still uses the default entry — the
+      // browser code path sets GlobalWorkerOptions.workerSrc in pdfWorker.ts.
+      'pdfjs-dist': path.resolve(__dirname, './node_modules/pdfjs-dist/legacy/build/pdf.mjs'),
     },
   },
   base: process.env.VITE_BASE || '/PDFit/',
