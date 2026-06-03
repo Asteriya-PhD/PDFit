@@ -40,7 +40,9 @@ coverage/
 .omc/
 .omo/
 .playwright-mcp/
-test-files/
+test-files/*
+!test-files/text-pdf.pdf
+!test-files/multi-page.pdf
 
 # Build artifacts
 tsconfig.tsbuildinfo
