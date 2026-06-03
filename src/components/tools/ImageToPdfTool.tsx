@@ -87,7 +87,7 @@ export default function ImageToPdfTool() {
   if (images.length === 0) {
     return (
       <div className="max-w-lg mx-auto">
-        <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{t('imageToPdf.title')}</h2>
+        <h2 className="text-lg font-semibold mb-4" style={{ color: 'var(--color-text-primary)' }}>{t('imageToPdf.title')}</h2>
 
         <input
           ref={inputRef}
@@ -103,16 +103,17 @@ export default function ImageToPdfTool() {
           onDragOver={e => e.preventDefault()}
           onDrop={handleDrop}
           onClick={handleClick}
-          className="flex flex-col items-center justify-center gap-4 p-12 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl
+          className="flex flex-col items-center justify-center gap-4 p-12 border-2 border-dashed rounded-xl
             cursor-pointer hover:border-[var(--color-accent)] hover:bg-[var(--color-accent-100)] transition-colors"
+          style={{ borderColor: 'var(--color-border)' }}
         >
           <div className="w-14 h-14 bg-[var(--color-accent-100)] rounded-full flex items-center justify-center">
             <Upload className="w-7 h-7 text-[var(--color-accent)]" />
           </div>
           <div className="text-center">
-            <p className="text-base font-medium text-gray-600 dark:text-gray-300">{t('imageToPdf.empty.text')}</p>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t('imageToPdf.empty.hint')}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t('imageToPdf.empty.formats')}</p>
+            <p className="text-base font-medium" style={{ color: 'var(--color-text-secondary)' }}>{t('imageToPdf.empty.text')}</p>
+            <p className="text-sm mt-1" style={{ color: 'var(--color-text-muted)' }}>{t('imageToPdf.empty.hint')}</p>
+            <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>{t('imageToPdf.empty.formats')}</p>
           </div>
         </div>
       </div>
@@ -121,17 +122,27 @@ export default function ImageToPdfTool() {
 
   return (
     <div className="max-w-lg mx-auto">
-      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{t('imageToPdf.title')}</h2>
+      <h2 className="text-lg font-semibold mb-4" style={{ color: 'var(--color-text-primary)' }}>{t('imageToPdf.title')}</h2>
 
       {/* Thumbnail list */}
       <div className="space-y-2 mb-6">
         {images.map((img, index) => (
-          <div key={img.id} className="flex items-center gap-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2">
+          <div
+            key={img.id}
+            className="flex items-center gap-3 rounded-lg px-3 py-2"
+            style={{
+              backgroundColor: 'var(--color-surface)',
+              border: '1px solid var(--color-border)',
+            }}
+          >
             <div className="flex gap-1">
               <button
                 onClick={() => moveImage(index, -1)}
                 disabled={index === 0}
-                className="p-0.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-600 disabled:opacity-20 disabled:cursor-not-allowed"
+                className="p-0.5 rounded disabled:opacity-20 disabled:cursor-not-allowed"
+                style={{ color: 'var(--color-text-muted)' }}
+                onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'var(--color-bg-tertiary)'; e.currentTarget.style.color = 'var(--color-text-secondary)' }}
+                onMouseLeave={e => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = 'var(--color-text-muted)' }}
                 aria-label={t('common.moveUp')}
                 title={t('common.moveUp')}
               >
@@ -140,7 +151,10 @@ export default function ImageToPdfTool() {
               <button
                 onClick={() => moveImage(index, 1)}
                 disabled={index === images.length - 1}
-                className="p-0.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-600 disabled:opacity-20 disabled:cursor-not-allowed"
+                className="p-0.5 rounded disabled:opacity-20 disabled:cursor-not-allowed"
+                style={{ color: 'var(--color-text-muted)' }}
+                onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'var(--color-bg-tertiary)'; e.currentTarget.style.color = 'var(--color-text-secondary)' }}
+                onMouseLeave={e => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = 'var(--color-text-muted)' }}
                 aria-label={t('common.moveDown')}
                 title={t('common.moveDown')}
               >
@@ -150,17 +164,21 @@ export default function ImageToPdfTool() {
             <img
               src={img.dataUrl}
               alt={img.file.name}
-              className="w-10 h-10 object-cover rounded border border-gray-200 dark:border-gray-700 shrink-0"
+              className="w-10 h-10 object-cover rounded border shrink-0"
+              style={{ borderColor: 'var(--color-border)' }}
             />
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-gray-700 dark:text-gray-200 truncate">{img.file.name}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-sm truncate" style={{ color: 'var(--color-text-primary)' }}>{img.file.name}</p>
+              <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
                 {t('imageToPdf.sizeInfo', { size: (img.file.size / 1024).toFixed(1), format: img.file.type.replace('image/', '') })}
               </p>
             </div>
             <button
               onClick={() => removeImage(img.id)}
-              className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-[var(--color-accent)] shrink-0"
+              className="p-1 rounded shrink-0"
+              style={{ color: 'var(--color-text-muted)' }}
+              onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'var(--color-bg-tertiary)'; e.currentTarget.style.color = 'var(--color-accent)' }}
+              onMouseLeave={e => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = 'var(--color-text-muted)' }}
               aria-label={t('common.remove')}
               title={t('common.remove')}
             >
@@ -190,7 +208,7 @@ export default function ImageToPdfTool() {
       {/* Options */}
       <div className="space-y-4 mb-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('imageToPdf.pageSize')}</label>
+          <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>{t('imageToPdf.pageSize')}</label>
           <div className="flex gap-2">
             {([
               { value: 'auto', label: t('imageToPdf.pageSize.auto') },
@@ -203,7 +221,7 @@ export default function ImageToPdfTool() {
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   pageSize === opt.value
                     ? 'bg-[var(--color-accent-100)] text-[var(--color-accent-700)] border-[var(--color-accent)]'
-                    : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
+                    : 'bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] border border-[var(--color-border)] hover:bg-[var(--color-bg-tertiary)]'
                 }`}
               >
                 {opt.label}
@@ -213,7 +231,7 @@ export default function ImageToPdfTool() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+          <label className="block text-sm font-medium mb-1" style={{ color: 'var(--color-text-primary)' }}>
             {t('imageToPdf.margin', { count: margin })}
           </label>
           <input
@@ -230,8 +248,7 @@ export default function ImageToPdfTool() {
       <button
         onClick={handleConvert}
         disabled={loading || images.length === 0}
-        className="w-full flex items-center justify-center gap-2 btn-primary
-          disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
+        className="w-full flex items-center justify-center gap-2 btn-primary disabled:cursor-not-allowed"
       >
         <Download className="w-4 h-4" />
         {loading ? t('imageToPdf.loading') : t('imageToPdf.button', { count: images.length })}

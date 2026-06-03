@@ -81,7 +81,7 @@ export default function DeleteTool() {
 
   return (
     <div className="max-w-lg mx-auto">
-      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{t('delete.title')}</h2>
+      <h2 className="text-lg font-semibold mb-4" style={{ color: 'var(--color-text-primary)' }}>{t('delete.title')}</h2>
 
       <div className="flex gap-2 mb-6">
         <button
@@ -89,7 +89,7 @@ export default function DeleteTool() {
           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
             selectMode === 'manual'
               ? 'bg-[var(--color-accent-100)] text-[var(--color-accent-700)] border-[var(--color-accent)]'
-              : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
+              : 'bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] border border-[var(--color-border)] hover:bg-[var(--color-bg-tertiary)]'
           }`}
         >
           {t('delete.tab.manual')}
@@ -99,25 +99,25 @@ export default function DeleteTool() {
           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
             selectMode === 'select'
               ? 'bg-[var(--color-accent-100)] text-[var(--color-accent-700)] border-[var(--color-accent)]'
-              : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
+              : 'bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] border border-[var(--color-border)] hover:bg-[var(--color-bg-tertiary)]'
           }`}
         >
           {t('delete.tab.select')}
         </button>
       </div>
 
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-        {t('delete.currentFile')}<span className="font-medium text-gray-700 dark:text-gray-200">{activeFile.name}</span>
-        <span className="text-gray-500 dark:text-gray-400 ml-2">{t('delete.pageCount', { count: activeFile.pageCount })}</span>
+      <p className="text-sm mb-4" style={{ color: 'var(--color-text-muted)' }}>
+        {t('delete.currentFile')}<span className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{activeFile.name}</span>
+        <span className="ml-2" style={{ color: 'var(--color-text-muted)' }}>{t('delete.pageCount', { count: activeFile.pageCount })}</span>
       </p>
 
       {selectMode === 'manual' ? (
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+            <label className="block text-sm font-medium mb-1" style={{ color: 'var(--color-text-primary)' }}>
               {t('delete.manual.label')}
             </label>
-<p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+            <p className="text-xs mb-2" style={{ color: 'var(--color-text-muted)' }}>
               {t('delete.manual.hint')}
             </p>
             <input
@@ -125,15 +125,16 @@ export default function DeleteTool() {
               value={spec}
               onChange={e => setSpec(e.target.value)}
               placeholder={t('delete.manual.placeholder')}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--shadow-focus)] focus:border-[var(--color-accent)]"
+              className="input"
             />
           </div>
         </div>
       ) : (
         <div className="mb-4">
-          <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">{t('delete.select.hint')}</p>
+          <p className="text-xs mb-2" style={{ color: 'var(--color-text-muted)' }}>{t('delete.select.hint')}</p>
           <div
-            className="grid grid-cols-6 sm:grid-cols-8 gap-2 max-h-64 overflow-y-auto p-2 bg-gray-50 dark:bg-gray-900 rounded-lg"
+            className="grid grid-cols-6 sm:grid-cols-8 gap-2 max-h-64 overflow-y-auto p-2 rounded-lg"
+            style={{ backgroundColor: 'var(--color-bg-secondary)' }}
             tabIndex={0}
             role="group"
             aria-label={t('delete.select.hint')}
@@ -146,15 +147,16 @@ export default function DeleteTool() {
                   aspect-[3/4] flex items-center justify-center rounded border text-sm font-medium transition-all
                   ${selectedPages.has(i)
                     ? 'bg-[var(--color-accent-100)] border-[var(--color-accent)] text-[var(--color-accent-700)]'
-                    : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-gray-300'
+                    : 'bg-[var(--color-surface)] border-[var(--color-border)] hover:border-[var(--color-border-hover)]'
                   }
                 `}
+                style={!selectedPages.has(i) ? { color: 'var(--color-text-secondary)' } : undefined}
               >
                 {i + 1}
               </button>
             ))}
           </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+          <p className="text-xs mt-2" style={{ color: 'var(--color-text-muted)' }}>
             {t('delete.select.count', { count: selectedPages.size, remaining: activeFile.pageCount - selectedPages.size })}
           </p>
         </div>
@@ -163,8 +165,7 @@ export default function DeleteTool() {
       <button
         onClick={handleDelete}
         disabled={loading}
-        className="w-full flex items-center justify-center gap-2 btn-primary
-          disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
+        className="w-full flex items-center justify-center gap-2 btn-primary disabled:cursor-not-allowed"
       >
         <Download className="w-4 h-4" />
         {loading ? t('delete.loading') : t('delete.button')}

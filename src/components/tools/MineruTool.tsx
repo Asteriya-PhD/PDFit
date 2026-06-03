@@ -101,13 +101,22 @@ export default function MineruTool() {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-amber-200 dark:border-amber-700 p-4">
-            <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+          <div
+            className="rounded-lg border p-4"
+            style={{
+              backgroundColor: 'var(--color-surface)',
+              borderColor: 'var(--color-border)',
+            }}
+          >
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>
               {t('mineru.privacy.detail')}
             </p>
           </div>
 
-          <label className="flex items-start gap-3 text-sm text-gray-700 dark:text-gray-300 cursor-pointer p-3 rounded-lg hover:bg-amber-100/50 dark:hover:bg-amber-800/20 transition-colors">
+          <label
+            className="flex items-start gap-3 text-sm cursor-pointer p-3 rounded-lg transition-colors"
+            style={{ color: 'var(--color-text-secondary)' }}
+          >
             <input
               type="checkbox"
               checked={consentGiven}
@@ -129,15 +138,27 @@ export default function MineruTool() {
   if (showConfig && !builtInKey) {
     return (
       <div className="max-w-2xl mx-auto space-y-6">
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 space-y-4">
-          <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200 flex items-center gap-2">
-            <Settings className="w-5 h-5 text-gray-400" />
+        <div
+          className="rounded-lg border p-6 space-y-4"
+          style={{
+            backgroundColor: 'var(--color-surface)',
+            borderColor: 'var(--color-border)',
+          }}
+        >
+          <h3
+            className="text-lg font-medium flex items-center gap-2"
+            style={{ color: 'var(--color-text-primary)' }}
+          >
+            <Settings className="w-5 h-5" style={{ color: 'var(--color-text-muted)' }} />
             {t('mineru.config.title')}
           </h3>
 
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
-              <Globe className="w-4 h-4 text-gray-400" />
+            <label
+              className="block text-sm font-medium flex items-center gap-1.5"
+              style={{ color: 'var(--color-text-secondary)' }}
+            >
+              <Globe className="w-4 h-4" style={{ color: 'var(--color-text-muted)' }} />
               {t('mineru.config.endpoint')}
             </label>
             <input
@@ -145,12 +166,15 @@ export default function MineruTool() {
               value={endpoint}
               onChange={e => setEndpoint(e.target.value)}
               placeholder="https://mineru.net"
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--shadow-focus)]"
+              className="input"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+            <label
+              className="block text-sm font-medium flex items-center gap-1.5"
+              style={{ color: 'var(--color-text-secondary)' }}
+            >
               {t('mineru.config.apiKey')}
             </label>
             <input
@@ -158,14 +182,14 @@ export default function MineruTool() {
               value={apiKey}
               onChange={e => setApiKey(e.target.value)}
               placeholder={t('mineru.config.apiKeyPlaceholder')}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--shadow-focus)]"
+              className="input"
             />
           </div>
 
           <button
             onClick={handleSaveConfig}
             disabled={!endpoint.trim() || !apiKey.trim()}
-            className="w-full px-4 py-2 btn-primary disabled:bg-gray-300 dark:disabled:bg-gray-600 text-white rounded-md text-sm font-medium transition-colors"
+            className="w-full px-4 py-2 btn-primary text-white rounded-md text-sm font-medium disabled:cursor-not-allowed"
           >
             {t('mineru.config.save')}
           </button>
@@ -178,13 +202,16 @@ export default function MineruTool() {
   return (
     <div className="max-w-2xl mx-auto space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">
+        <h3 className="text-lg font-medium" style={{ color: 'var(--color-text-primary)' }}>
           {t('mineru.title')}
         </h3>
         {!builtInKey && (
           <button
             onClick={() => setShowConfig(true)}
-            className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+            className="flex items-center gap-1 text-xs transition-colors"
+            style={{ color: 'var(--color-text-muted)' }}
+            onMouseEnter={e => { e.currentTarget.style.color = 'var(--color-text-secondary)' }}
+            onMouseLeave={e => { e.currentTarget.style.color = 'var(--color-text-muted)' }}
           >
             <Settings className="w-3 h-3" />
             {t('mineru.configButton')}
@@ -204,7 +231,8 @@ export default function MineruTool() {
           onDragOver={e => e.preventDefault()}
           onDrop={handleDrop}
           onClick={() => inputRef.current?.click()}
-          className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 text-center cursor-pointer hover:border-[var(--color-accent)] hover:bg-[var(--color-accent-100)] transition-colors"
+          className="border-2 border-dashed rounded-xl p-8 text-center cursor-pointer hover:border-[var(--color-accent)] hover:bg-[var(--color-accent-100)] transition-colors"
+          style={{ borderColor: 'var(--color-border)' }}
         >
           <input
             ref={inputRef}
@@ -213,26 +241,34 @@ export default function MineruTool() {
             className="hidden"
             onChange={handleFileSelect}
           />
-          <Upload className="w-8 h-8 text-gray-300 dark:text-gray-500 mx-auto mb-3" />
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <Upload className="w-8 h-8 mx-auto mb-3" style={{ color: 'var(--color-text-muted)' }} />
+          <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
             {t('mineru.dropzone.text')}
           </p>
-          <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+          <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
             {t('mineru.dropzone.formats')}
           </p>
         </div>
       ) : (
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 space-y-3">
+        <div
+          className="rounded-lg border p-4 space-y-3"
+          style={{
+            backgroundColor: 'var(--color-surface)',
+            borderColor: 'var(--color-border)',
+          }}
+        >
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+            <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
               <FileText className="w-4 h-4 text-[var(--color-accent)]" />
-              <span className="font-medium">{file.name}</span>
-              <span className="text-gray-400">({(file.size / 1024 / 1024).toFixed(1)} MB)</span>
+              <span className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{file.name}</span>
+              <span style={{ color: 'var(--color-text-muted)' }}>({(file.size / 1024 / 1024).toFixed(1)} MB)</span>
             </div>
             {status !== 'uploading' && (
               <button
                 onClick={() => { setFile(null); setStatus('idle'); setResult(''); setError('') }}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                style={{ color: 'var(--color-text-muted)' }}
+                onMouseEnter={e => { e.currentTarget.style.color = 'var(--color-text-secondary)' }}
+                onMouseLeave={e => { e.currentTarget.style.color = 'var(--color-text-muted)' }}
               >
                 <X className="w-4 h-4" />
               </button>
@@ -250,23 +286,27 @@ export default function MineruTool() {
 
           {status === 'uploading' && (
             <div className="space-y-2">
-              <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--color-bg-tertiary)' }}>
                 <div className="h-full bg-[var(--color-accent)] rounded-full animate-pulse" style={{ width: '60%' }} />
               </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400 text-center">{progress}</p>
+              <p className="text-sm text-center" style={{ color: 'var(--color-text-muted)' }}>{progress}</p>
             </div>
           )}
 
           {status === 'done' && (
             <div className="space-y-3">
               <div
-                className="max-h-80 overflow-y-auto bg-gray-50 dark:bg-gray-900 rounded-md p-3 text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap font-mono"
+                className="max-h-80 overflow-y-auto rounded-md p-3 text-sm whitespace-pre-wrap font-mono"
+                style={{
+                  backgroundColor: 'var(--color-bg-secondary)',
+                  color: 'var(--color-text-secondary)',
+                }}
                 tabIndex={0}
                 role="region"
                 aria-label={t('mineru.title')}
               >
                 {result.slice(0, 5000)}
-                {result.length > 5000 && <span className="text-gray-400">...</span>}
+                {result.length > 5000 && <span style={{ color: 'var(--color-text-muted)' }}>...</span>}
               </div>
               <div className="flex gap-2">
                 <button

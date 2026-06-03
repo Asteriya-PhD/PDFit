@@ -80,24 +80,24 @@ export default function PdfToImageTool() {
 
   return (
     <div className="max-w-lg mx-auto">
-      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">{t('pdfToImage.title')}</h2>
+      <h2 className="text-lg font-semibold mb-4" style={{ color: 'var(--color-text-primary)' }}>{t('pdfToImage.title')}</h2>
 
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-        {t('pdfToImage.currentFile')}<span className="font-medium text-gray-700 dark:text-gray-200">{activeFile.name}</span>
-        <span className="text-gray-500 dark:text-gray-400 ml-2">{t('pdfToImage.pageCount', { count: activeFile.pageCount })}</span>
+      <p className="text-sm mb-4" style={{ color: 'var(--color-text-muted)' }}>
+        {t('pdfToImage.currentFile')}<span className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{activeFile.name}</span>
+        <span className="ml-2">{t('pdfToImage.pageCount', { count: activeFile.pageCount })}</span>
       </p>
 
       <div className="space-y-5 mb-6">
         {/* Page selection */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('pdfToImage.scopeLabel')}</label>
+          <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>{t('pdfToImage.scopeLabel')}</label>
           <div className="flex gap-2 mb-2">
             <button
               onClick={() => setPageScope('all')}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 pageScope === 'all'
                   ? 'bg-[var(--color-accent-100)] text-[var(--color-accent-700)] border-[var(--color-accent)]'
-                  : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  : 'bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] border border-[var(--color-border)] hover:bg-[var(--color-bg-tertiary)]'
               }`}
             >
               {t('pdfToImage.scopeAll')}
@@ -107,7 +107,7 @@ export default function PdfToImageTool() {
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 pageScope === 'custom'
                   ? 'bg-[var(--color-accent-100)] text-[var(--color-accent-700)] border-[var(--color-accent)]'
-                  : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  : 'bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] border border-[var(--color-border)] hover:bg-[var(--color-bg-tertiary)]'
               }`}
             >
               {t('pdfToImage.scopeCustom')}
@@ -119,21 +119,21 @@ export default function PdfToImageTool() {
               value={customSpec}
               onChange={e => setCustomSpec(e.target.value)}
               placeholder={t('pdfToImage.scopePlaceholder')}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--shadow-focus)] focus:border-[var(--color-accent)]"
+              className="input"
             />
           )}
         </div>
 
         {/* Format */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('pdfToImage.format')}</label>
+          <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>{t('pdfToImage.format')}</label>
           <div className="flex gap-2">
             <button
               onClick={() => setFormat('png')}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 format === 'png'
                   ? 'bg-[var(--color-accent-100)] text-[var(--color-accent-700)] border-[var(--color-accent)]'
-                  : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  : 'bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] border border-[var(--color-border)] hover:bg-[var(--color-bg-tertiary)]'
               }`}
             >
               {t('pdfToImage.format.png')}
@@ -143,7 +143,7 @@ export default function PdfToImageTool() {
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 format === 'jpeg'
                   ? 'bg-[var(--color-accent-100)] text-[var(--color-accent-700)] border-[var(--color-accent)]'
-                  : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  : 'bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] border border-[var(--color-border)] hover:bg-[var(--color-bg-tertiary)]'
               }`}
             >
               {t('pdfToImage.format.jpeg')}
@@ -154,7 +154,7 @@ export default function PdfToImageTool() {
         {/* JPEG quality */}
         {format === 'jpeg' && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+            <label className="block text-sm font-medium mb-1" style={{ color: 'var(--color-text-primary)' }}>
               {t('pdfToImage.jpegQuality', { value: quality })}
             </label>
             <input
@@ -170,7 +170,7 @@ export default function PdfToImageTool() {
 
         {/* DPI */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">{t('pdfToImage.dpi')}</label>
+          <label className="block text-sm font-medium mb-2" style={{ color: 'var(--color-text-primary)' }}>{t('pdfToImage.dpi')}</label>
           <div className="flex gap-2">
             {[72, 150, 200, 300].map(v => (
               <button
@@ -179,14 +179,14 @@ export default function PdfToImageTool() {
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   dpi === v
                     ? 'bg-[var(--color-accent-100)] text-[var(--color-accent-700)] border-[var(--color-accent)]'
-                    : 'bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
+                    : 'bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] border border-[var(--color-border)] hover:bg-[var(--color-bg-tertiary)]'
                 }`}
               >
                 {v}
               </button>
             ))}
           </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
             {dpi === 72 && t('pdfToImage.dpi.72')}
             {dpi === 150 && t('pdfToImage.dpi.150')}
             {dpi === 200 && t('pdfToImage.dpi.200')}
@@ -198,11 +198,11 @@ export default function PdfToImageTool() {
       {/* Progress bar */}
       {loading && progress.total > 0 && (
         <div className="mb-4">
-          <div className="flex justify-between text-xs text-gray-500 mb-1">
+          <div className="flex justify-between text-xs mb-1" style={{ color: 'var(--color-text-muted)' }}>
             <span>{t('pdfToImage.progress', { done: progress.done, total: progress.total })}</span>
             <span>{Math.round((progress.done / progress.total) * 100)}%</span>
           </div>
-          <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+          <div className="w-full h-2 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--color-bg-tertiary)' }}>
             <div
               className="h-full bg-[var(--color-accent)] rounded-full transition-all duration-200"
               style={{ width: `${(progress.done / progress.total) * 100}%` }}
@@ -214,8 +214,7 @@ export default function PdfToImageTool() {
       <button
         onClick={handleExport}
         disabled={loading || (showPageInput && !customSpec.trim())}
-        className="w-full flex items-center justify-center gap-2 btn-primary
-          disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
+        className="w-full flex items-center justify-center gap-2 btn-primary disabled:cursor-not-allowed"
       >
         <Download className="w-4 h-4" />
         {loading ? t('pdfToImage.loading') : t('pdfToImage.button')}

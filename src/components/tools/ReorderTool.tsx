@@ -129,19 +129,19 @@ export default function ReorderTool() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
+      <h2 className="text-lg font-semibold mb-4" style={{ color: 'var(--color-text-primary)' }}>
         <span className="flex items-center gap-2">
           <Move className="w-5 h-5" />
           {t('reorder.title')}
         </span>
       </h2>
 
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-        {t('reorder.currentFile')}<span className="font-medium text-gray-700 dark:text-gray-200">{activeFile.name}</span>
-        <span className="text-gray-500 dark:text-gray-400 ml-2">{t('reorder.pageCount', { count: pageCount })}</span>
+      <p className="text-sm mb-4" style={{ color: 'var(--color-text-muted)' }}>
+        {t('reorder.currentFile')}<span className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{activeFile.name}</span>
+        <span className="ml-2">{t('reorder.pageCount', { count: pageCount })}</span>
       </p>
 
-      <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">{t('reorder.dragHint')}</p>
+      <p className="text-xs mb-3" style={{ color: 'var(--color-text-muted)' }}>{t('reorder.dragHint')}</p>
 
       <div
         ref={stripRef}
@@ -173,7 +173,7 @@ export default function ReorderTool() {
                 pageIndex={pageIdx}
                 targetPx={THUMB_HEIGHT}
               />
-              <span className="font-medium text-[10px] text-gray-500 dark:text-gray-400">{pageIdx + 1}</span>
+              <span className="font-medium text-[10px]" style={{ color: 'var(--color-text-muted)' }}>{pageIdx + 1}</span>
             </div>
           </div>
         ))}
@@ -185,7 +185,7 @@ export default function ReorderTool() {
       </div>
 
       {isModified && (
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3">
+        <p className="text-xs mt-1 mb-3" style={{ color: 'var(--color-text-muted)' }}>
           {t('reorder.original')}: {order.map(i => i + 1).join(' → ')}
         </p>
       )}
@@ -194,8 +194,7 @@ export default function ReorderTool() {
         <button
           onClick={handleApply}
           disabled={loading}
-          className="flex-1 flex items-center justify-center gap-2 btn-primary
-            disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
+          className="flex-1 flex items-center justify-center gap-2 btn-primary disabled:cursor-not-allowed"
         >
           <Download className="w-4 h-4" />
           {loading ? t('reorder.loading') : t('reorder.button')}
@@ -203,8 +202,15 @@ export default function ReorderTool() {
         <button
           onClick={handleReset}
           disabled={loading || !isModified}
-          className="flex items-center justify-center gap-2 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-lg px-4 py-2.5 text-sm font-medium
-            hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors border border-gray-200 dark:border-gray-700"
+          className="flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium
+            disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          style={{
+            backgroundColor: 'var(--color-bg-secondary)',
+            color: 'var(--color-text-secondary)',
+            border: '1px solid var(--color-border)',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'var(--color-bg-tertiary)' }}
+          onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'var(--color-bg-secondary)' }}
         >
           <RotateCcw className="w-4 h-4" />
           {t('reorder.reset')}
@@ -264,8 +270,14 @@ function PagePreview({
   if (error) {
     return (
       <div
-        className="bg-white dark:bg-gray-800 rounded border border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center text-xs text-gray-500 dark:text-gray-400"
-        style={{ width: targetPx * 0.7, height: targetPx }}
+        className="rounded border border-dashed flex items-center justify-center text-xs"
+        style={{
+          width: targetPx * 0.7,
+          height: targetPx,
+          backgroundColor: 'var(--color-surface)',
+          borderColor: 'var(--color-border)',
+          color: 'var(--color-text-muted)',
+        }}
       >
         ✕
       </div>
@@ -273,7 +285,13 @@ function PagePreview({
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
+    <div
+      className="rounded border shadow-sm overflow-hidden"
+      style={{
+        backgroundColor: 'var(--color-surface)',
+        borderColor: 'var(--color-border)',
+      }}
+    >
       <canvas
         ref={canvasRef}
         className="block"
