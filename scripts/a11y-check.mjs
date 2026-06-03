@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 /**
  * a11y-check.mjs — Spin up the production build via `vite preview`,
- * navigate key pages, and run axe-core (WCAG 2 AA). Fails the process
+ * navigate key surfaces, and run axe-core (WCAG 2 AA). Fails the process
  * on any critical or serious violations.
  *
- * Designed to run in CI without test fixtures; uses the empty state as
- * the only required surface (tool panels need a real PDF).
+ * Tool panels only render when a file is loaded, so we inject a stub
+ * PDFFileInfo via `window.__PDFIT_TEST_STATE__` (read by AppContext) for
+ * those scenarios. This bypass is opt-in — no production code path sets
+ * the window var, and AppContext falls back to an empty state otherwise.
  */
 import { chromium } from 'playwright'
 import { AxeBuilder } from '@axe-core/playwright'
@@ -15,8 +17,24 @@ import { existsSync } from 'node:fs'
 
 const PORT = 4173
 const BASE = `http://127.0.0.1:${PORT}/PDFit/`
-const PAGES = [
-  { name: 'home (empty state)', path: '' },
+
+/**
+ * Each scenario audits one rendered surface. `tool` and `fileName`
+ * trigger the test-state injection; omit them for the empty home state.
+ */
+const SCENARIOS = [
+  { name: 'home (empty state)' },
+  { name: 'merge tool',         tool: 'merge' },
+  { name: 'split tool',         tool: 'split' },
+  { name: 'delete tool',        tool: 'delete' },
+  { name: 'rotate tool',        tool: 'rotate' },
+  { name: 'reorder tool',       tool: 'reorder' },
+  { name: 'page-numbering',     tool: 'page-numbering' },
+  { name: 'watermark tool',     tool: 'watermark' },
+  { name: 'pdf-to-image',       tool: 'pdf-to-image' },
+  { name: 'pdf-to-md',          tool: 'pdf-to-md' },
+  { name: 'image-to-pdf',       tool: 'image-to-pdf' },
+  { name: 'mineru tool',        tool: 'mineru' },
 ]
 
 let server = null
@@ -70,22 +88,44 @@ async function main() {
     console.log('Using Playwright-bundled Chromium')
   }
   const browser = await chromium.launch(launchOpts)
-  const context = await browser.newContext()
-  const page = await context.newPage()
 
   let critical = 0
   let serious = 0
   let minor = 0
   const startTime = Date.now()
 
-  for (const { name, path } of PAGES) {
-    const url = BASE + path
-    console.log(`\n→ Auditing: ${name}`)
-    console.log(`  url: ${url}`)
+  for (const scenario of SCENARIOS) {
+    // Fresh context per scenario so addInitScript payloads don't accumulate
+    // and the React tree restarts cleanly between states.
+    const context = await browser.newContext()
+    const page = await context.newPage()
 
-    await page.goto(url, { waitUntil: 'networkidle', timeout: 15000 })
-    // Let any post-mount animation settle (e.g. fadeIn 250ms).
-    await wait(400)
+    if (scenario.tool) {
+      const fileName = scenario.fileName ?? 'sample.pdf'
+      await context.addInitScript(({ tool, fileName }) => {
+        const file = new File([new Uint8Array(0)], fileName, { type: 'application/pdf' })
+        window.__PDFIT_TEST_STATE__ = {
+          files: [{
+            id: 'test-file-1',
+            name: fileName,
+            size: 0,
+            file,
+            arrayBuffer: new ArrayBuffer(0),
+            pageCount: 5,
+          }],
+          activeFileId: 'test-file-1',
+          activeTool: tool,
+        }
+      }, { tool: scenario.tool, fileName })
+    }
+
+    console.log(`\n→ Auditing: ${scenario.name}`)
+    console.log(`  url: ${BASE}`)
+
+    await page.goto(BASE, { waitUntil: 'networkidle', timeout: 15000 })
+    // Let any post-mount animation settle (e.g. fadeIn 250ms) and let
+    // tool panels finish their initial render (font picker, color inputs).
+    await wait(500)
 
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
@@ -106,6 +146,8 @@ async function main() {
     } else {
       console.log(`  → ${results.violations.length} total (critical=${critical}, serious=${serious}, minor=${minor})`)
     }
+
+    await context.close()
   }
 
   await browser.close()

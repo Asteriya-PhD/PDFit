@@ -63,13 +63,33 @@ interface AppContextValue extends AppState {
 
 const AppContext = createContext<AppContextValue | null>(null)
 
+const INITIAL_STATE: AppState = {
+  files: [],
+  activeFileId: null,
+  activeTool: null,
+  loading: false,
+}
+
+/**
+ * In a11y tests we want to audit tool panels, which only render when a
+ * file is loaded. Playwright injects a stub state on `window` before the
+ * page scripts run, so the AppContext boots with it already populated.
+ * No production user can set this — opt-in via the a11y-check script.
+ */
+function getInitialState(): AppState {
+  if (typeof window === 'undefined') return INITIAL_STATE
+  const testState = (window as unknown as { __PDFIT_TEST_STATE__?: Partial<AppState> }).__PDFIT_TEST_STATE__
+  if (!testState || typeof testState !== 'object') return INITIAL_STATE
+  return {
+    files: Array.isArray(testState.files) ? testState.files : INITIAL_STATE.files,
+    activeFileId: testState.activeFileId ?? INITIAL_STATE.activeFileId,
+    activeTool: testState.activeTool ?? INITIAL_STATE.activeTool,
+    loading: INITIAL_STATE.loading,
+  }
+}
+
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(reducer, {
-    files: [],
-    activeFileId: null,
-    activeTool: null,
-    loading: false,
-  })
+  const [state, dispatch] = useReducer(reducer, undefined, getInitialState)
 
   const addFiles = useCallback(async (fileList: File[]) => {
     const pdfFiles: PDFFileInfo[] = []
