@@ -160,6 +160,9 @@ async function main() {
     process.exit(1)
   }
   console.log('\n✅ a11y check passed (WCAG 2 AA)')
+  // vite preview is a child with piped stdio; without an explicit exit, the
+  // event loop stays alive and CI hangs until the 20-min job timeout.
+  process.exit(0)
 }
 
 main().catch(err => {
