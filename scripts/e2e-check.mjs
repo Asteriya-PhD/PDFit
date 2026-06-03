@@ -82,13 +82,6 @@ function getBrowserLaunchOpts() {
   return opts
 }
 
-const TOOL_BUTTON = {
-  merge: '合并',
-  split: '分割',
-  rotate: '旋转',
-  watermark: '水印',
-}
-
 const SCENARIOS = [
   {
     name: 'merge',
@@ -179,6 +172,65 @@ const SCENARIOS = [
     },
     expect: 'md',
   },
+  {
+    name: 'image-to-pdf',
+    // ImageToPdfTool manages its own local `images` state and uses its own
+    // <input type=file>, not the AppContext dropzone. We inject the file
+    // via Playwright's setInputFiles, then click the convert button.
+    files: [],
+    pageCount: [],
+    tool: 'image-to-pdf',
+    action: async (page) => {
+      const input = page.locator('input[type="file"]').first()
+      await input.setInputFiles(join(TEST_DIR, 'test1.png'))
+      const btn = page.getByRole('button', { name: /转换为 PDF/ })
+      await btn.waitFor({ timeout: 5000 })
+      await btn.click()
+    },
+    expect: 'pdf',
+  },
+  {
+    name: 'reorder',
+    // Drag-drop is fragile in headless Chromium. ReorderTool's apply
+    // button handles the no-op case (downloads the original PDF), so
+    // we can validate the apply flow without performing a drag.
+    files: ['multi-page.pdf'],
+    pageCount: [3],
+    tool: 'reorder',
+    action: async (page) => {
+      await page.getByRole('button', { name: '确认新顺序' }).click()
+    },
+    expect: 'pdf',
+  },
+  {
+    name: 'mineru-panel',
+    // Mineru is a multi-step external API flow (presigned URL → upload →
+    // poll → result). Mocking that for a CI e2e is too brittle. Instead,
+    // we smoke-test the panel: privacy gate → accept consent → upload UI
+    // appears. A dummy PDF is injected so App.tsx renders the ToolPanel
+    // branch (MineruTool itself doesn't read the active file — only the
+    // consent gate is exercised here).
+    files: ['text-pdf.pdf'],
+    pageCount: [1],
+    tool: 'mineru',
+    validate: async (page) => {
+      const checkbox = page.getByRole('checkbox')
+      await checkbox.waitFor({ timeout: 5000 })
+      // Use click() rather than check() — check() waits for the element
+      // to be stable post-toggle, but the gate re-renders into the
+      // next panel on click, which check() interprets as instability.
+      await checkbox.click()
+      // After consent the gate transitions. Without VITE_MINERU_API_KEY
+      // the config form is shown; with it the upload UI is shown. Accept
+      // either — the assertion is that consent was accepted and the
+      // panel re-rendered past the gate.
+      await Promise.race([
+        page.getByRole('button', { name: '上传并解析' }).waitFor({ timeout: 5000 }),
+        page.getByText('API Key').waitFor({ timeout: 5000 }),
+      ])
+    },
+    expect: null,
+  },
 ]
 
 async function runScenario(browser, scenario) {
@@ -215,14 +267,17 @@ async function runScenario(browser, scenario) {
     })
     window.__PDFIT_TEST_STATE__ = {
       files,
-      activeFileId: files[0].id,
+      // Empty-file scenarios (image-to-pdf, mineru-panel) need no active
+      // file id; the tools render via App.tsx's special-case branches or
+      // accept gate without touching activeFile.
+      activeFileId: files[0]?.id ?? null,
       activeTool: payload.tool,
     }
   }, { files: filePayload, tool: scenario.tool })
 
   const page = await ctx.newPage()
   const errors = []
-  page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`))
+  page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}\n${e.stack ?? ''}`))
   page.on('console', (m) => {
     if (m.type() === 'error') errors.push(`console: ${m.text()}`)
   })
@@ -244,8 +299,25 @@ async function runScenario(browser, scenario) {
       'page-numbering': /添加页码并下载/,
       'pdf-to-image': /导出图片/,
       'pdf-to-md': /提取文本/,
+      'image-to-pdf': /图片转 PDF|拖拽图片/,
+      reorder: /确认新顺序/,
+      mineru: /我已了解并同意/,
     }[scenario.tool]
-    await page.getByRole('button', { name: readySelector }).first().waitFor({ timeout: 10000 })
+    await page.getByText(readySelector).first().waitFor({ timeout: 10000 })
+
+    // No-download smoke test path: run scenario.validate and report
+    // its outcome directly. Used for mineru, where mocking the full
+    // multi-step external API flow is too brittle for a CI e2e.
+    if (scenario.validate) {
+      await scenario.validate(page)
+      return {
+        name: scenario.name,
+        status: 'PASS',
+        filename: null,
+        size: null,
+        errors,
+      }
+    }
 
     // Trigger the action and wait for the resulting download.
     // .catch is attached immediately so an action() throw doesn't leak an
