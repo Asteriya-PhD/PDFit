@@ -122,7 +122,11 @@ async function main() {
     console.log(`\n→ Auditing: ${scenario.name}`)
     console.log(`  url: ${BASE}`)
 
-    await page.goto(BASE, { waitUntil: 'networkidle', timeout: 15000 })
+    // domcontentloaded is faster and more deterministic than networkidle
+    // for vite preview (HMR pings / sourcemap fetches can keep networkidle
+    // from settling in CI under load). The tool panel renders on mount
+    // and the 500ms wait below covers animation/initial render.
+    await page.goto(BASE, { waitUntil: 'domcontentloaded', timeout: 15000 })
     // Let any post-mount animation settle (e.g. fadeIn 250ms) and let
     // tool panels finish their initial render (font picker, color inputs).
     await wait(500)

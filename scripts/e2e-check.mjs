@@ -283,7 +283,11 @@ async function runScenario(browser, scenario) {
   })
 
   try {
-    await page.goto(BASE, { waitUntil: 'networkidle', timeout: 15000 })
+    // domcontentloaded is faster and more deterministic than networkidle
+    // for vite preview — HMR pings / sourcemap fetches can keep
+    // networkidle from settling in CI under load. The tool panel
+    // renders on mount and the 500ms wait below covers animation.
+    await page.goto(BASE, { waitUntil: 'domcontentloaded', timeout: 15000 })
     await wait(500)
 
     // Wait for the tool panel to render by looking for the action button
