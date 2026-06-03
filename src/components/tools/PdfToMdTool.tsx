@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useApp } from '@/contexts/AppContext'
 import { useI18n } from '@/i18n'
-import { pdfToMarkdown } from '@/lib/pdfToMarkdown'
+import { pdfToMarkdown, hasTextContent } from '@/lib/pdfToMarkdown'
 import { Download, Copy, Check, FileText } from 'lucide-react'
 
 type OutputMode = 'markdown' | 'plaintext'
@@ -33,6 +33,15 @@ export default function PdfToMdTool() {
     setProgress({ done: 0, total: 0 })
 
     try {
+      // Scanned / image-only PDFs: pdfjs returns no text items, so
+      // pdfToMarkdown would emit "<!-- Page N: no extractable text -->"
+      // comments that look like content. Check first and short-circuit
+      // to the empty state instead.
+      if (!(await hasTextContent(activeFile.arrayBuffer))) {
+        setIsEmpty(true)
+        return
+      }
+
       const result = await pdfToMarkdown(
         activeFile.arrayBuffer,
         (done, total) => setProgress({ done, total })
