@@ -94,6 +94,8 @@ export default function MergeTool() {
                   disabled={index === 0}
                   className="p-1.5 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                   style={{ color: 'var(--color-text-muted)' }}
+                  aria-label={t('common.moveUp')}
+                  title={t('common.moveUp')}
                   onMouseEnter={e => {
                     if (index !== 0) {
                       e.currentTarget.style.backgroundColor = 'var(--color-bg-secondary)'
@@ -112,6 +114,8 @@ export default function MergeTool() {
                   disabled={index === order.length - 1}
                   className="p-1.5 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                   style={{ color: 'var(--color-text-muted)' }}
+                  aria-label={t('common.moveDown')}
+                  title={t('common.moveDown')}
                   onMouseEnter={e => {
                     if (index !== order.length - 1) {
                       e.currentTarget.style.backgroundColor = 'var(--color-bg-secondary)'

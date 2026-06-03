@@ -55,6 +55,7 @@ export default function FileList() {
           className="btn-icon"
           style={{ width: 28, height: 28 }}
           title={t('fileList.addMore')}
+          aria-label={t('fileList.addMore')}
         >
           <Plus className="w-4 h-4" />
         </button>
@@ -126,6 +127,8 @@ export default function FileList() {
                   style={{
                     color: 'var(--color-text-muted)',
                   }}
+                  aria-label={t('common.remove')}
+                  title={t('common.remove')}
                   onMouseEnter={e => {
                     e.currentTarget.style.backgroundColor = 'var(--color-bg-tertiary)'
                     e.currentTarget.style.color = 'var(--color-text-primary)'

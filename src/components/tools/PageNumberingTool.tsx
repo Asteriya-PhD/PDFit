@@ -225,6 +225,7 @@ export default function PageNumberingTool() {
         {/* Start Number */}
         <div className="mb-5">
           <label
+            htmlFor="pageNumbering-start"
             className="block text-sm font-medium mb-1"
             style={{
               fontFamily: 'var(--font-heading)',
@@ -234,6 +235,7 @@ export default function PageNumberingTool() {
             {t('pageNumbering.startNumber')}
           </label>
           <input
+            id="pageNumbering-start"
             type="number"
             min={1}
             value={startNumber}
@@ -298,11 +300,13 @@ export default function PageNumberingTool() {
               />
             ))}
             <label className="relative ml-1 cursor-pointer">
+              <span className="sr-only">{t('pageNumbering.color')}</span>
               <input
                 type="color"
                 value={color}
                 onChange={e => setColor(e.target.value)}
                 className="absolute inset-0 opacity-0 w-8 h-8 cursor-pointer"
+                aria-label={t('pageNumbering.color')}
               />
               <div
                 className="w-8 h-8 rounded-full border-2 border-dashed flex items-center justify-center text-xs"

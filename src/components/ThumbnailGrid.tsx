@@ -187,6 +187,8 @@ export default function ThumbnailGrid({ vertical = false }: ThumbnailGridProps) 
               cursor: canScrollLeft ? 'pointer' : 'default',
             }}
             disabled={!canScrollLeft}
+            aria-label={t('common.scrollLeft')}
+            title={t('common.scrollLeft')}
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
@@ -200,6 +202,8 @@ export default function ThumbnailGrid({ vertical = false }: ThumbnailGridProps) 
               cursor: canScrollRight ? 'pointer' : 'default',
             }}
             disabled={!canScrollRight}
+            aria-label={t('common.scrollRight')}
+            title={t('common.scrollRight')}
           >
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -215,6 +219,8 @@ export default function ThumbnailGrid({ vertical = false }: ThumbnailGridProps) 
             onClick={() => setExpanded(v => !v)}
             className="btn-icon"
             style={{ width: 28, height: 28 }}
+            aria-label={expanded ? t('common.collapse') : t('common.expand')}
+            title={expanded ? t('common.collapse') : t('common.expand')}
           >
             {expanded ? (
               <Minimize2 className="w-4 h-4" />

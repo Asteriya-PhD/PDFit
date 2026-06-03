@@ -432,6 +432,7 @@ export default function WatermarkTool() {
         {/* Opacity */}
         <div className="mb-3">
           <label
+            htmlFor="watermark-opacity"
             className="block text-xs font-medium mb-1.5"
             style={{
               fontFamily: 'var(--font-heading)',
@@ -441,6 +442,7 @@ export default function WatermarkTool() {
             {t('watermark.opacity', { value: Math.round(opacity * 100) })}
           </label>
           <input
+            id="watermark-opacity"
             type="range"
             min={1}
             max={100}
@@ -513,11 +515,13 @@ export default function WatermarkTool() {
                 />
               ))}
               <label className="relative cursor-pointer">
+                <span className="sr-only">{t('watermark.color')}</span>
                 <input
                   type="color"
                   value={color}
                   onChange={e => setColor(e.target.value)}
                   className="absolute inset-0 opacity-0 w-6 h-6 cursor-pointer"
+                  aria-label={t('watermark.color')}
                 />
                 <div
                   className="w-6 h-6 rounded-full border-2 border-dashed flex items-center justify-center text-[10px]"

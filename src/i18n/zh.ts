@@ -1,6 +1,14 @@
 const zh: Record<string, string> = {
   // Common
   'common.error.default': '未知错误',
+  'common.remove': '移除',
+  'common.moveUp': '上移',
+  'common.moveDown': '下移',
+  'common.scrollLeft': '向左滚动',
+  'common.scrollRight': '向右滚动',
+  'common.expand': '展开',
+  'common.collapse': '折叠',
+  'common.fileInput': '文件输入',
   // Header
   'header.title': 'PDFit',
   'header.tool.merge': '合并',
@@ -280,6 +288,9 @@ const zh: Record<string, string> = {
   'pdfToMd.pageCount': '({{count}} 页)',
   'pdfToMd.description': '将 PDF 中的文本内容提取为 Markdown 格式。支持标题检测和段落分割。',
   'pdfToMd.limitation': '注意：扫描件无法提取文本，复杂排版可能不完美。',
+  'pdfToMd.outputFormat': '输出格式',
+  'pdfToMd.format.markdown': 'Markdown',
+  'pdfToMd.format.plaintext': '纯文本',
   'pdfToMd.progress': '处理中 {{done}}/{{total}} 页',
   'pdfToMd.loading': '提取中...',
   'pdfToMd.button': '提取文本',

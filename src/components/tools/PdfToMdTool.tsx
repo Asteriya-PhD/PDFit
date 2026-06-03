@@ -133,7 +133,7 @@ export default function PdfToMdTool() {
                 color: 'var(--color-text-secondary)',
               }}
             >
-              输出格式
+              {t('pdfToMd.outputFormat')}
             </label>
             <div className="flex gap-2">
               <button
@@ -153,7 +153,7 @@ export default function PdfToMdTool() {
                       }
                 }
               >
-                Markdown
+                {t('pdfToMd.format.markdown')}
               </button>
               <button
                 onClick={() => setOutputMode('plaintext')}
@@ -172,7 +172,7 @@ export default function PdfToMdTool() {
                       }
                 }
               >
-                纯文本
+                {t('pdfToMd.format.plaintext')}
               </button>
             </div>
           </div>
@@ -247,7 +247,7 @@ export default function PdfToMdTool() {
                       }
                 }
               >
-                Markdown
+                {t('pdfToMd.format.markdown')}
               </button>
               <button
                 onClick={() => setOutputMode('plaintext')}
@@ -266,7 +266,7 @@ export default function PdfToMdTool() {
                       }
                 }
               >
-                纯文本
+                {t('pdfToMd.format.plaintext')}
               </button>
             </div>
             <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>

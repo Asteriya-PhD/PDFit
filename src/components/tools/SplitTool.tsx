@@ -209,7 +209,11 @@ export default function SplitTool() {
           {ranges.map((range, index) => (
             <div key={range.id} className="flex items-center gap-2">
               <span className="text-sm w-6" style={{ color: 'var(--color-text-muted)' }}>#{index + 1}</span>
+              <label htmlFor={`split-start-${range.id}`} className="sr-only">
+                {t('split.split.placeholderStart')}
+              </label>
               <input
+                id={`split-start-${range.id}`}
                 type="number"
                 min={1}
                 max={activeFile.pageCount}
@@ -219,7 +223,11 @@ export default function SplitTool() {
                 className="input w-24"
               />
               <span style={{ color: 'var(--color-text-muted)' }}>—</span>
+              <label htmlFor={`split-end-${range.id}`} className="sr-only">
+                {t('split.split.placeholderEnd')}
+              </label>
               <input
+                id={`split-end-${range.id}`}
                 type="number"
                 min={1}
                 max={activeFile.pageCount}
@@ -233,6 +241,8 @@ export default function SplitTool() {
                   onClick={() => removeRange(range.id)}
                   className="p-1.5 rounded-lg transition-colors"
                   style={{ color: 'var(--color-text-muted)' }}
+                  aria-label={t('common.remove')}
+                  title={t('common.remove')}
                   onMouseEnter={e => {
                     e.currentTarget.style.backgroundColor = 'var(--color-bg-secondary)'
                     e.currentTarget.style.color = 'var(--color-accent)'

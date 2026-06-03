@@ -1,6 +1,14 @@
 const en: Record<string, string> = {
   // Common
   'common.error.default': 'Unknown error',
+  'common.remove': 'Remove',
+  'common.moveUp': 'Move up',
+  'common.moveDown': 'Move down',
+  'common.scrollLeft': 'Scroll left',
+  'common.scrollRight': 'Scroll right',
+  'common.expand': 'Expand',
+  'common.collapse': 'Collapse',
+  'common.fileInput': 'File input',
   // Header
   'header.title': 'PDFit',
   'header.tool.merge': 'Merge',
@@ -280,6 +288,9 @@ const en: Record<string, string> = {
   'pdfToMd.pageCount': '({{count}} pages)',
   'pdfToMd.description': 'Extract text content from PDF as Markdown. Supports heading detection and paragraph splitting.',
   'pdfToMd.limitation': 'Note: Scanned PDFs cannot extract text. Complex layouts may not be perfect.',
+  'pdfToMd.outputFormat': 'Output Format',
+  'pdfToMd.format.markdown': 'Markdown',
+  'pdfToMd.format.plaintext': 'Plain Text',
   'pdfToMd.progress': 'Processing {{done}}/{{total}} pages',
   'pdfToMd.loading': 'Extracting...',
   'pdfToMd.button': 'Extract Text',

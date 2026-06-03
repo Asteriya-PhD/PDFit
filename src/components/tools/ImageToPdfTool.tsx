@@ -96,6 +96,7 @@ export default function ImageToPdfTool() {
           multiple
           onChange={handleChange}
           className="hidden"
+          aria-label={t('common.fileInput')}
         />
 
         <div
@@ -131,6 +132,8 @@ export default function ImageToPdfTool() {
                 onClick={() => moveImage(index, -1)}
                 disabled={index === 0}
                 className="p-0.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-600 disabled:opacity-20 disabled:cursor-not-allowed"
+                aria-label={t('common.moveUp')}
+                title={t('common.moveUp')}
               >
                 <ArrowUpDown className="w-3.5 h-3.5 rotate-180" />
               </button>
@@ -138,6 +141,8 @@ export default function ImageToPdfTool() {
                 onClick={() => moveImage(index, 1)}
                 disabled={index === images.length - 1}
                 className="p-0.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-600 disabled:opacity-20 disabled:cursor-not-allowed"
+                aria-label={t('common.moveDown')}
+                title={t('common.moveDown')}
               >
                 <ArrowUpDown className="w-3.5 h-3.5" />
               </button>
@@ -156,6 +161,8 @@ export default function ImageToPdfTool() {
             <button
               onClick={() => removeImage(img.id)}
               className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-[var(--color-accent)] shrink-0"
+              aria-label={t('common.remove')}
+              title={t('common.remove')}
             >
               <X className="w-4 h-4" />
             </button>
@@ -177,6 +184,7 @@ export default function ImageToPdfTool() {
         multiple
         onChange={handleChange}
         className="hidden"
+        aria-label={t('common.fileInput')}
       />
 
       {/* Options */}
