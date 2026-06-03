@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
@@ -39,12 +39,18 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      // pdfjs-dist's default entry uses web workers, which don't exist in
-      // Node. Redirect to the legacy build (main-thread, no worker) for
-      // vitest. The browser build still uses the default entry — the
-      // browser code path sets GlobalWorkerOptions.workerSrc in pdfWorker.ts.
-      'pdfjs-dist': path.resolve(__dirname, './node_modules/pdfjs-dist/legacy/build/pdf.mjs'),
     },
+  },
+  // Vitest-only config. The browser build must keep the real pdfjs-dist
+  // entry so the worker URL resolves at runtime; tests get a legacy
+  // redirect because Node has no Worker global.
+  test: {
+    alias: [
+      {
+        find: 'pdfjs-dist',
+        replacement: path.resolve(__dirname, './node_modules/pdfjs-dist/legacy/build/pdf.mjs'),
+      },
+    ],
   },
   base: process.env.VITE_BASE || '/PDFit/',
   build: {
