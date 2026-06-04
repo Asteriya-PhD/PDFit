@@ -37,6 +37,15 @@ interface TextItem {
 }
 
 const Y_TOLERANCE = 3
+// A single-column row is kept in the table only if it sits within this
+// y-distance of some multi-column row on the same page. Larger than
+// Y_TOLERANCE (which is a row-bucketing tolerance for same-baseline
+// items) because we're measuring cell-wrap gaps: a wrapped cell line
+// can be at a different y from the next multi-column line, but not by
+// much. Standalone headings (e.g. a centered "Teaching Method" between
+// two tables) have a much larger gap to any multi-column row and
+// therefore stay as `text`.
+const SINGLE_COL_TABLE_GAP = 20
 const HEADING_RE = /^(Heading\s+\d+|[A-Z][^.]*:?)$/
 
 interface LiteParseResult {
@@ -136,16 +145,31 @@ function groupRowsAndColumns(items: TextItem[]): {
 
 /**
  * Classify each row as table or text and group into PageElements.
- * Text rows: ≤ 1 item in a column, or doesn't match the column
- * schema. Table rows: ≥ 2 items in ≥ 2 distinct columns.
+ *
+ * Two-pass classification. Pass 1 counts how many distinct columns each
+ * row hits (`multi` = ≥ 2, `single` = 1, `none` = 0). Pass 2 maps to the
+ * final `'table' | 'text'`:
+ *   - `multi` rows are always `'table'`.
+ *   - `none` rows are always `'text'`.
+ *   - `single` rows are `'table'` iff some `multi` row is within
+ *     `SINGLE_COL_TABLE_GAP` of their y baseline; otherwise `'text'`.
+ *
+ * The two-pass is necessary because a multi-line cell produces N pipeline
+ * rows that each hit only one column. Marking all ≥ 1-hit rows as `'table'`
+ * naively (the v5 attempt) over-classifies standalone headings — a
+ * centered "Teaching Method" between two tables would merge the tables
+ * together. The y-proximity check keeps wrapped cells in the table (their
+ * single-column rows sit within ~14 y-units of the next multi-column
+ * row) while excluding isolated headings (whose gap to any multi-column
+ * row is much larger).
  */
 function classifyRows(rows: Row[], columnXs: number[]): PageElement[] {
   if (rows.length === 0) return []
   const out: PageElement[] = []
 
-  const classifyRow = (r: Row): 'table' | 'text' => {
-    if (columnXs.length < 2) return 'text'
-    // Map each item to its nearest column; count distinct columns hit.
+  // Pass 1: tag each row by column-hit count.
+  const hitColCount = (r: Row): number => {
+    if (columnXs.length < 2) return 0
     const hitCols = new Set<number>()
     for (const it of r.items) {
       let nearest = columnXs[0]!
@@ -156,14 +180,29 @@ function classifyRows(rows: Row[], columnXs: number[]): PageElement[] {
       }
       hitCols.add(nearest)
     }
-    return hitCols.size >= 2 ? 'table' : 'text'
+    return hitCols.size
   }
+  const hits = rows.map(r => hitColCount(r))
+
+  // Pass 2: 'multi' → 'table'; 'none' → 'text'; 'single' → 'table' iff
+  // a 'multi' row is within SINGLE_COL_TABLE_GAP of its y.
+  const kinds: Array<'table' | 'text'> = rows.map((_, i) => {
+    if (hits[i]! >= 2) return 'table'
+    if (hits[i]! === 0) return 'text'
+    // exactly 1 column hit — look for a nearby multi-column row
+    for (let j = 0; j < rows.length; j++) {
+      if (j === i) continue
+      if (hits[j]! < 2) continue
+      if (Math.abs(rows[j]!.y - rows[i]!.y) < SINGLE_COL_TABLE_GAP) return 'table'
+    }
+    return 'text'
+  })
 
   let i = 0
   while (i < rows.length) {
-    const kind = classifyRow(rows[i]!)
+    const kind = kinds[i]!
     let j = i
-    while (j < rows.length && classifyRow(rows[j]!) === kind) j++
+    while (j < rows.length && kinds[j] === kind) j++
 
     if (kind === 'table') {
       const tableRows: string[][] = rows.slice(i, j).map(r => {
