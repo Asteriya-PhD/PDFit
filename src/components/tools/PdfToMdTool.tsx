@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useApp } from '@/contexts/AppContext'
 import { useI18n } from '@/i18n'
-import { pdfToMarkdown, hasTextContent } from '@/lib/pdfToMarkdown'
+import { parseToMarkdown as pdfToMarkdown, hasTextContent } from '@/lib/liteparse'
 import { Download, Copy, Check, FileText } from 'lucide-react'
 
 type OutputMode = 'markdown' | 'plaintext'
@@ -33,10 +33,11 @@ export default function PdfToMdTool() {
     setProgress({ done: 0, total: 0 })
 
     try {
-      // Scanned / image-only PDFs: pdfjs returns no text items, so
-      // pdfToMarkdown would emit "<!-- Page N: no extractable text -->"
-      // comments that look like content. Check first and short-circuit
-      // to the empty state instead.
+      // Scanned / image-only PDFs: LiteParse returns an empty text
+      // string, but we check explicitly to skip the WASM parse and
+      // surface the empty state immediately. (Without this, hasText
+      // would be inferred from a 0-char result and the user would
+      // still see the click→"no result" path, just slower.)
       if (!(await hasTextContent(activeFile.arrayBuffer))) {
         setIsEmpty(true)
         return

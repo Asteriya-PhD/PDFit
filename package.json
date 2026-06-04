@@ -23,6 +23,7 @@
     "graph:query": "tsx scripts/codegraph/cli.ts"
   },
   "dependencies": {
+    "@llamaindex/liteparse-wasm": "^2.0.4",
     "@tauri-apps/api": "^2.11.0",
     "@tauri-apps/plugin-dialog": "^2.7.1",
     "@tauri-apps/plugin-fs": "^2.5.1",

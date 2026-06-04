@@ -23,7 +23,6 @@ export const TOOL_ORDER: ToolType[] = [
   'page-numbering',
   'watermark',
   'pdf-to-md',
-  'mineru',
   'rotate',
   'image-to-pdf',
   'pdf-to-image',

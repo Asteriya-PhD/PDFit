@@ -1,7 +1,7 @@
 import { useApp } from '@/contexts/AppContext'
 import { useI18n } from '@/i18n'
 import type { ToolType } from '@/types'
-import { Combine, Split, Trash2, RotateCw, Move, FileText, Image, FileImage, Hash, Droplets, FileSpreadsheet } from 'lucide-react'
+import { Combine, Split, Trash2, RotateCw, Move, FileText, Image, FileImage, Hash, Droplets } from 'lucide-react'
 import ThemeToggle from '@/components/ThemeToggle'
 import LocaleToggle from '@/components/LocaleToggle'
 
@@ -32,7 +32,6 @@ export default function Header() {
       tools: [
         { type: 'pdf-to-image' as ToolType, label: t('header.tool.pdfToImage'), icon: Image, description: t('header.tool.description.pdfToImage') },
         { type: 'image-to-pdf' as ToolType, label: t('header.tool.imageToPdf'), icon: FileImage, description: t('header.tool.description.imageToPdf') },
-        { type: 'mineru' as ToolType, label: t('header.tool.mineru'), icon: FileSpreadsheet, description: t('header.tool.description.mineru') },
       ],
     },
     {

@@ -45,8 +45,7 @@
 | **添加水印** | 文字水印，自定义透明度、角度、范围，实时预览 |
 | **PDF 转图片** | 导出为 PNG/JPEG，支持 DPI 调整 |
 | **图片转 PDF** | 将 PNG/JPEG/WebP 合成 PDF |
-| **提取 Markdown** | 从 PDF 提取文本并格式化为 Markdown |
-| **文档转换** | 通过 MinerU API 解析 PDF/Office → Markdown（需同意隐私条款） |
+| **提取 Markdown** | 从 PDF 提取文本并格式化为 Markdown（LiteParse WASM 引擎，本地完成） |
 
 ---
 

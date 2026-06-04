@@ -31,8 +31,6 @@ jobs:
       - run: npm ci
 
       - run: npm run build
-        env:
-          VITE_MINERU_API_KEY: ${{ secrets.MINERU_API_KEY }}
 
       - uses: actions/configure-pages@v5
 

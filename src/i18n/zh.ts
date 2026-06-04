@@ -21,7 +21,6 @@ const zh: Record<string, string> = {
   'header.tool.imageToPdf': '图片转PDF',
   'header.tool.reorder': '排序',
   'header.tool.pdfToMd': '提取文本',
-  'header.tool.mineru': '文档转换',
   'header.tool.description.merge': '合并多个PDF',
   'header.tool.description.split': '提取页面',
   'header.tool.description.delete': '删除页面',
@@ -32,7 +31,6 @@ const zh: Record<string, string> = {
   'header.tool.description.pdfToImage': '导出为图片',
   'header.tool.description.imageToPdf': '从图片创建',
   'header.tool.description.pdfToMd': '提取 Markdown 或纯文本',
-  'header.tool.description.mineru': 'AI转换',
   'header.group.edit': '编辑',
   'header.group.annotate': '标注',
   'header.group.convert': '转换',
@@ -65,7 +63,6 @@ const zh: Record<string, string> = {
   'emptyState.feature.imageToPdf': '图片转PDF',
   'emptyState.feature.reorder': '页面排序',
   'emptyState.feature.pdfToMd': '提取文本',
-  'emptyState.feature.mineru': '文档转换',
   'emptyState.original': '原始文件',
   'emptyState.processed': '处理完成',
   'emptyState.group.edit': '编辑',
@@ -304,26 +301,6 @@ const zh: Record<string, string> = {
   'pdfToMd.stats': '共 {{count}} 字符 · {{lines}} 行',
   'pdfToMd.error': '提取失败: {{message}}',
 
-  // MineruTool
-  'mineru.title': '文档转换',
-  'mineru.configButton': '配置',
-  'mineru.config.title': 'MinerU API 配置',
-  'mineru.config.endpoint': 'API 端点',
-  'mineru.config.apiKey': 'API Key',
-  'mineru.config.apiKeyPlaceholder': '输入你的 MinerU API Key',
-  'mineru.config.save': '保存配置',
-  'mineru.privacy.title': '隐私与数据安全',
-  'mineru.privacy.description': '此功能需要将文件发送至 MinerU 云端服务器进行解析。文件不会保存在本地。',
-  'mineru.privacy.detail': '文件将通过 MinerU API 发送至云端解析，完成后 Markdown 会下载到本地，源文件不会保留。处理敏感文件请谨慎。',
-  'mineru.privacy.consent': '我已了解并同意：我的文件将被发送至 MinerU 服务器进行处理。',
-  'mineru.privacy.notice': '你随时可以清除此授权（需要重新确认）。',
-  'mineru.privacy.banner': '文件将通过 MinerU API 发送至云端解析。支持 PDF、DOCX、PPTX、XLSX 格式。',
-  'mineru.dropzone.text': '点击或拖拽文件到此区域',
-  'mineru.dropzone.formats': '支持 PDF、DOCX、PPTX、XLSX 及常见图片格式',
-  'mineru.button': '上传并解析',
-  'mineru.download': '下载 .md 文件',
-  'mineru.error.default': '未知错误',
-
   // ReorderTool
   'reorder.title': '页面排序',
   'reorder.currentFile': '当前文件: ',
@@ -339,3 +316,4 @@ const zh: Record<string, string> = {
 }
 
 export default zh
+

@@ -34,7 +34,6 @@ const SCENARIOS = [
   { name: 'pdf-to-image',       tool: 'pdf-to-image' },
   { name: 'pdf-to-md',          tool: 'pdf-to-md' },
   { name: 'image-to-pdf',       tool: 'image-to-pdf' },
-  { name: 'mineru tool',        tool: 'mineru' },
 ]
 
 let server = null
@@ -125,11 +124,11 @@ async function main() {
     // domcontentloaded is faster and more deterministic than networkidle
     // for vite preview (HMR pings / sourcemap fetches can keep networkidle
     // from settling in CI under load). The tool panel renders on mount
-    // and the 500ms wait below covers animation/initial render.
+    // and the 800ms wait below covers animation/initial render.
     await page.goto(BASE, { waitUntil: 'domcontentloaded', timeout: 15000 })
     // Let any post-mount animation settle (e.g. fadeIn 250ms) and let
     // tool panels finish their initial render (font picker, color inputs).
-    await wait(500)
+    await wait(800)
 
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])

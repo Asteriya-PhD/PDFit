@@ -10,7 +10,6 @@ import WatermarkTool from '@/components/tools/WatermarkTool'
 import PdfToImageTool from '@/components/tools/PdfToImageTool'
 import ImageToPdfTool from '@/components/tools/ImageToPdfTool'
 import PdfToMdTool from '@/components/tools/PdfToMdTool'
-import MineruTool from '@/components/tools/MineruTool'
 
 export default function ToolPanel() {
   const { files, activeTool } = useApp()
@@ -28,7 +27,6 @@ export default function ToolPanel() {
     'pdf-to-image': <PdfToImageTool />,
     'image-to-pdf': <ImageToPdfTool />,
     'pdf-to-md': <PdfToMdTool />,
-    mineru: <MineruTool />,
   }
 
   if (!activeTool) {

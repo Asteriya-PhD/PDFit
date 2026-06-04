@@ -202,35 +202,6 @@ const SCENARIOS = [
     },
     expect: 'pdf',
   },
-  {
-    name: 'mineru-panel',
-    // Mineru is a multi-step external API flow (presigned URL → upload →
-    // poll → result). Mocking that for a CI e2e is too brittle. Instead,
-    // we smoke-test the panel: privacy gate → accept consent → upload UI
-    // appears. A dummy PDF is injected so App.tsx renders the ToolPanel
-    // branch (MineruTool itself doesn't read the active file — only the
-    // consent gate is exercised here).
-    files: ['text-pdf.pdf'],
-    pageCount: [1],
-    tool: 'mineru',
-    validate: async (page) => {
-      const checkbox = page.getByRole('checkbox')
-      await checkbox.waitFor({ timeout: 5000 })
-      // Use click() rather than check() — check() waits for the element
-      // to be stable post-toggle, but the gate re-renders into the
-      // next panel on click, which check() interprets as instability.
-      await checkbox.click()
-      // After consent the gate transitions. Without VITE_MINERU_API_KEY
-      // the config form is shown; with it the upload UI is shown. Accept
-      // either — the assertion is that consent was accepted and the
-      // panel re-rendered past the gate.
-      await Promise.race([
-        page.getByRole('button', { name: '上传并解析' }).waitFor({ timeout: 5000 }),
-        page.getByText('API Key').waitFor({ timeout: 5000 }),
-      ])
-    },
-    expect: null,
-  },
 ]
 
 async function runScenario(browser, scenario) {
@@ -286,9 +257,13 @@ async function runScenario(browser, scenario) {
     // domcontentloaded is faster and more deterministic than networkidle
     // for vite preview — HMR pings / sourcemap fetches can keep
     // networkidle from settling in CI under load. The tool panel
-    // renders on mount and the 500ms wait below covers animation.
+    // renders on mount and the 800ms wait below covers animation +
+    // any lazy-imported module that lands on the same task (e.g.
+    // pdf-to-md triggers the LiteParse WASM dynamic import which
+    // can briefly hog the main thread before the next scenario's
+    // panel mounts).
     await page.goto(BASE, { waitUntil: 'domcontentloaded', timeout: 15000 })
-    await wait(500)
+    await wait(800)
 
     // Wait for the tool panel to render by looking for the action button
     // the scenario is about to click. If it's the active tool (default
@@ -305,7 +280,6 @@ async function runScenario(browser, scenario) {
       'pdf-to-md': /提取文本/,
       'image-to-pdf': /图片转 PDF|拖拽图片/,
       reorder: /确认新顺序/,
-      mineru: /我已了解并同意/,
     }[scenario.tool]
     await page.getByText(readySelector).first().waitFor({ timeout: 10000 })
 
