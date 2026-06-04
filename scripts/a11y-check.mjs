@@ -33,6 +33,7 @@ const SCENARIOS = [
   { name: 'watermark tool',     tool: 'watermark' },
   { name: 'pdf-to-image',       tool: 'pdf-to-image' },
   { name: 'pdf-to-md',          tool: 'pdf-to-md' },
+  { name: 'pdf-to-docx',        tool: 'pdf-to-docx' },
   { name: 'image-to-pdf',       tool: 'image-to-pdf' },
 ]
 

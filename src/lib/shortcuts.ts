@@ -23,6 +23,7 @@ export const TOOL_ORDER: ToolType[] = [
   'page-numbering',
   'watermark',
   'pdf-to-md',
+  'pdf-to-docx',
   'rotate',
   'image-to-pdf',
   'pdf-to-image',
@@ -158,6 +159,16 @@ export const SHORTCUTS: ShortcutDef[] = [
     alt: false,
     action: { type: 'SET_TOOL', tool: 'pdf-to-md' },
     label: 'Switch to Extract Markdown',
+  },
+
+  // Ctrl+Shift+D — PDF→DOCX
+  {
+    key: 'd',
+    ctrl: true,
+    shift: true,
+    alt: false,
+    action: { type: 'SET_TOOL', tool: 'pdf-to-docx' },
+    label: 'Switch to PDF→Word',
   },
 
   // Numeric shortcuts (1-8)

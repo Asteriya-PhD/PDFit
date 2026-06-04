@@ -173,6 +173,26 @@ const SCENARIOS = [
     expect: 'md',
   },
   {
+    name: 'pdf-to-docx',
+    // PDF→DOCX pipeline: click the action button to convert, then the
+    // download button. The result is a valid .docx (PK zip header) so
+    // we check both magic + size, same as the PDF scenarios.
+    files: ['text-pdf.pdf'],
+    pageCount: [1],
+    tool: 'pdf-to-docx',
+    action: async (page) => {
+      // The toolbar tab and the panel action button share the same text
+      // ("转 Word" / "To Word" in zh); scope to .btn-primary to pick the
+      // action button, not the nav tab.
+      const convertBtn = page.locator('button.btn-primary', { hasText: '转换为 Word' })
+      const downloadBtn = page.locator('button.btn-primary', { hasText: '下载 .docx' })
+      await convertBtn.click()
+      await downloadBtn.waitFor({ timeout: 30000 })
+      await downloadBtn.click()
+    },
+    expect: 'docx',
+  },
+  {
     name: 'image-to-pdf',
     // ImageToPdfTool manages its own local `images` state and uses its own
     // <input type=file>, not the AppContext dropzone. We inject the file
@@ -280,6 +300,7 @@ async function runScenario(browser, scenario) {
       'pdf-to-md': /提取文本/,
       'image-to-pdf': /图片转 PDF|拖拽图片/,
       reorder: /确认新顺序/,
+      'pdf-to-docx': /转 Word|转换为 Word/,
     }[scenario.tool]
     await page.getByText(readySelector).first().waitFor({ timeout: 10000 })
 
@@ -318,11 +339,15 @@ async function runScenario(browser, scenario) {
     await download.saveAs(outPath)
     const size = statSync(outPath).size
     const bytes = readFileSync(outPath)
-    // Only PDF scenarios are checked for the %PDF- magic header; ZIP/MD
-    // are validated by size alone since the byte layout varies.
-    const isPdf = scenario.expect === 'pdf'
-    const magic = isPdf ? Array.from(bytes.subarray(0, 4)) : []
-    const headerOk = isPdf ? magic.every((b, i) => b === PDF_HEADER[i]) : true
+    // PDF and DOCX (which is a zip) get magic-byte checks; plain formats
+    // (zip-from-pdf-to-image, md) are validated by size alone since
+    // the byte layout varies.
+    const ZIP_HEADER = [0x50, 0x4B, 0x03, 0x04]   // PK\x03\x04
+    const expectMagic = scenario.expect === 'pdf' ? PDF_HEADER
+      : scenario.expect === 'docx' ? ZIP_HEADER
+      : null
+    const magic = expectMagic ? Array.from(bytes.subarray(0, 4)) : []
+    const headerOk = expectMagic ? magic.every((b, i) => b === expectMagic[i]) : true
     const sizeOk = size >= MIN_SIZE
     const pass = headerOk && sizeOk
 

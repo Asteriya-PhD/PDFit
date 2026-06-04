@@ -21,6 +21,7 @@ const zh: Record<string, string> = {
   'header.tool.imageToPdf': '图片转PDF',
   'header.tool.reorder': '排序',
   'header.tool.pdfToMd': '提取文本',
+  'header.tool.pdfToDocx': '转 Word',
   'header.tool.description.merge': '合并多个PDF',
   'header.tool.description.split': '提取页面',
   'header.tool.description.delete': '删除页面',
@@ -31,6 +32,7 @@ const zh: Record<string, string> = {
   'header.tool.description.pdfToImage': '导出为图片',
   'header.tool.description.imageToPdf': '从图片创建',
   'header.tool.description.pdfToMd': '提取 Markdown 或纯文本',
+  'header.tool.description.pdfToDocx': '将 PDF 转换为可编辑的 Word 文档',
   'header.group.edit': '编辑',
   'header.group.annotate': '标注',
   'header.group.convert': '转换',
@@ -63,6 +65,7 @@ const zh: Record<string, string> = {
   'emptyState.feature.imageToPdf': '图片转PDF',
   'emptyState.feature.reorder': '页面排序',
   'emptyState.feature.pdfToMd': '提取文本',
+  'emptyState.feature.pdfToDocx': 'PDF转Word',
   'emptyState.original': '原始文件',
   'emptyState.processed': '处理完成',
   'emptyState.group.edit': '编辑',
@@ -70,7 +73,7 @@ const zh: Record<string, string> = {
   'emptyState.group.annotate': '标注',
   'emptyState.group.annotate.desc': '页码 · 水印',
   'emptyState.group.convert': '转换',
-  'emptyState.group.convert.desc': 'PDF转图 · 图转PDF · MinerU',
+  'emptyState.group.convert.desc': 'PDF转图 · 图转PDF · PDF转Word',
   'emptyState.group.extract': '提取',
   'emptyState.group.extract.desc': '提取文本 · Markdown',
 
@@ -313,6 +316,23 @@ const zh: Record<string, string> = {
   'reorder.error': '重新排序失败: {{message}}',
   'reorder.noFile': '请先选择一个 PDF 文件',
   'reorder.dragHint': '拖拽页面缩略图调整顺序',
+
+  // PdfToDocxTool
+  'pdfToDocx.noFile': '请先选择一个 PDF 文件',
+  'pdfToDocx.title': '转换为 Word',
+  'pdfToDocx.currentFile': '当前文件: ',
+  'pdfToDocx.pageCount': '({{count}} 页)',
+  'pdfToDocx.description': '将 PDF 转换为可编辑的 Word 文档。完全在浏览器本地完成，文件不会离开你的设备。',
+  'pdfToDocx.limitation': '注意：不保留表格和嵌入图片。仅保留文本和基本结构。',
+  'pdfToDocx.progress': '正在处理第 {{done}}/{{total}} 页',
+  'pdfToDocx.loading': '转换中...',
+  'pdfToDocx.button': '转换为 Word',
+  'pdfToDocx.empty.title': '此 PDF 可能为扫描件，无可转换的文本',
+  'pdfToDocx.empty.hint': '建议使用 OCR 工具（如 Adobe Acrobat、ABBYY）先进行文字识别',
+  'pdfToDocx.stats': '{{pages}} 页 · {{chars}} 字符 · {{size}} KB',
+  'pdfToDocx.download': '下载 .docx',
+  'pdfToDocx.reset': '重新转换',
+  'pdfToDocx.error': '转换失败: {{message}}',
 }
 
 export default zh

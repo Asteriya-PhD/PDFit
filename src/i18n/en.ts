@@ -21,6 +21,7 @@ const en: Record<string, string> = {
   'header.tool.imageToPdf': 'From Image',
   'header.tool.reorder': 'Reorder',
   'header.tool.pdfToMd': 'Extract Text',
+  'header.tool.pdfToDocx': 'To Word',
   'header.tool.description.merge': 'Combine multiple PDFs',
   'header.tool.description.split': 'Extract pages',
   'header.tool.description.delete': 'Remove pages',
@@ -31,6 +32,7 @@ const en: Record<string, string> = {
   'header.tool.description.pdfToImage': 'Export as images',
   'header.tool.description.imageToPdf': 'Create from images',
   'header.tool.description.pdfToMd': 'Extract text as Markdown or plain text',
+  'header.tool.description.pdfToDocx': 'Convert PDF to editable Word (.docx)',
   'header.group.edit': 'Edit',
   'header.group.annotate': 'Annotate',
   'header.group.convert': 'Convert',
@@ -63,6 +65,7 @@ const en: Record<string, string> = {
   'emptyState.feature.imageToPdf': 'Image to PDF',
   'emptyState.feature.reorder': 'Reorder Pages',
   'emptyState.feature.pdfToMd': 'Extract Text',
+  'emptyState.feature.pdfToDocx': 'PDF to Word',
   'emptyState.original': 'Original',
   'emptyState.processed': 'Processed',
   'emptyState.group.edit': 'Edit',
@@ -70,7 +73,7 @@ const en: Record<string, string> = {
   'emptyState.group.annotate': 'Annotate',
   'emptyState.group.annotate.desc': 'Page numbers · Watermark',
   'emptyState.group.convert': 'Convert',
-  'emptyState.group.convert.desc': 'PDF to Image · Image to PDF · MinerU',
+  'emptyState.group.convert.desc': 'PDF to Image · Image to PDF · PDF to Word',
   'emptyState.group.extract': 'Extract',
   'emptyState.group.extract.desc': 'Extract text · Markdown',
 
@@ -313,6 +316,23 @@ const en: Record<string, string> = {
   'reorder.error': 'Reorder failed: {{message}}',
   'reorder.noFile': 'Please select a PDF file first',
   'reorder.dragHint': 'Drag thumbnails to reorder',
+
+  // PdfToDocxTool
+  'pdfToDocx.noFile': 'Please select a PDF file first',
+  'pdfToDocx.title': 'Convert to Word',
+  'pdfToDocx.currentFile': 'Current file: ',
+  'pdfToDocx.pageCount': '({{count}} pages)',
+  'pdfToDocx.description': 'Convert your PDF to an editable Word document. Runs entirely in your browser — your file never leaves your device.',
+  'pdfToDocx.limitation': 'Note: tables and embedded images are not preserved. Text and basic structure only.',
+  'pdfToDocx.progress': 'Processing page {{done}}/{{total}}',
+  'pdfToDocx.loading': 'Converting…',
+  'pdfToDocx.button': 'Convert to Word',
+  'pdfToDocx.empty.title': 'This PDF appears to be a scanned document — no text to convert',
+  'pdfToDocx.empty.hint': 'Use OCR tools (e.g., Adobe Acrobat, ABBYY) to recognize text first',
+  'pdfToDocx.stats': '{{pages}} pages · {{chars}} characters · {{size}} KB',
+  'pdfToDocx.download': 'Download .docx',
+  'pdfToDocx.reset': 'Convert again',
+  'pdfToDocx.error': 'Conversion failed: {{message}}',
 }
 
 export default en

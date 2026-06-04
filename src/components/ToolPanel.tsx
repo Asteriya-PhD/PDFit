@@ -10,6 +10,7 @@ import WatermarkTool from '@/components/tools/WatermarkTool'
 import PdfToImageTool from '@/components/tools/PdfToImageTool'
 import ImageToPdfTool from '@/components/tools/ImageToPdfTool'
 import PdfToMdTool from '@/components/tools/PdfToMdTool'
+import PdfToDocxTool from '@/components/tools/PdfToDocxTool'
 
 export default function ToolPanel() {
   const { files, activeTool } = useApp()
@@ -27,6 +28,7 @@ export default function ToolPanel() {
     'pdf-to-image': <PdfToImageTool />,
     'image-to-pdf': <ImageToPdfTool />,
     'pdf-to-md': <PdfToMdTool />,
+    'pdf-to-docx': <PdfToDocxTool />,
   }
 
   if (!activeTool) {

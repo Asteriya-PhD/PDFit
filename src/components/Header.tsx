@@ -1,7 +1,7 @@
 import { useApp } from '@/contexts/AppContext'
 import { useI18n } from '@/i18n'
 import type { ToolType } from '@/types'
-import { Combine, Split, Trash2, RotateCw, Move, FileText, Image, FileImage, Hash, Droplets } from 'lucide-react'
+import { Combine, Split, Trash2, RotateCw, Move, FileText, Image, FileImage, Hash, Droplets, FileType } from 'lucide-react'
 import ThemeToggle from '@/components/ThemeToggle'
 import LocaleToggle from '@/components/LocaleToggle'
 
@@ -38,6 +38,7 @@ export default function Header() {
       label: t('header.group.extract'),
       tools: [
         { type: 'pdf-to-md' as ToolType, label: t('header.tool.pdfToMd'), icon: FileText, description: t('header.tool.description.pdfToMd') },
+        { type: 'pdf-to-docx' as ToolType, label: t('header.tool.pdfToDocx'), icon: FileType, description: t('header.tool.description.pdfToDocx') },
       ],
     },
   ]
