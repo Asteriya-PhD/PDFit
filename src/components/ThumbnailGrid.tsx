@@ -7,7 +7,7 @@ import { Maximize2, Minimize2, ChevronLeft, ChevronRight } from 'lucide-react'
 
 const THUMB_HEIGHT = 180
 const EXPANDED_HEIGHT = 400
-const SIDEBAR_THUMB_HEIGHT = 120
+const SIDEBAR_THUMB_WIDTH_RATIO = 0.92  // fraction of sidebar width used per thumb
 
 interface ThumbnailGridProps {
   vertical?: boolean
@@ -87,8 +87,14 @@ export default function ThumbnailGrid({ vertical = false }: ThumbnailGridProps) 
     )
   }
 
+  // Vertical (sidebar) layout: each page renders at sidebar width and
+  // the height is derived from the page's intrinsic aspect ratio. The
+  // full page fits in one view — that's the point of a thumbnail grid.
+  const w = vertical
+    ? (containerWidth > 0 ? Math.max(80, Math.round(containerWidth * SIDEBAR_THUMB_WIDTH_RATIO)) : 240)
+    : 0
   const h = vertical
-    ? (containerWidth > 0 ? Math.round((containerWidth - 16) * 1.4) : SIDEBAR_THUMB_HEIGHT)
+    ? Math.round(w * 1.4)  // initial estimate, replaced once page renders
     : (expanded ? EXPANDED_HEIGHT : THUMB_HEIGHT)
 
   if (vertical) {
@@ -96,30 +102,11 @@ export default function ThumbnailGrid({ vertical = false }: ThumbnailGridProps) 
       <div
         className="flex flex-col flex-1 min-h-0 overflow-hidden"
         style={{
-          borderTop: '1px solid var(--color-border)',
           backgroundColor: 'var(--color-bg-secondary)',
         }}
       >
-        {/* Header */}
-        <div
-          className="flex items-center justify-between px-3 py-1.5 shrink-0"
-          style={{ borderBottom: '1px solid var(--color-border)' }}
-        >
-          <span
-            className="text-xs font-medium truncate"
-            style={{
-              fontFamily: 'var(--font-heading)',
-              color: 'var(--color-text-muted)',
-            }}
-          >
-            {activeFile.name}
-          </span>
-          <span className="badge badge-orange text-[10px] py-0 px-1.5">
-            {activeFile.pageCount}
-          </span>
-        </div>
-
-        {/* Vertical Thumbnail Strip */}
+        {/* Vertical Thumbnail Strip — fill sidebar width, no internal
+            header (FileList already shows filename + page count). */}
         <div
           ref={scrollContainerRef}
           className="flex-1 overflow-y-auto overflow-x-hidden"
@@ -134,7 +121,7 @@ export default function ThumbnailGrid({ vertical = false }: ThumbnailGridProps) 
                 key={`${activeFile.id}-${i}`}
                 arrayBuffer={activeFile.arrayBuffer}
                 pageIndex={i}
-                targetPx={h}
+                targetWidth={w}
               />
             ))}
           </div>
@@ -255,7 +242,7 @@ export default function ThumbnailGrid({ vertical = false }: ThumbnailGridProps) 
               key={i}
               arrayBuffer={activeFile.arrayBuffer}
               pageIndex={i}
-              targetPx={h - 32}
+              targetHeight={h - 32}
             />
           ))}
         </div>
@@ -267,11 +254,16 @@ export default function ThumbnailGrid({ vertical = false }: ThumbnailGridProps) 
 function PagePreview({
   arrayBuffer,
   pageIndex,
-  targetPx,
+  targetWidth,
+  targetHeight,
 }: {
   arrayBuffer: ArrayBuffer
   pageIndex: number
-  targetPx: number
+  /** Render the page at this many CSS pixels wide. Height comes from
+   *  the page's intrinsic aspect ratio. Use one of width or height. */
+  targetWidth?: number
+  /** Render the page at this many CSS pixels tall (legacy mode). */
+  targetHeight?: number
 }) {
   const { t } = useI18n()
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -294,7 +286,12 @@ function PagePreview({
 
         const rotation = page.rotate
         const unscaled = page.getViewport({ scale: 1, rotation })
-        const scale = targetPx / unscaled.height
+        // Pick scale: if targetWidth is given, fit-to-width; else fit-to-height.
+        const fitAxis = targetWidth && targetWidth > 0 ? 'w' : 'h'
+        const target = fitAxis === 'w' ? targetWidth! : targetHeight ?? 0
+        const scale = target > 0
+          ? target / (fitAxis === 'w' ? unscaled.width : unscaled.height)
+          : 1
         const viewport = page.getViewport({ scale, rotation })
 
         cvs.width = viewport.width
@@ -318,15 +315,15 @@ function PagePreview({
     })()
 
     return () => { cancelled = true }
-  }, [arrayBuffer, pageIndex, targetPx])
+  }, [arrayBuffer, pageIndex, targetWidth, targetHeight])
 
   if (error) {
     return (
       <div
         className="flex flex-col items-center justify-center shrink-0 rounded-xl"
         style={{
-          width: targetPx * 0.7,
-          height: targetPx + 24,
+          width: targetWidth ?? 200,
+          height: (targetWidth ?? 200) * 1.3,
           backgroundColor: 'var(--color-surface)',
           border: '1px dashed var(--color-border)',
         }}
@@ -340,12 +337,12 @@ function PagePreview({
 
   return (
     <div
-      className="flex flex-col items-center gap-2 shrink-0"
+      className="flex flex-col items-center gap-2 shrink-0 w-full"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <div
-        className="rounded-xl overflow-hidden transition-all duration-200"
+        className="rounded-xl overflow-hidden transition-all duration-200 w-full"
         style={{
           backgroundColor: 'var(--color-surface)',
           border: `1px solid ${isHovered ? 'var(--color-accent)' : 'var(--color-border)'}`,
@@ -355,8 +352,8 @@ function PagePreview({
       >
         <canvas
           ref={canvasRef}
-          className="block"
-          style={{ width: size.w || undefined, height: size.h || undefined }}
+          className="block w-full h-auto"
+          style={{ width: targetWidth ? '100%' : (size.w || undefined), height: size.h ? 'auto' : undefined }}
         />
       </div>
       <span

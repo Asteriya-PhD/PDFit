@@ -363,6 +363,37 @@ export default function WatermarkTool() {
           )}
         </div>
 
+        {/* Rotation — moved to main flow so it's discoverable.
+            Opacity and color are demoted to the right column below the preview. */}
+        <div className="mb-3">
+          <label
+            className="block text-xs font-medium mb-1.5"
+            style={{
+              fontFamily: 'var(--font-heading)',
+              color: 'var(--color-text-secondary)',
+            }}
+          >
+            {t('watermark.rotation')}
+          </label>
+          <div className="grid grid-cols-4 gap-1.5">
+            {rotations.map(r => (
+              <button
+                key={r.value}
+                onClick={() => setRotation(r.value)}
+                className="px-2 py-1.5 rounded-lg text-xs font-medium transition-all"
+                style={{
+                  fontFamily: 'var(--font-heading)',
+                  backgroundColor: rotation === r.value ? 'var(--color-accent-100)' : 'var(--color-surface)',
+                  border: `1px solid ${rotation === r.value ? 'var(--color-accent)' : 'var(--color-border)'}`,
+                  color: rotation === r.value ? 'var(--color-accent-700)' : 'var(--color-text-secondary)',
+                }}
+              >
+                {r.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Action Button */}
         <button
           onClick={handleApply}
@@ -462,83 +493,50 @@ export default function WatermarkTool() {
           </div>
         </div>
 
-        {/* Color row: rotation + color side by side */}
-        <div className="grid grid-cols-2 gap-3 mb-3">
-          {/* Rotation */}
-          <div>
-            <label
-              className="block text-xs font-medium mb-1.5"
-              style={{
-                fontFamily: 'var(--font-heading)',
-                color: 'var(--color-text-secondary)',
-              }}
-            >
-              {t('watermark.rotation')}
+        {/* Color row (rotation moved to the main left column above) */}
+        <div className="mb-3">
+          <label
+            className="block text-xs font-medium mb-1.5"
+            style={{
+              fontFamily: 'var(--font-heading)',
+              color: 'var(--color-text-secondary)',
+            }}
+          >
+            {t('watermark.color')}
+          </label>
+          <div className="flex gap-1.5 items-center flex-wrap">
+            {COLOR_PRESETS.map(c => (
+              <button
+                key={c}
+                onClick={() => setColor(c)}
+                className="w-6 h-6 rounded-full border-2 transition-all"
+                style={{
+                  backgroundColor: c,
+                  borderColor: color === c ? 'var(--color-accent)' : 'transparent',
+                  transform: color === c ? 'scale(1.15)' : 'scale(1)',
+                }}
+                aria-label={t('watermark.colorLabel', { value: c })}
+              />
+            ))}
+            <label className="relative cursor-pointer">
+              <span className="sr-only">{t('watermark.color')}</span>
+              <input
+                type="color"
+                value={color}
+                onChange={e => setColor(e.target.value)}
+                className="absolute inset-0 opacity-0 w-6 h-6 cursor-pointer"
+                aria-label={t('watermark.color')}
+              />
+              <div
+                className="w-6 h-6 rounded-full border-2 border-dashed flex items-center justify-center text-[10px]"
+                style={{
+                  borderColor: 'var(--color-border)',
+                  color: 'var(--color-text-muted)',
+                }}
+              >
+                +
+              </div>
             </label>
-            <div className="grid grid-cols-2 gap-1">
-              {rotations.map(r => (
-                <button
-                  key={r.value}
-                  onClick={() => setRotation(r.value)}
-                  className="px-2 py-1.5 rounded-lg text-[10px] font-medium transition-all"
-                  style={{
-                    fontFamily: 'var(--font-heading)',
-                    backgroundColor: rotation === r.value ? 'var(--color-accent-100)' : 'var(--color-surface)',
-                    border: `1px solid ${rotation === r.value ? 'var(--color-accent)' : 'var(--color-border)'}`,
-                    color: rotation === r.value ? 'var(--color-accent-700)' : 'var(--color-text-secondary)',
-                  }}
-                >
-                  {r.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Color */}
-          <div>
-            <label
-              className="block text-xs font-medium mb-1.5"
-              style={{
-                fontFamily: 'var(--font-heading)',
-                color: 'var(--color-text-secondary)',
-              }}
-            >
-              {t('watermark.color')}
-            </label>
-            <div className="flex gap-1.5 items-center flex-wrap">
-              {COLOR_PRESETS.map(c => (
-                <button
-                  key={c}
-                  onClick={() => setColor(c)}
-                  className="w-6 h-6 rounded-full border-2 transition-all"
-                  style={{
-                    backgroundColor: c,
-                    borderColor: color === c ? 'var(--color-accent)' : 'transparent',
-                    transform: color === c ? 'scale(1.15)' : 'scale(1)',
-                  }}
-                  aria-label={t('watermark.colorLabel', { value: c })}
-                />
-              ))}
-              <label className="relative cursor-pointer">
-                <span className="sr-only">{t('watermark.color')}</span>
-                <input
-                  type="color"
-                  value={color}
-                  onChange={e => setColor(e.target.value)}
-                  className="absolute inset-0 opacity-0 w-6 h-6 cursor-pointer"
-                  aria-label={t('watermark.color')}
-                />
-                <div
-                  className="w-6 h-6 rounded-full border-2 border-dashed flex items-center justify-center text-[10px]"
-                  style={{
-                    borderColor: 'var(--color-border)',
-                    color: 'var(--color-text-muted)',
-                  }}
-                >
-                  +
-                </div>
-              </label>
-            </div>
           </div>
         </div>
       </div>

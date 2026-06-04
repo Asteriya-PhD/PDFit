@@ -32,14 +32,14 @@ export default function Header() {
       tools: [
         { type: 'pdf-to-image' as ToolType, label: t('header.tool.pdfToImage'), icon: Image, description: t('header.tool.description.pdfToImage') },
         { type: 'image-to-pdf' as ToolType, label: t('header.tool.imageToPdf'), icon: FileImage, description: t('header.tool.description.imageToPdf') },
+        { type: 'pdf-to-docx' as ToolType, label: t('header.tool.pdfToDocx'), icon: FileType, description: t('header.tool.description.pdfToDocx') },
+        { type: 'pdf-to-xlsx' as ToolType, label: t('header.tool.pdfToXlsx'), icon: Sheet, description: t('header.tool.description.pdfToXlsx') },
       ],
     },
     {
       label: t('header.group.extract'),
       tools: [
         { type: 'pdf-to-md' as ToolType, label: t('header.tool.pdfToMd'), icon: FileText, description: t('header.tool.description.pdfToMd') },
-        { type: 'pdf-to-docx' as ToolType, label: t('header.tool.pdfToDocx'), icon: FileType, description: t('header.tool.description.pdfToDocx') },
-        { type: 'pdf-to-xlsx' as ToolType, label: t('header.tool.pdfToXlsx'), icon: Sheet, description: t('header.tool.description.pdfToXlsx') },
       ],
     },
   ]
