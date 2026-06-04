@@ -46,6 +46,12 @@ const Y_TOLERANCE = 3
 // two tables) have a much larger gap to any multi-column row and
 // therefore stay as `text`.
 const SINGLE_COL_TABLE_GAP = 20
+// X positions within this many PDF units of each other are bucketed into
+// the same column during schema detection. Chosen to be smaller than the
+// gap between any two real columns of a page (>30 in every observed
+// fixture) so adjacent columns stay separate, but large enough to absorb
+// x-jitter within a single column.
+const X_CLUSTER_TOL = 25
 const HEADING_RE = /^(Heading\s+\d+|[A-Z][^.]*:?)$/
 
 interface LiteParseResult {
@@ -90,9 +96,18 @@ type PageElement = { kind: 'paragraphs'; blocks: TextBlock[] } | { kind: 'table'
 
 /**
  * Group textItems on a page into rows (items sharing a y-baseline
- * within Y_TOLERANCE), then determine the page's column x-positions
- * by finding the most-populated row and keeping x's that appear in
- * ≥ 2 rows.
+ * within Y_TOLERANCE), then determine the page's column x-positions.
+ *
+ * Columns are detected by **global x-clustering** rather than by picking
+ * a single "schema row" (the previous approach). Each item's x is added
+ * to the closest existing cluster if it's within X_CLUSTER_TOL; otherwise
+ * it starts a new cluster. A cluster is kept as a column only if it has
+ * items in ≥ 2 different rows. The previous "schema row = max-items row"
+ * approach over-detected columns when an outlier row (e.g. a 4-item
+ * fill-in-the-blank math worksheet line spread across the page) had more
+ * items than the actual table header — every x in that outlier became a
+ * candidate column. Global clustering makes phantom columns self-filter
+ * because their x positions only appear in 1 row.
  */
 function groupRowsAndColumns(items: TextItem[]): {
   rows: Row[]
@@ -114,32 +129,48 @@ function groupRowsAndColumns(items: TextItem[]): {
   }
   for (const r of rows) r.items.sort((a, b) => a.x - b.x)
 
-  // Pick the row with the most items as the "schema" — its x-positions
-  // are the candidate columns. Keep only x's that appear in ≥ 2 rows.
-  const maxLen = Math.max(...rows.map(r => r.items.length))
-  if (maxLen < 2) return { rows, columnXs: [] }
-  const headerXs = rows.find(r => r.items.length === maxLen)!.items.map(it => it.x)
-
-  const xCount = new Map<number, number>()
-  for (const row of rows) {
-    const seen = new Set<number>()
-    for (const it of row.items) {
-      let nearest = headerXs[0]!
-      let bestDist = Math.abs(it.x - nearest)
-      for (const hx of headerXs) {
-        const d = Math.abs(it.x - hx)
-        if (d < bestDist) { bestDist = d; nearest = hx }
+  // Cluster all x positions across the page. Each cluster is a candidate
+  // column. Keep clusters that have items in ≥ 2 different rows.
+  interface Cluster {
+    /** x position of the first item in the cluster (used as the anchor for distance checks). */
+    anchor: number
+    /** All x positions that landed in this cluster (for computing the representative). */
+    xPositions: number[]
+    rowIndices: Set<number>
+  }
+  const clusters: Cluster[] = []
+  for (let r = 0; r < rows.length; r++) {
+    for (const it of rows[r]!.items) {
+      // Find the closest cluster within tolerance; ties broken by lower index.
+      let bestIdx = -1
+      let bestDist = Infinity
+      for (let c = 0; c < clusters.length; c++) {
+        const d = Math.abs(it.x - clusters[c]!.anchor)
+        if (d <= X_CLUSTER_TOL && d < bestDist) {
+          bestIdx = c
+          bestDist = d
+        }
       }
-      if (!seen.has(nearest)) {
-        seen.add(nearest)
-        xCount.set(nearest, (xCount.get(nearest) ?? 0) + 1)
+      if (bestIdx === -1) {
+        clusters.push({ anchor: it.x, xPositions: [it.x], rowIndices: new Set([r]) })
+      } else {
+        const cluster = clusters[bestIdx]!
+        cluster.xPositions.push(it.x)
+        cluster.rowIndices.add(r)
       }
     }
   }
-  const columnXs = [...xCount.entries()]
-    .filter(([, c]) => c >= 2)
-    .map(([x]) => x)
+
+  // Keep clusters that appear in ≥ 2 rows. Use the median x of the cluster
+  // as the representative column position.
+  const columnXs = clusters
+    .filter(c => c.rowIndices.size >= 2)
+    .map(c => {
+      const sorted = [...c.xPositions].sort((a, b) => a - b)
+      return sorted[Math.floor(sorted.length / 2)]!
+    })
     .sort((a, b) => a - b)
+
   return { rows, columnXs }
 }
 
