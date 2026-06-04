@@ -45,6 +45,7 @@ test-files/*
 !test-files/multi-page.pdf
 !test-files/image-only.pdf
 !test-files/table-pdf.pdf
+!test-files/mixed-pdf.pdf
 !test-files/test1.png
 !test-files/test3.jpg
 

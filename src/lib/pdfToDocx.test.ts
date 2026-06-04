@@ -48,4 +48,13 @@ describe('pdfToDocx', () => {
   it('throws EMPTY_PDF for an image-only PDF', async () => {
     await expect(pdfToDocx(imageOnlyPdf)).rejects.toThrow('EMPTY_PDF')
   })
+
+  it('emits at least one table for the mixed text+table fixture', async () => {
+    const mixed = readFileSync(join(TEST_DIR, 'mixed-pdf.pdf'))
+    const ab = mixed.buffer.slice(mixed.byteOffset, mixed.byteOffset + mixed.byteLength)
+    const { bytes, tableCount, charCount } = await pdfToDocx(ab)
+    expect(bytes.byteLength).toBeGreaterThan(0)
+    expect(tableCount).toBeGreaterThanOrEqual(2)  // fixture has 2 tables
+    expect(charCount).toBeGreaterThan(0)
+  })
 })
