@@ -47,6 +47,7 @@
 | **图片转 PDF** | 将 PNG/JPEG/WebP 合成 PDF |
 | **提取 Markdown** | 从 PDF 提取文本并格式化为 Markdown（LiteParse WASM 引擎，本地完成） |
 | **PDF 转 Word** | 将 PDF 转换为可编辑的 .docx 文档（LiteParse + docx 包，全本地） |
+| **PDF 转 Excel** | 检测 PDF 表格结构并转换为 .xlsx 工作簿（LiteParse + exceljs，全本地） |
 
 ---
 

@@ -34,6 +34,7 @@ const SCENARIOS = [
   { name: 'pdf-to-image',       tool: 'pdf-to-image' },
   { name: 'pdf-to-md',          tool: 'pdf-to-md' },
   { name: 'pdf-to-docx',        tool: 'pdf-to-docx' },
+  { name: 'pdf-to-xlsx',        tool: 'pdf-to-xlsx' },
   { name: 'image-to-pdf',       tool: 'image-to-pdf' },
 ]
 

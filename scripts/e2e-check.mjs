@@ -193,6 +193,23 @@ const SCENARIOS = [
     expect: 'docx',
   },
   {
+    name: 'pdf-to-xlsx',
+    // PDF→XLSX pipeline: click the action button to convert, then the
+    // download button. Uses a synthetic table-pdf.pdf fixture (4 rows ×
+    // 3 cols). Result is .xlsx (also a zip), so we check PK magic.
+    files: ['table-pdf.pdf'],
+    pageCount: [1],
+    tool: 'pdf-to-xlsx',
+    action: async (page) => {
+      const convertBtn = page.locator('button.btn-primary', { hasText: '转换为 Excel' })
+      const downloadBtn = page.locator('button.btn-primary', { hasText: '下载 .xlsx' })
+      await convertBtn.click()
+      await downloadBtn.waitFor({ timeout: 30000 })
+      await downloadBtn.click()
+    },
+    expect: 'xlsx',
+  },
+  {
     name: 'image-to-pdf',
     // ImageToPdfTool manages its own local `images` state and uses its own
     // <input type=file>, not the AppContext dropzone. We inject the file
@@ -301,6 +318,7 @@ async function runScenario(browser, scenario) {
       'image-to-pdf': /图片转 PDF|拖拽图片/,
       reorder: /确认新顺序/,
       'pdf-to-docx': /转 Word|转换为 Word/,
+      'pdf-to-xlsx': /转 Excel|转换为 Excel/,
     }[scenario.tool]
     await page.getByText(readySelector).first().waitFor({ timeout: 10000 })
 
@@ -344,7 +362,7 @@ async function runScenario(browser, scenario) {
     // the byte layout varies.
     const ZIP_HEADER = [0x50, 0x4B, 0x03, 0x04]   // PK\x03\x04
     const expectMagic = scenario.expect === 'pdf' ? PDF_HEADER
-      : scenario.expect === 'docx' ? ZIP_HEADER
+      : (scenario.expect === 'docx' || scenario.expect === 'xlsx') ? ZIP_HEADER
       : null
     const magic = expectMagic ? Array.from(bytes.subarray(0, 4)) : []
     const headerOk = expectMagic ? magic.every((b, i) => b === expectMagic[i]) : true

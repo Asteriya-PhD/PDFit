@@ -24,6 +24,7 @@ export const TOOL_ORDER: ToolType[] = [
   'watermark',
   'pdf-to-md',
   'pdf-to-docx',
+  'pdf-to-xlsx',
   'rotate',
   'image-to-pdf',
   'pdf-to-image',
@@ -169,6 +170,16 @@ export const SHORTCUTS: ShortcutDef[] = [
     alt: false,
     action: { type: 'SET_TOOL', tool: 'pdf-to-docx' },
     label: 'Switch to PDF→Word',
+  },
+
+  // Ctrl+Shift+X — PDF→XLSX
+  {
+    key: 'x',
+    ctrl: true,
+    shift: true,
+    alt: false,
+    action: { type: 'SET_TOOL', tool: 'pdf-to-xlsx' },
+    label: 'Switch to PDF→Excel',
   },
 
   // Numeric shortcuts (1-8)

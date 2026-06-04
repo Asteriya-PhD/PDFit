@@ -22,6 +22,7 @@ const en: Record<string, string> = {
   'header.tool.reorder': 'Reorder',
   'header.tool.pdfToMd': 'Extract Text',
   'header.tool.pdfToDocx': 'To Word',
+  'header.tool.pdfToXlsx': 'To Excel',
   'header.tool.description.merge': 'Combine multiple PDFs',
   'header.tool.description.split': 'Extract pages',
   'header.tool.description.delete': 'Remove pages',
@@ -33,6 +34,7 @@ const en: Record<string, string> = {
   'header.tool.description.imageToPdf': 'Create from images',
   'header.tool.description.pdfToMd': 'Extract text as Markdown or plain text',
   'header.tool.description.pdfToDocx': 'Convert PDF to editable Word (.docx)',
+  'header.tool.description.pdfToXlsx': 'Convert PDF tables to Excel (.xlsx)',
   'header.group.edit': 'Edit',
   'header.group.annotate': 'Annotate',
   'header.group.convert': 'Convert',
@@ -66,6 +68,7 @@ const en: Record<string, string> = {
   'emptyState.feature.reorder': 'Reorder Pages',
   'emptyState.feature.pdfToMd': 'Extract Text',
   'emptyState.feature.pdfToDocx': 'PDF to Word',
+  'emptyState.feature.pdfToXlsx': 'PDF to Excel',
   'emptyState.original': 'Original',
   'emptyState.processed': 'Processed',
   'emptyState.group.edit': 'Edit',
@@ -73,7 +76,7 @@ const en: Record<string, string> = {
   'emptyState.group.annotate': 'Annotate',
   'emptyState.group.annotate.desc': 'Page numbers · Watermark',
   'emptyState.group.convert': 'Convert',
-  'emptyState.group.convert.desc': 'PDF to Image · Image to PDF · PDF to Word',
+  'emptyState.group.convert.desc': 'PDF to Image · Image to PDF · PDF to Word · PDF to Excel',
   'emptyState.group.extract': 'Extract',
   'emptyState.group.extract.desc': 'Extract text · Markdown',
 
@@ -333,6 +336,25 @@ const en: Record<string, string> = {
   'pdfToDocx.download': 'Download .docx',
   'pdfToDocx.reset': 'Convert again',
   'pdfToDocx.error': 'Conversion failed: {{message}}',
+
+  // PdfToXlsxTool
+  'pdfToXlsx.noFile': 'Please select a PDF file first',
+  'pdfToXlsx.title': 'Convert to Excel',
+  'pdfToXlsx.currentFile': 'Current file: ',
+  'pdfToXlsx.pageCount': '({{count}} pages)',
+  'pdfToXlsx.description': 'Detect tables in your PDF and convert them to an Excel workbook. Runs entirely in your browser.',
+  'pdfToXlsx.limitation': 'Note: only clear table layouts are detected. Mixed-content PDFs may not yield tables. Cell merges and formulas are not preserved.',
+  'pdfToXlsx.progress': 'Processing page {{done}}/{{total}}',
+  'pdfToXlsx.loading': 'Converting…',
+  'pdfToXlsx.button': 'Convert to Excel',
+  'pdfToXlsx.empty.title': 'This PDF appears to be a scanned document — no text to convert',
+  'pdfToXlsx.empty.hint': 'Use OCR tools (e.g., Adobe Acrobat, ABBYY) to recognize text first',
+  'pdfToXlsx.noTable.title': 'No tables detected in this PDF',
+  'pdfToXlsx.noTable.hint': 'Try a PDF that contains a clear tabular layout (rows and columns).',
+  'pdfToXlsx.stats': '{{pages}} table pages · {{cells}} cells · {{size}} KB',
+  'pdfToXlsx.download': 'Download .xlsx',
+  'pdfToXlsx.reset': 'Convert again',
+  'pdfToXlsx.error': 'Conversion failed: {{message}}',
 }
 
 export default en

@@ -11,6 +11,7 @@ import PdfToImageTool from '@/components/tools/PdfToImageTool'
 import ImageToPdfTool from '@/components/tools/ImageToPdfTool'
 import PdfToMdTool from '@/components/tools/PdfToMdTool'
 import PdfToDocxTool from '@/components/tools/PdfToDocxTool'
+import PdfToXlsxTool from '@/components/tools/PdfToXlsxTool'
 
 export default function ToolPanel() {
   const { files, activeTool } = useApp()
@@ -29,6 +30,7 @@ export default function ToolPanel() {
     'image-to-pdf': <ImageToPdfTool />,
     'pdf-to-md': <PdfToMdTool />,
     'pdf-to-docx': <PdfToDocxTool />,
+    'pdf-to-xlsx': <PdfToXlsxTool />,
   }
 
   if (!activeTool) {
