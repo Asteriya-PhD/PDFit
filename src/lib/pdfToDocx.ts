@@ -91,8 +91,8 @@ function groupRowsAndColumns(items: TextItem[]): {
 } {
   if (items.length === 0) return { rows: [], columnXs: [] }
 
-  // Sort top-to-bottom, then by x (so items at the same y end up adjacent).
-  const sorted = [...items].sort((a, b) => b.y - a.y || a.x - b.x)
+  // Sort top-to-bottom (ascending y), then left-to-right (ascending x).
+  const sorted = [...items].sort((a, b) => a.y - b.y || a.x - b.x)
 
   const rows: Row[] = []
   for (const it of sorted) {

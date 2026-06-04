@@ -96,8 +96,8 @@ async function parseStructured(arrayBuffer: ArrayBuffer): Promise<LiteParseResul
 function detectTable(items: TextItem[]): PageTable | null {
   if (items.length === 0) return null
 
-  // Sort top-to-bottom, then left-to-right.
-  const sorted = [...items].sort((a, b) => b.y - a.y || a.x - b.x)
+  // Sort top-to-bottom (ascending y), then left-to-right (ascending x).
+  const sorted = [...items].sort((a, b) => a.y - b.y || a.x - b.x)
 
   // Group by y (top-to-bottom).
   const rowYs: number[] = []
