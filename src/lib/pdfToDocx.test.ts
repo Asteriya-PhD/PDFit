@@ -2,17 +2,17 @@ import { describe, it, expect, beforeAll } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import JSZip from 'jszip'
+import { PDFDocument, StandardFonts } from 'pdf-lib'
 import { initSync } from '@llamaindex/liteparse-wasm'
 import { pdfToDocx } from './pdfToDocx'
 
 const TEST_DIR = join(process.cwd(), 'test-files')
-const REAL_DIR = join(process.cwd(), 'PDF_Word')
 let textPdf: ArrayBuffer
 let imageOnlyPdf: ArrayBuffer
 let tablePdf: ArrayBuffer
-let realPdf: ArrayBuffer
+let multiLinePdf: ArrayBuffer
 
-beforeAll(() => {
+beforeAll(async () => {
   // Same trick as liteparse.test.ts: init the wasm sync with local bytes
   // for Node. The dynamic import inside pdfToDocx reuses the cached
   // parser from liteparse.ts.
@@ -24,11 +24,37 @@ beforeAll(() => {
   const text = readFileSync(join(TEST_DIR, 'text-pdf.pdf'))
   const imageOnly = readFileSync(join(TEST_DIR, 'image-only.pdf'))
   const table = readFileSync(join(TEST_DIR, 'table-pdf.pdf'))
-  const real = readFileSync(join(REAL_DIR, '05_多普勒效应_2026-05-21.pdf'))
   textPdf = text.buffer.slice(text.byteOffset, text.byteOffset + text.byteLength)
   imageOnlyPdf = imageOnly.buffer.slice(imageOnly.byteOffset, imageOnly.byteOffset + imageOnly.byteLength)
   tablePdf = table.buffer.slice(table.byteOffset, table.byteOffset + table.byteLength)
-  realPdf = real.buffer.slice(real.byteOffset, real.byteOffset + real.byteLength)
+
+  // Build a 2-col table whose right cell wraps to 3 visual lines. Generated
+  // at test time (not a checked-in fixture) so it doesn't depend on any
+  // local asset — `PDF_Word/` is gitignored and the existing test-files/
+  // fixtures don't have multi-line cells. y values are chosen so that
+  // each wrapped right-cell line sits within SINGLE_COL_TABLE_GAP (20) of
+  // the nearest multi-col row, so the v6 classifier keeps them all in the
+  // same Table element.
+  const doc = await PDFDocument.create()
+  const page = doc.addPage([612, 792]) // US Letter
+  const font = await doc.embedFont(StandardFonts.Helvetica)
+  const draw = (text: string, x: number, y: number) => {
+    page.drawText(text, { x, y, font, size: 12 })
+  }
+  // Header row at y=750.
+  draw('Teacher', 80, 750)
+  draw('Student', 300, 750)
+  // Row 1 at y=710: both cells single-line.
+  draw('1. Play audio', 80, 710)
+  draw('1. Listen', 300, 710)
+  // Row 1 line 2 at y=694: both cells continue. (16y gap < 20 SINGLE_COL_TABLE_GAP)
+  draw('description', 80, 694)
+  draw('to audio', 300, 694)
+  // Row 1 line 3 at y=678: only the right cell has a 3rd line. (16y gap to
+  // the y=694 multi-col row, so the v6 classifier keeps this in the table.)
+  draw('end of line', 300, 678)
+  const bytes = await doc.save()
+  multiLinePdf = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength)
 })
 
 /**
@@ -106,42 +132,49 @@ describe('pdfToDocx', () => {
     ])
   })
 
-  // Regression: a 2-col table whose cells wrap to multiple visual lines
-  // (the "教学过程" / teacher-activity × student-activity table on page 3
-  // of the real physics fixture) must keep all wrapped fragments in the
-  // same `Table` element — not split them across multiple table elements
-  // or paragraph blocks. The header row (教师活动 / 学生活动) anchors the
-  // detection; the next table should have ≥ 2 rows and the leftmost column
-  // of one of those rows should start with "1. 播放音频".
+  // Regression: a 2-col table whose right cell wraps to 3 visual lines must
+  // keep all wrapped fragments in the same `Table` element. Built with
+  // pdf-lib in beforeAll so the fixture isn't a checked-in asset (the
+  // `PDF_Word/` real-world PDF is gitignored; the existing test-files/
+  // fixtures don't have multi-line cells).
+  //
+  // Source-PDF layout (y in PDF coords, decreasing downward):
+  //   y=750  Teacher          Student          (header, both cols)
+  //   y=710  1. Play audio    1. Listen        (row 1 line 1, both cols)
+  //   y=694  description      to audio         (row 1 line 2, both cols)
+  //   y=678                   end of line      (row 1 line 3, only right col)
+  //
+  // The v6 classifier (≥ 1 col hit → table, single-col row stays in the
+  // table if a multi-col row is within 20y) should keep the y=678 single-
+  // col row inside the same Table as the y=694/710/750 multi-col rows.
   it('keeps multi-line cell rows in the same Table element (not fragmented)', async () => {
-    const { bytes, tableCount } = await pdfToDocx(realPdf)
+    const { bytes, tableCount } = await pdfToDocx(multiLinePdf)
     expect(bytes.byteLength).toBeGreaterThan(0)
-    // The 5-page real PDF has multiple tables; 教学过程 alone contributes 6
-    // (环节 1:1 header + 6 data rows). Pick a low bound to stay robust if
-    // the cell-wrap count shifts.
-    expect(tableCount).toBeGreaterThanOrEqual(5)
+    // All 4 rows classify as 'table' (the single-col y=678 row is within
+    // 16y of the y=694 multi-col row) and coalesce into one Table element.
+    expect(tableCount).toBe(1)
 
     const cells = await docxCells(bytes)
-    // Find the header row of 教学过程 first. The PDF's text encoding uses
-    // Kangxi radicals (⽣ U+2F63) for some glyphs, so we accept either form.
+    // Locate the table by its 'Teacher' / 'Student' header.
     const headerIdx = cells.findIndex(
-      r => r.length === 2 && r[0] === '教师活动' && /^学[⽣生]活动$/.test(r[1] ?? ''),
+      r => r.length === 2 && r[0] === 'Teacher' && r[1] === 'Student',
     )
     expect(headerIdx).toBeGreaterThanOrEqual(0)
-    // The data rows of this table come right after the header (in the
-    // same contiguous Table element). The first numbered teacher activity
-    // ("1. 播放音频...") is at row[headerIdx+2] in the source PDF, because
-    // the right cell's wrap produces a leading row[headerIdx+1] with the
-    // left cell empty. Search up to 8 rows past the header so the
-    // assertion stays robust if the wrap count shifts. The PDF text
-    // encoding uses Kangxi radicals for many CJK glyphs, so we just check
-    // for the "1. 播" prefix and the "频" character anywhere in the cell.
-    const leftCellStartsWithPlay = cells
-      .slice(headerIdx + 1, headerIdx + 9)
-      .some(r => {
-        const first = r[0]
-        return first !== undefined && first.startsWith('1. 播') && first.includes('频')
-      })
-    expect(leftCellStartsWithPlay).toBe(true)
+
+    // The 3 rows right after the header are the wrapped row-1 block:
+    // row 0 = line 1 (both cols), row 1 = line 2 (both cols),
+    // row 2 = line 3 (only right col, left empty).
+    const row1Block = cells.slice(headerIdx + 1, headerIdx + 5)
+
+    // The "1. Play audio" left cell must appear in one of the row-1 rows.
+    const playRow = row1Block.find(r => r[0] === '1. Play audio')
+    expect(playRow).toBeDefined()
+    expect(playRow?.[1]).toBe('1. Listen')
+
+    // A row with empty left cell and "end of line" as the right cell must
+    // exist — this is the key assertion: the right cell's 3rd line stayed
+    // in the same Table instead of being fragmented out as a paragraph.
+    const endOfLineRow = row1Block.find(r => r[0] === '' && r[1] === 'end of line')
+    expect(endOfLineRow).toBeDefined()
   })
 })
