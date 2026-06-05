@@ -6,10 +6,13 @@ import ThumbnailGrid from '@/components/ThumbnailGrid'
 import ToolPanel from '@/components/ToolPanel'
 import EmptyState from '@/components/EmptyState'
 import ImageToPdfTool from '@/components/tools/ImageToPdfTool'
+import ShareToast from '@/components/ShareToast'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
+import { usePwaDeepLinks } from '@/hooks/usePwaDeepLinks'
 
 export default function App() {
   useKeyboardShortcuts()
+  usePwaDeepLinks()
   const { files, activeTool } = useApp()
 
   const showImageToPdf = activeTool === 'image-to-pdf' && files.length === 0
@@ -19,6 +22,7 @@ export default function App() {
       className="h-[100dvh] flex flex-col"
       style={{ backgroundColor: 'var(--color-bg-primary)' }}
     >
+      <ShareToast />
       <Header />
 
       {showImageToPdf ? (

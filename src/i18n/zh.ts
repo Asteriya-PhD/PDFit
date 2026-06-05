@@ -57,6 +57,10 @@ const zh: Record<string, string> = {
   'persistBanner.dismiss': '暂不',
   'persistBanner.granted': '已保存。PDFit 将持续可离线使用。',
 
+  // Share-received toast (PWA share_target flow)
+  'shareReceived.toast': '已接收：{{filename}}',
+  'shareReceived.dismiss': '关闭',
+
   // ThemeToggle
   'themeToggle.title.dark': '切换到浅色模式',
   'themeToggle.title.light': '切换到深色模式',

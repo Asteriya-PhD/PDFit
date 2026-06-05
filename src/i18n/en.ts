@@ -57,6 +57,10 @@ const en: Record<string, string> = {
   'persistBanner.dismiss': 'Not now',
   'persistBanner.granted': 'Saved. PDFit will stay available offline.',
 
+  // Share-received toast (PWA share_target flow)
+  'shareReceived.toast': 'Received: {{filename}}',
+  'shareReceived.dismiss': 'Dismiss',
+
   // ThemeToggle
   'themeToggle.title.dark': 'Switch to light mode',
   'themeToggle.title.light': 'Switch to dark mode',
