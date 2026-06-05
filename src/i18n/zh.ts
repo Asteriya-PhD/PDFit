@@ -78,7 +78,7 @@ const zh: Record<string, string> = {
   'emptyState.group.annotate': '标注',
   'emptyState.group.annotate.desc': '页码 · 水印',
   'emptyState.group.convert': '转换',
-  'emptyState.group.convert.desc': 'PDF转图 · 图转PDF · PDF转Word · PDF转Excel',
+  'emptyState.group.convert.desc': 'PDF转Word · PDF转Excel · PDF转图 · 图转PDF',
   'emptyState.group.extract': '提取',
   'emptyState.group.extract.desc': '提取文本 · Markdown',
 

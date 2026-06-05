@@ -61,6 +61,12 @@ export default function EmptyState() {
 
   const featureGroups: FeatureGroup[] = [
     {
+      key: 'convert',
+      icon: ArrowLeftRight,
+      title: t('emptyState.group.convert'),
+      desc: t('emptyState.group.convert.desc'),
+    },
+    {
       key: 'edit',
       icon: Layers,
       title: t('emptyState.group.edit'),
@@ -71,12 +77,6 @@ export default function EmptyState() {
       icon: Bookmark,
       title: t('emptyState.group.annotate'),
       desc: t('emptyState.group.annotate.desc'),
-    },
-    {
-      key: 'convert',
-      icon: ArrowLeftRight,
-      title: t('emptyState.group.convert'),
-      desc: t('emptyState.group.convert.desc'),
     },
     {
       key: 'extract',

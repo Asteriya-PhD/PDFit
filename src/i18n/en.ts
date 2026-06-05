@@ -78,7 +78,7 @@ const en: Record<string, string> = {
   'emptyState.group.annotate': 'Annotate',
   'emptyState.group.annotate.desc': 'Page numbers · Watermark',
   'emptyState.group.convert': 'Convert',
-  'emptyState.group.convert.desc': 'PDF to Image · Image to PDF · PDF to Word · PDF to Excel',
+  'emptyState.group.convert.desc': 'PDF to Word · PDF to Excel · PDF to Image · Image to PDF',
   'emptyState.group.extract': 'Extract',
   'emptyState.group.extract.desc': 'Extract text · Markdown',
 

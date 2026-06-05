@@ -11,6 +11,15 @@ export default function Header() {
 
   const toolGroups = [
     {
+      label: t('header.group.convert'),
+      tools: [
+        { type: 'pdf-to-docx' as ToolType, label: t('header.tool.pdfToDocx'), icon: FileType, description: t('header.tool.description.pdfToDocx'), featured: true },
+        { type: 'pdf-to-xlsx' as ToolType, label: t('header.tool.pdfToXlsx'), icon: Sheet, description: t('header.tool.description.pdfToXlsx'), featured: true },
+        { type: 'pdf-to-image' as ToolType, label: t('header.tool.pdfToImage'), icon: Image, description: t('header.tool.description.pdfToImage') },
+        { type: 'image-to-pdf' as ToolType, label: t('header.tool.imageToPdf'), icon: FileImage, description: t('header.tool.description.imageToPdf') },
+      ],
+    },
+    {
       label: t('header.group.edit'),
       tools: [
         { type: 'merge' as ToolType, label: t('header.tool.merge'), icon: Combine, description: t('header.tool.description.merge') },
@@ -25,15 +34,6 @@ export default function Header() {
       tools: [
         { type: 'page-numbering' as ToolType, label: t('header.tool.pageNumbering'), icon: Hash, description: t('header.tool.description.pageNumbering') },
         { type: 'watermark' as ToolType, label: t('header.tool.watermark'), icon: Droplets, description: t('header.tool.description.watermark') },
-      ],
-    },
-    {
-      label: t('header.group.convert'),
-      tools: [
-        { type: 'pdf-to-image' as ToolType, label: t('header.tool.pdfToImage'), icon: Image, description: t('header.tool.description.pdfToImage') },
-        { type: 'image-to-pdf' as ToolType, label: t('header.tool.imageToPdf'), icon: FileImage, description: t('header.tool.description.imageToPdf') },
-        { type: 'pdf-to-docx' as ToolType, label: t('header.tool.pdfToDocx'), icon: FileType, description: t('header.tool.description.pdfToDocx'), featured: true },
-        { type: 'pdf-to-xlsx' as ToolType, label: t('header.tool.pdfToXlsx'), icon: Sheet, description: t('header.tool.description.pdfToXlsx'), featured: true },
       ],
     },
     {
