@@ -1,4 +1,4 @@
-import { useCallback, useState, useId } from 'react'
+import { useCallback, useState, useRef } from 'react'
 import { useApp } from '@/contexts/AppContext'
 import { useI18n } from '@/i18n'
 import { Shield, Upload } from 'lucide-react'
@@ -13,14 +13,20 @@ interface IndexEntry {
 /**
  * Editorial "Privacy Press" landing for PDFit.
  * Single-viewport layout: hero + dropzone on top, numbered tool index below,
- * PRIVACY GUARANTEE bar at the bottom. Real <input type="file"> inside a
- * <label> wrapper for keyboard a11y (replaces the previous div+onClick).
+ * PRIVACY GUARANTEE bar at the bottom.
+ *
+ * The dropzone uses an explicit onClick → inputRef.current.click()
+ * pattern (NOT <label htmlFor>) because label-synthesized file-picker
+ * clicks are unreliable in installed-PWA contexts (iOS PWA + some
+ * Chromium PWAs swallow them). The same pattern is used in
+ * FileDropzone.tsx and ImageToPdfTool.tsx, both of which work in
+ * installed PWAs.
  */
 export default function EmptyState() {
   const { addFiles } = useApp()
   const { t } = useI18n()
   const [isDragging, setIsDragging] = useState(false)
-  const inputId = useId()
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const handleDragEnter = useCallback((e: React.DragEvent) => {
     e.preventDefault()
@@ -44,6 +50,15 @@ export default function EmptyState() {
     },
     [addFiles]
   )
+  const handleClick = useCallback(() => {
+    inputRef.current?.click()
+  }, [])
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      inputRef.current?.click()
+    }
+  }, [])
   const handleFileChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target.files) addFiles(Array.from(e.target.files))
@@ -129,13 +144,17 @@ export default function EmptyState() {
 
           {/* Right: dropzone */}
           <div className="w-full lg:w-[440px] shrink-0">
-            <label
-              htmlFor={inputId}
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={handleClick}
+              onKeyDown={handleKeyDown}
               onDragEnter={handleDragEnter}
               onDragLeave={handleDragLeave}
               onDragOver={handleDragOver}
               onDrop={handleDrop}
-              className="block cursor-pointer transition-all duration-300"
+              aria-label={t('emptyState.dropzone.text')}
+              className="cursor-pointer transition-all duration-300"
               style={{
                 backgroundColor: 'var(--color-surface)',
                 border: `1.5px dashed ${isDragging ? 'var(--color-accent)' : 'var(--color-rule)'}`,
@@ -203,16 +222,22 @@ export default function EmptyState() {
                   <Upload className="w-4 h-4" />
                   {t('emptyState.browseButton')}
                 </span>
-                <input
-                  id={inputId}
-                  type="file"
-                  accept=".pdf"
-                  multiple
-                  onChange={handleFileChange}
-                  className="sr-only"
-                />
               </div>
-            </label>
+            </div>
+            {/* Hidden file input — sibling of the role=button div, not a
+                descendant, to satisfy a11y "no interactive nested in
+                interactive". tabIndex=-1 keeps it out of the tab order;
+                the div above is the focusable / clickable target. */}
+            <input
+              ref={inputRef}
+              type="file"
+              accept=".pdf"
+              multiple
+              onChange={handleFileChange}
+              aria-label={t('emptyState.dropzone.text')}
+              tabIndex={-1}
+              className="sr-only"
+            />
           </div>
         </section>
 
