@@ -184,7 +184,15 @@ export default function EmptyState() {
                 <span
                   className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-full"
                   style={{
-                    backgroundColor: 'var(--color-accent-700)',
+                    // Mid-tone orange between brand accent (#d97757,
+                    // 3.08:1 fails AA) and accent-700 (#8b3a1c, 8.97:1
+                    // but reads as muddy brown). #b8553a = 4.75:1,
+                    // passes AA on white text and still looks orange.
+                    // Kept inline rather than adding a new CSS var for
+                    // one-off use; the brand identity is preserved by
+                    // the surrounding accent-100/700 text + the
+                    // hairline orange strip at the top of the page.
+                    backgroundColor: '#b8553a',
                     color: '#fff',
                     fontFamily: 'var(--font-body)',
                     fontWeight: 500,
