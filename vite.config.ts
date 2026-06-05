@@ -45,6 +45,46 @@ export default defineConfig({
               cacheableResponse: { statuses: [0, 200] },
             },
           },
+          {
+            // Excel export — exceljs (~940 KB raw, ~270 KB gzip). Used
+            // by PdfToXlsxTool via dynamic import. First-clicks slow
+            // until cached, then instant.
+            urlPattern: /\/assets\/exceljs\.min-.*\.js$/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'exceljs',
+              expiration: { maxEntries: 4, maxAgeSeconds: 86400 * 365 },
+            },
+          },
+          {
+            // pdfjs web worker (~1.4 MB raw). Loaded by pdfjs-dist as a
+            // Worker; the SW intercepts the fetch even for worker URLs.
+            urlPattern: /\/assets\/pdf\.worker\.min-.*\.mjs$/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'pdfjs-worker',
+              expiration: { maxEntries: 4, maxAgeSeconds: 86400 * 365 },
+            },
+          },
+          {
+            // pdfjs library chunk (~360 KB). Pairs with the worker above.
+            urlPattern: /\/assets\/pdfjs-.*\.js$/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'pdfjs-lib',
+              expiration: { maxEntries: 4, maxAgeSeconds: 86400 * 365 },
+            },
+          },
+          {
+            // pdf-lib chunk (~440 KB). Used by merge / split / delete /
+            // rotate / reorder / page-numbering / watermark / image-to-pdf.
+            urlPattern: /\/assets\/pdflib-.*\.js$/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'pdf-lib',
+              expiration: { maxEntries: 4, maxAgeSeconds: 86400 * 365 },
+            },
+          },
         ],
       },
     }),
