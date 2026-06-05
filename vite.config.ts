@@ -10,22 +10,38 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['pdfit.svg', 'icons/pwa-192x192.png', 'icons/pwa-512x512.png'],
+      injectRegister: 'auto',
+      includeAssets: [
+        'pdfit.svg',
+        'icons/pwa-192x192.png',
+        'icons/pwa-512x512.png',
+        'icons/apple-touch-icon.png',
+        'icons/maskable-icon-512x512.png',
+      ],
       manifest: {
-        name: 'PDFit',
+        id: '/PDFit/',
+        name: 'PDFit — 12 PDF tools, 0 servers',
         short_name: 'PDFit',
-        description: 'Privacy-first browser-based PDF manipulation tool',
-        theme_color: '#DC2626',
-        background_color: '#ffffff',
+        description:
+          'Privacy-first PDF toolbox. Merge, split, convert to Word/Excel, watermark, and more — entirely in your browser.',
+        theme_color: '#d97757',
+        background_color: '#f4f1e8',
         display: 'standalone',
+        orientation: 'portrait-primary',
         start_url: '.',
+        scope: '.',
+        lang: 'en',
+        categories: ['productivity', 'utilities'],
         icons: [
-          { src: 'icons/pwa-192x192.png', sizes: '192x192', type: 'image/png' },
-          { src: 'icons/pwa-512x512.png', sizes: '512x512', type: 'image/png' },
+          { src: 'icons/pwa-192x192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: 'icons/pwa-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+          { src: 'icons/maskable-icon-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,ico,webmanifest}'],
+        navigateFallback: 'index.html',
+        navigateFallbackDenylist: [/^\/api\//],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,

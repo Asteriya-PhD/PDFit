@@ -3,12 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="pdfit.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/pwa-192x192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="icons/pwa-512x512.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#d97757" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#e08a6d" media="(prefers-color-scheme: dark)" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="PDFit" />
     <meta name="color-scheme" content="light dark" />
-    <title>PDFit - PDF Toolbox</title>
+    <meta name="description" content="Privacy-first PDF toolbox. Merge, split, convert to Word/Excel, watermark, and more — entirely in your browser. No uploads, no servers." />
+    <title>PDFit — 12 PDF tools, 0 servers</title>
   </head>
   <body class="antialiased">
     <div id="root"></div>
+    <noscript>PDFit requires JavaScript to run. Please enable it in your browser.</noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

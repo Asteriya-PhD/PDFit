@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PDFit — Offline</title>
+    <style>
+      :root {
+        --color-paper: #f4f1e8;
+        --color-ink: #1a1a1a;
+        --color-muted: #6b6661;
+        --color-accent: #d97757;
+        --font-heading: 'Fraunces', Georgia, serif;
+        --font-body: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        --font-mono: 'IBM Plex Mono', 'SF Mono', monospace;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px;
+        background-color: var(--color-paper);
+        color: var(--color-ink);
+        font-family: var(--font-body);
+        font-size: 16px;
+        line-height: 1.5;
+      }
+      .card {
+        max-width: 480px;
+        text-align: center;
+      }
+      .kicker {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--color-muted);
+        margin-bottom: 16px;
+      }
+      h1 {
+        font-family: var(--font-heading);
+        font-weight: 500;
+        font-size: clamp(40px, 6vw, 64px);
+        line-height: 0.95;
+        letter-spacing: -0.035em;
+        margin-bottom: 16px;
+      }
+      h1 .accent { color: var(--color-accent); font-style: italic; font-weight: 400; }
+      p {
+        color: var(--color-muted);
+        margin-bottom: 12px;
+      }
+      .accent { color: var(--color-accent); }
+      .btn {
+        display: inline-block;
+        margin-top: 24px;
+        padding: 10px 24px;
+        background-color: var(--color-accent);
+        color: white;
+        font-weight: 500;
+        font-size: 14px;
+        border-radius: 999px;
+        text-decoration: none;
+      }
+      .btn:hover { background-color: #8b3a1c; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <p class="kicker">PDFit · Offline</p>
+      <h1>No signal<span class="accent">.</span></h1>
+      <p>You're offline. PDFit needs the internet to load on first visit.</p>
+      <p>Once installed, your tools work fully offline. Reconnect once to cache the app, then you're set.</p>
+      <a href="." class="btn">Try again</a>
+    </div>
+  </body>
+</html>
