@@ -44,6 +44,19 @@ const en: Record<string, string> = {
   'header.badge.new': 'New',
   'header.featuredLabel': 'New tool — flagship feature',
 
+  // PWA install
+  'installButton.label': 'Install',
+  'installButton.installed': 'PDFit is installed',
+  'installButton.iosHint.title': 'Add to Home Screen',
+  'installButton.iosHint.body': 'Tap the Share button, then choose "Add to Home Screen" to install PDFit.',
+
+  // Storage persist prompt
+  'persistBanner.title': 'Keep PDFit always available offline?',
+  'persistBanner.body': 'Without permission, your browser may clear cached files (including the PDF parser) when storage runs low.',
+  'persistBanner.keep': 'Keep installed',
+  'persistBanner.dismiss': 'Not now',
+  'persistBanner.granted': 'Saved. PDFit will stay available offline.',
+
   // ThemeToggle
   'themeToggle.title.dark': 'Switch to light mode',
   'themeToggle.title.light': 'Switch to dark mode',

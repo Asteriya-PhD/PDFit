@@ -4,6 +4,7 @@ import type { ToolType } from '@/types'
 import { Combine, Split, Trash2, RotateCw, Move, FileText, FileType, Sheet, Hash, Droplets, ImageDown } from 'lucide-react'
 import ThemeToggle from '@/components/ThemeToggle'
 import LocaleToggle from '@/components/LocaleToggle'
+import InstallButton from '@/components/InstallButton'
 
 export default function Header() {
   const { activeTool, setTool } = useApp()
@@ -160,6 +161,7 @@ export default function Header() {
           >
             Vol. 01
           </span>
+          <InstallButton />
           <LocaleToggle />
           <ThemeToggle />
         </div>

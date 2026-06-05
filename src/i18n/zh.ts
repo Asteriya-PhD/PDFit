@@ -44,6 +44,19 @@ const zh: Record<string, string> = {
   'header.badge.new': '新',
   'header.featuredLabel': '新工具 — 旗舰功能',
 
+  // PWA 安装
+  'installButton.label': '安装',
+  'installButton.installed': 'PDFit 已安装',
+  'installButton.iosHint.title': '添加到主屏幕',
+  'installButton.iosHint.body': '点击分享按钮，选择「添加到主屏幕」即可安装 PDFit。',
+
+  // 永久存储提示
+  'persistBanner.title': '让 PDFit 始终离线可用？',
+  'persistBanner.body': '如果不允许，浏览器在存储空间不足时可能清除缓存（包括 PDF 解析器）。',
+  'persistBanner.keep': '保持安装',
+  'persistBanner.dismiss': '暂不',
+  'persistBanner.granted': '已保存。PDFit 将持续可离线使用。',
+
   // ThemeToggle
   'themeToggle.title.dark': '切换到浅色模式',
   'themeToggle.title.light': '切换到深色模式',

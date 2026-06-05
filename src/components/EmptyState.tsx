@@ -2,6 +2,7 @@ import { useCallback, useState, useId } from 'react'
 import { useApp } from '@/contexts/AppContext'
 import { useI18n } from '@/i18n'
 import { Shield, Upload } from 'lucide-react'
+import StoragePersistBanner from '@/components/StoragePersistBanner'
 
 interface IndexEntry {
   num: string
@@ -222,6 +223,7 @@ export default function EmptyState() {
         </section>
 
         {/* PRIVACY GUARANTEE BAR */}
+        <StoragePersistBanner />
         <div className="privacy-bar mt-2.5">
           <span className="privacy-bar-title">{t('emptyState.privacyGuarantee.title')}</span>
           <span className="privacy-bar-body">{t('emptyState.privacyGuarantee.body')}</span>

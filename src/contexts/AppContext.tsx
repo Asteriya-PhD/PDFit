@@ -93,6 +93,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const addFiles = useCallback(async (fileList: File[]) => {
     const pdfFiles: PDFFileInfo[] = []
+    // Bump the persist-prompt gate counter — every real file load
+    // proves the user actually uses the app, which is the right
+    // moment to ask about persistent storage.
+    try {
+      const next = Number(localStorage.getItem('pdfit-conversions') || '0') + 1
+      localStorage.setItem('pdfit-conversions', String(next))
+    } catch {}
     for (const file of fileList) {
       const arrayBuffer = await file.arrayBuffer()
       const { PDFDocument } = await import('pdf-lib')
