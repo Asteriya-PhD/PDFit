@@ -9,6 +9,13 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
+      // InjectManifest lets us write the SW in TypeScript
+      // (src/sw.ts). It's how we get a custom `fetch` listener for
+      // the share_target POST without shelling out to a parallel
+      // generateSW + importScripts config.
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.ts',
       registerType: 'autoUpdate',
       injectRegister: 'auto',
       includeAssets: [
@@ -17,7 +24,18 @@ export default defineConfig({
         'icons/pwa-512x512.png',
         'icons/apple-touch-icon.png',
         'icons/maskable-icon-512x512.png',
+        'icons/shortcut-word.png',
+        'icons/shortcut-excel.png',
+        'icons/shortcut-merge.png',
       ],
+      injectManifest: {
+        // Workbox InjectManifest glob. The pre-cache list is injected
+        // at build time into the SW via self.__WB_MANIFEST.
+        globPatterns: ['**/*.{js,css,html,svg,png,ico,webmanifest}'],
+        // We don't want the share-target action URL itself in the
+        // precache (it would shadow the fetch listener). index.html
+        // is what navigateFallback will serve for SPA routing.
+      },
       manifest: {
         id: '/PDFit/',
         name: 'PDFit — 12 PDF tools, 0 servers',
@@ -37,71 +55,56 @@ export default defineConfig({
           { src: 'icons/pwa-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
           { src: 'icons/maskable-icon-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
-      },
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,ico,webmanifest}'],
-        navigateFallback: 'index.html',
-        navigateFallbackDenylist: [/^\/api\//],
-        runtimeCaching: [
+        // Long-press the installed-app icon → jump straight to a tool.
+        // URL is resolved against the manifest's base path, so
+        // '/PDFit/?tool=word' lands on /PDFit/?tool=word (the app
+        // reads ?tool= on boot via src/lib/urlRouter.ts).
+        shortcuts: [
           {
-            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: { cacheName: 'google-fonts', expiration: { maxEntries: 10, maxAgeSeconds: 86400 * 365 } },
+            name: 'Convert to Word',
+            short_name: 'To Word',
+            description: 'Open a PDF and convert to editable .docx',
+            url: '/PDFit/?tool=word',
+            icons: [{ src: 'icons/shortcut-word.png', sizes: '192x192', type: 'image/png' }],
           },
           {
-            // LiteParse WASM bundle (~4 MB) — the big one. CacheFirst so
-            // returning users don't re-download it; the browser also
-            // pre-warms this via preloadLiteParse() in main.tsx on first
-            // visit so the very first extract is also fast.
-            urlPattern: /\/assets\/liteparse_wasm_bg-.*\.wasm$/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'liteparse-wasm',
-              expiration: { maxEntries: 4, maxAgeSeconds: 86400 * 365 },
-              cacheableResponse: { statuses: [0, 200] },
-            },
+            name: 'Convert to Excel',
+            short_name: 'To Excel',
+            description: 'Open a PDF and extract tables to .xlsx',
+            url: '/PDFit/?tool=excel',
+            icons: [{ src: 'icons/shortcut-excel.png', sizes: '192x192', type: 'image/png' }],
           },
           {
-            // Excel export — exceljs (~940 KB raw, ~270 KB gzip). Used
-            // by PdfToXlsxTool via dynamic import. First-clicks slow
-            // until cached, then instant.
-            urlPattern: /\/assets\/exceljs\.min-.*\.js$/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'exceljs',
-              expiration: { maxEntries: 4, maxAgeSeconds: 86400 * 365 },
-            },
-          },
-          {
-            // pdfjs web worker (~1.4 MB raw). Loaded by pdfjs-dist as a
-            // Worker; the SW intercepts the fetch even for worker URLs.
-            urlPattern: /\/assets\/pdf\.worker\.min-.*\.mjs$/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'pdfjs-worker',
-              expiration: { maxEntries: 4, maxAgeSeconds: 86400 * 365 },
-            },
-          },
-          {
-            // pdfjs library chunk (~360 KB). Pairs with the worker above.
-            urlPattern: /\/assets\/pdfjs-.*\.js$/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'pdfjs-lib',
-              expiration: { maxEntries: 4, maxAgeSeconds: 86400 * 365 },
-            },
-          },
-          {
-            // pdf-lib chunk (~440 KB). Used by merge / split / delete /
-            // rotate / reorder / page-numbering / watermark / image-to-pdf.
-            urlPattern: /\/assets\/pdflib-.*\.js$/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'pdf-lib',
-              expiration: { maxEntries: 4, maxAgeSeconds: 86400 * 365 },
-            },
+            name: 'Merge PDFs',
+            short_name: 'Merge',
+            description: 'Combine multiple PDFs into one',
+            url: '/PDFit/?tool=merge',
+            icons: [{ src: 'icons/shortcut-merge.png', sizes: '192x192', type: 'image/png' }],
           },
         ],
+        // Share sheet → PDFit. The action URL doubles as the app's
+        // "share received" trigger: after the SW stashes the file in
+        // IndexedDB (see src/sw.ts) it 303-redirects to the same URL
+        // as GET, and the app boot (src/lib/shareReceiver.ts) drains
+        // IDB.
+        share_target: {
+          action: '/PDFit/?share=received',
+          method: 'POST',
+          enctype: 'multipart/form-data',
+          params: {
+            files: [{ name: 'files', accept: ['application/pdf'] }],
+          },
+        },
+      },
+      // The runtime caching rules moved into src/sw.ts so we can use
+      // real TypeScript + registerRoute. Keeping them here would
+      // duplicate logic; this block intentionally omits `workbox:`.
+      devOptions: {
+        // Don't activate the SW during `vite dev` — it makes HMR
+        // // unreliable and the share-target flow only matters once
+        // // shipped to GH Pages.
+        enabled: false,
+        type: 'module',
       },
     }),
   ],
