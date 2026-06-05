@@ -39,6 +39,8 @@ const zh: Record<string, string> = {
   'header.group.annotate': '标注',
   'header.group.convert': '转换',
   'header.group.extract': '提取',
+  'header.badge.new': '新',
+  'header.featuredLabel': '新工具 — 旗舰功能',
 
   // ThemeToggle
   'themeToggle.title.dark': '切换到浅色模式',

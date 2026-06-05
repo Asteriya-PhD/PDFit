@@ -39,6 +39,8 @@ const en: Record<string, string> = {
   'header.group.annotate': 'Annotate',
   'header.group.convert': 'Convert',
   'header.group.extract': 'Extract',
+  'header.badge.new': 'New',
+  'header.featuredLabel': 'New tool — flagship feature',
 
   // ThemeToggle
   'themeToggle.title.dark': 'Switch to light mode',

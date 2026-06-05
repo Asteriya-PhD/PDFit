@@ -32,8 +32,8 @@ export default function Header() {
       tools: [
         { type: 'pdf-to-image' as ToolType, label: t('header.tool.pdfToImage'), icon: Image, description: t('header.tool.description.pdfToImage') },
         { type: 'image-to-pdf' as ToolType, label: t('header.tool.imageToPdf'), icon: FileImage, description: t('header.tool.description.imageToPdf') },
-        { type: 'pdf-to-docx' as ToolType, label: t('header.tool.pdfToDocx'), icon: FileType, description: t('header.tool.description.pdfToDocx') },
-        { type: 'pdf-to-xlsx' as ToolType, label: t('header.tool.pdfToXlsx'), icon: Sheet, description: t('header.tool.description.pdfToXlsx') },
+        { type: 'pdf-to-docx' as ToolType, label: t('header.tool.pdfToDocx'), icon: FileType, description: t('header.tool.description.pdfToDocx'), featured: true },
+        { type: 'pdf-to-xlsx' as ToolType, label: t('header.tool.pdfToXlsx'), icon: Sheet, description: t('header.tool.description.pdfToXlsx'), featured: true },
       ],
     },
     {
@@ -96,33 +96,58 @@ export default function Header() {
               {group.tools.map(tool => {
                 const Icon = tool.icon
                 const isActive = activeTool === tool.type
+                const isFeatured = 'featured' in tool && tool.featured === true
                 return (
                   <button
                     key={tool.type}
                     onClick={() => setTool(isActive ? null : tool.type)}
                     className="whitespace-nowrap flex items-center gap-1.5 px-2.5 md:px-3 py-2 rounded-lg text-xs md:text-sm font-medium transition-all duration-300 shrink-0"
                     data-tooltip={tool.description}
+                    aria-label={isFeatured ? `${tool.label} — ${t('header.featuredLabel')}` : undefined}
                     style={{
-                      color: isActive ? 'var(--color-accent-700)' : 'var(--color-text-secondary)',
-                      backgroundColor: isActive ? 'var(--color-surface-active)' : 'transparent',
+                      color: isActive || isFeatured
+                        ? 'var(--color-accent-700)'
+                        : 'var(--color-text-secondary)',
+                      backgroundColor: isActive
+                        ? 'var(--color-surface-active)'
+                        : isFeatured
+                          ? 'var(--color-accent-100)'
+                          : 'transparent',
                       fontFamily: 'var(--font-heading)',
                       transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)',
                     }}
                     onMouseEnter={e => {
-                      if (!isActive) {
+                      if (!isActive && !isFeatured) {
                         e.currentTarget.style.backgroundColor = 'var(--color-surface-active)'
                         e.currentTarget.style.color = 'var(--color-accent)'
                       }
                     }}
                     onMouseLeave={e => {
-                      if (!isActive) {
+                      if (!isActive && !isFeatured) {
                         e.currentTarget.style.backgroundColor = 'transparent'
                         e.currentTarget.style.color = 'var(--color-text-secondary)'
+                      } else if (isFeatured && !isActive) {
+                        // keep featured treatment on mouseout
+                        e.currentTarget.style.backgroundColor = 'var(--color-accent-100)'
+                        e.currentTarget.style.color = 'var(--color-accent-700)'
                       }
                     }}
                   >
                     <Icon className="w-3.5 md:w-4 h-3.5 md:h-4 shrink-0" />
                     <span className="hidden sm:inline">{tool.label}</span>
+                    {isFeatured && (
+                      <span
+                        className="hidden sm:inline-flex items-center px-1.5 py-0.5 text-[10px] font-semibold leading-none rounded-full"
+                        style={{
+                          backgroundColor: 'var(--color-accent-700)',
+                          color: '#ffffff',
+                          letterSpacing: '0.04em',
+                        }}
+                        aria-hidden="true"
+                      >
+                        {t('header.badge.new')}
+                      </span>
+                    )}
                   </button>
                 )
               })}
