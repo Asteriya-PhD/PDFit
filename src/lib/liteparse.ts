@@ -70,6 +70,19 @@ async function getParser(): Promise<LiteParser> {
 }
 
 /**
+ * Eagerly load + initialize the LiteParse WASM. Safe to call at app
+ * startup — it's idempotent (the parser promise is memoized) and
+ * non-blocking (returns a promise that callers can ignore). Warms the
+ * 4 MB wasm so the first "Extract Text" click has no download latency.
+ */
+export function preloadLiteParse(): void {
+  void getParser().catch(() => {
+    // Silent — if preload fails (e.g., offline), the lazy path will retry
+    // when the user actually invokes the tool and surface the error.
+  })
+}
+
+/**
  * Parse a PDF and return Markdown-ish text. LiteParse returns plain text
  * (with newlines preserved per its own layout heuristics); we just pass
  * it through — the existing tool already lets the user switch between

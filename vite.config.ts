@@ -32,6 +32,19 @@ export default defineConfig({
             handler: 'CacheFirst',
             options: { cacheName: 'google-fonts', expiration: { maxEntries: 10, maxAgeSeconds: 86400 * 365 } },
           },
+          {
+            // LiteParse WASM bundle (~4 MB) — the big one. CacheFirst so
+            // returning users don't re-download it; the browser also
+            // pre-warms this via preloadLiteParse() in main.tsx on first
+            // visit so the very first extract is also fast.
+            urlPattern: /\/assets\/liteparse_wasm_bg-.*\.wasm$/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'liteparse-wasm',
+              expiration: { maxEntries: 4, maxAgeSeconds: 86400 * 365 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
         ],
       },
     }),
