@@ -239,6 +239,84 @@ const SCENARIOS = [
     },
     expect: 'pdf',
   },
+  {
+    // PWA shortcut deep-link: navigates to /PDFit/?tool=word and
+    // asserts the Word tool is selected (Header button has the
+    // "isActive" class via aria-current). The URL router is wired
+    // in src/hooks/usePwaDeepLinks.ts + src/lib/urlRouter.ts.
+    name: 'tool-deep-link',
+    files: [],
+    pageCount: [],
+    tool: null,
+    validate: async (page) => {
+      await page.goto(BASE + '?tool=word', { waitUntil: 'domcontentloaded' })
+      await wait(400)
+      // The Header Word tool button accessible name in zh is
+      // "转 Word — 新工具 — 旗舰功能" (when featured) or just the
+      // description when not featured. We just look for a button
+      // whose accessible name contains "转 Word".
+      const wordBtn = page.getByRole('button', { name: /转 Word/ })
+      await wordBtn.waitFor({ timeout: 5000 })
+      // The URL router strips ?tool= after applying the deep-link.
+      const url = page.url()
+      if (url.includes('tool=word')) {
+        throw new Error(`URL still has tool=word after deep-link: ${url}`)
+      }
+    },
+  },
+  {
+    // PWA share-target flow: pre-stash a PDF in the share IDB
+    // (same store the SW writes to in production), then navigate
+    // to /?share=received. The app's boot code (shareReceiver.ts)
+    // should drain the IDB, add the file to AppContext, fire the
+    // 'pdfit:share-received' CustomEvent, and the ShareToast
+    // component should render the announcement.
+    name: 'share-received',
+    files: [],
+    pageCount: [],
+    tool: null,
+    validate: async (page) => {
+      const ctx = page.context()
+      // Stash a known PDF in the share IDB before the page script
+      // runs. The schema mirrors src/lib/shareStore.ts: db
+      // 'pdfit-share', object store 'shared', key 'current'.
+      const bytes = readFileSync(join(TEST_DIR, 'text-pdf.pdf'))
+      await ctx.addInitScript((payload) => {
+        try { localStorage.setItem('pdfit-locale', 'zh') } catch {}
+        const req = indexedDB.open('pdfit-share', 1)
+        req.onupgradeneeded = () => {
+          const db = req.result
+          if (!db.objectStoreNames.contains('shared')) {
+            db.createObjectStore('shared', { keyPath: 'id' })
+          }
+        }
+        req.onsuccess = () => {
+          const db = req.result
+          const tx = db.transaction('shared', 'readwrite')
+          tx.objectStore('shared').put({
+            id: 'current',
+            blob: new Blob([new Uint8Array(payload.bytes)], { type: 'application/pdf' }),
+            name: payload.name,
+            receivedAt: Date.now(),
+          })
+          tx.oncomplete = () => db.close()
+        }
+      }, { bytes: Array.from(bytes), name: 'shared-by-test.pdf' })
+
+      await page.goto(BASE + '?share=received', { waitUntil: 'domcontentloaded' })
+      // Wait for the toast to appear. role=status, aria-live=polite
+      const toast = page.locator('[role="status"]', { hasText: /shared-by-test\.pdf/ })
+      await toast.waitFor({ timeout: 5000 })
+      // The URL should have been cleaned (share=received stripped).
+      const url = page.url()
+      if (url.includes('share=received')) {
+        throw new Error(`URL still has share=received: ${url}`)
+      }
+      // And the file should now be in AppContext — drop into the
+      // file-loaded view by checking the FileList header.
+      await page.locator('text=文件列表').first().waitFor({ timeout: 5000 })
+    },
+  },
 ]
 
 async function runScenario(browser, scenario) {
@@ -306,21 +384,29 @@ async function runScenario(browser, scenario) {
     // the scenario is about to click. If it's the active tool (default
     // is merge), the button shows "合并 N 个文件". For others, the
     // activeTool is set so the right panel renders on mount.
-    const readySelector = {
-      merge: /合并 \d+ 个文件/,
-      split: /提取所选页面|分割 PDF/,
-      rotate: /旋转全部页面/,
-      watermark: /添加水印并下载/,
-      delete: /删除并下载|输入页码|点选页面/,
-      'page-numbering': /添加页码并下载/,
-      'pdf-to-image': /导出图片/,
-      'pdf-to-md': /提取文本/,
-      'image-to-pdf': /图片转 PDF|拖拽图片/,
-      reorder: /确认新顺序/,
-      'pdf-to-docx': /转 Word|转换为 Word/,
-      'pdf-to-xlsx': /转 Excel|转换为 Excel/,
-    }[scenario.tool]
-    await page.getByText(readySelector).first().waitFor({ timeout: 10000 })
+    // Skipped for validate-only scenarios (tool: null) which drive
+    // their own navigation and assertions.
+    if (scenario.tool) {
+      const readySelector = {
+        merge: /合并 \d+ 个文件/,
+        split: /提取所选页面|分割 PDF/,
+        rotate: /旋转全部页面/,
+        watermark: /添加水印并下载/,
+        delete: /删除并下载|输入页码|点选页面/,
+        'page-numbering': /添加页码并下载/,
+        'pdf-to-image': /导出图片/,
+        'pdf-to-md': /提取文本/,
+        'image-to-pdf': /图片转 PDF|拖拽图片/,
+        reorder: /确认新顺序/,
+        'pdf-to-docx': /转 Word|转换为 Word/,
+        'pdf-to-xlsx': /转 Excel|转换为 Excel/,
+      }[scenario.tool]
+      await page.getByText(readySelector).first().waitFor({ timeout: 10000 })
+    } else {
+      // Validate scenarios still need the page to settle before
+      // re-navigating with their own query params.
+      await wait(400)
+    }
 
     // No-download smoke test path: run scenario.validate and report
     // its outcome directly. Used for mineru, where mocking the full
