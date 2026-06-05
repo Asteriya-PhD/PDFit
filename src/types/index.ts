@@ -7,7 +7,7 @@ export interface PDFFileInfo {
   pageCount: number
 }
 
-export type ToolType = 'merge' | 'split' | 'delete' | 'rotate' | 'reorder' | 'page-numbering' | 'watermark' | 'pdf-to-image' | 'image-to-pdf' | 'pdf-to-md' | 'pdf-to-docx' | 'pdf-to-xlsx' | null
+export type ToolType = 'merge' | 'split' | 'delete' | 'rotate' | 'reorder' | 'page-numbering' | 'watermark' | 'pdf-to-image' | 'image-to-pdf' | 'pdf-to-md' | 'pdf-to-docx' | 'pdf-to-xlsx' | 'pdf-image' | null
 
 export interface PageRange {
   start: number // 1-based inclusive

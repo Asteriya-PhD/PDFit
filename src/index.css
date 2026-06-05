@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Lora:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -56,9 +56,16 @@
   --shadow-focus: 0 0 0 3px var(--color-accent-300);
 
   /* Typography */
-  --font-heading: 'Poppins', 'PingFang SC', 'Microsoft YaHei', 'Hiragino Sans GB', Arial, sans-serif;
-  --font-body: 'Lora', 'Noto Serif SC', 'Songti SC', Georgia, serif;
-  --font-mono: 'SF Mono', 'Fira Code', monospace;
+  --font-heading: 'Fraunces', 'Songti SC', Georgia, serif;
+  --font-body: 'IBM Plex Sans', 'PingFang SC', 'Microsoft YaHei', 'Hiragino Sans GB', sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SF Mono', 'Fira Code', monospace;
+
+  /* Editorial design tokens (new — for the Privacy Press landing) */
+  --color-paper: #f4f1e8;
+  --color-paper-grain: rgba(26, 26, 26, 0.04);
+  --color-ink: #1a1a1a;
+  --color-muted: #6b6661;
+  --color-rule: #d4d0c4;
 
   /* Spacing */
   --radius-sm: 6px;
@@ -575,6 +582,183 @@
 .scrollbar-thin {
   scrollbar-width: thin;
   scrollbar-color: var(--color-border) transparent;
+}
+
+/* ============================================
+   EDITORIAL DESIGN SYSTEM — "Privacy Press"
+   ============================================ */
+
+/* Dark mode overrides for editorial tokens */
+.dark {
+  --color-paper: #0e0e0e;
+  --color-paper-grain: rgba(240, 237, 228, 0.04);
+  --color-ink: #f0ede4;
+  --color-muted: #8a8780;
+  --color-rule: #2a2a2a;
+}
+
+/* Subtle paper grain — applied to a wrapper, not body, so file-loaded views stay clean */
+.editorial-grain {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 200px 200px;
+  background-repeat: repeat;
+}
+
+/* Kicker — small mono caps label above a headline */
+.kicker {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+/* Hairline rules */
+.rule { height: 1px; background: var(--color-rule); border: 0; }
+.rule-thick { height: 1px; background: var(--color-ink); border: 0; }
+
+/* Section label — "§ Convert" with Fraunces semibold + hairline extending right */
+.section-label {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+  padding-bottom: 6px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--color-ink);
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.section-label .mark {
+  color: var(--color-accent);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 26px;
+  vertical-align: -1px;
+}
+
+/* Editorial tool row — number + name + optional NEW tag, hairline separator, hover tooltip */
+.tool-row {
+  display: grid;
+  grid-template-columns: 32px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--color-rule);
+  position: relative;
+  cursor: help;
+  transition: background-color var(--transition-fast);
+}
+.tool-row:last-child { border-bottom: none; }
+.tool-row:hover {
+  background-color: var(--color-accent-100);
+  margin: 0 -8px;
+  padding: 7px 8px;
+  border-radius: 4px;
+}
+.tool-row[data-tip]:hover::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 0;
+  padding: 6px 10px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-paper);
+  background-color: var(--color-ink);
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 10;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.tool-row[data-tip]:hover::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 18px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 6px 6px 0 6px;
+  border-color: var(--color-ink) transparent transparent transparent;
+  z-index: 10;
+  pointer-events: none;
+}
+.tool-number {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+}
+.tool-name {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--color-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Editorial grid — 4 columns on desktop, 2 on tablet, 1 on mobile */
+.editorial-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1.6fr 1fr 1fr;
+  gap: 0 32px;
+  align-items: start;
+}
+@media (max-width: 1023px) {
+  .editorial-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
+}
+@media (max-width: 639px) {
+  .editorial-grid { grid-template-columns: 1fr; gap: 16px; }
+}
+
+/* New tag — small mono caps in a subtle pill */
+.badge-new {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  background-color: var(--color-accent-100);
+  border: 1px solid var(--color-accent-200);
+  color: var(--color-accent-700);
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+
+/* Privacy bar — hairline-bordered horizontal block */
+.privacy-bar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 12px 20px;
+  border: 1px solid var(--color-ink);
+  border-radius: 8px;
+  background-color: var(--color-surface);
+}
+.privacy-bar-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--color-ink);
+  white-space: nowrap;
+  border-right: 1px solid var(--color-rule);
+  padding-right: 18px;
+}
+.privacy-bar-body {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--color-ink);
+  line-height: 1.4;
 }
 
 
